@@ -1,0 +1,15 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: var(--bg-color);
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+}
