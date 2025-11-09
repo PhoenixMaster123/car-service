@@ -1,0 +1,49 @@
+:root {
+
+    /* Neon Colors */
+    --primary: #00e1ff;
+    --secondary: #00ffa6;
+    --accent: #00ffc3;
+    --text-color: #eaeaea;
+    --text-color-muted: #aaa;
+    --text-color-dark: #111;
+
+    /* Neon Background */
+    --bg-color: #0a0f1c;
+    --bg-gradient: linear-gradient(135deg, #0a0f1c 0%, #111d2f 100%);
+
+    /* Neon Effects */
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --inner-card-bg: rgba(255, 255, 255, 0.08);
+    --shadow: 0 0 15px rgba(0, 225, 255, 0.3);
+    --nav-bg: rgba(10, 15, 28, 0.8);
+    --border-color: rgba(0, 225, 255, 0.2);
+
+    /* Action Colors */
+    --danger-color: #dc3545;
+}
+
+body.light {
+
+    /* Refined teal/blue palette */
+    --primary: #00bfa5;
+    --secondary: #00796b;
+    --accent: #00bfa5;
+    --text-color: #212529;
+    --text-color-muted: #6c757d;
+    --text-color-dark: #212529;
+
+    /* Softer gradient background */
+    --bg-color: #f8f9fa;
+    --bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9fbf8 100%);
+
+    /* Subtle Glassmorphism */
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --inner-card-bg: #ffffff;
+    --shadow: 0 6px 15px rgba(0, 121, 107, 0.12);
+    --nav-bg: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(0, 121, 107, 0.15);
+
+    /* Action Colors */
+    --danger-color: #dc3545;
+}

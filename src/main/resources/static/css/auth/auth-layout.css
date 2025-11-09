@@ -1,0 +1,313 @@
+@import "static/css/common/variables.css";
+
+/* ========================================
+                 DARK THEME
+   ======================================== */
+
+.standalone-theme-toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 2rem;
+    z-index: 100;
+    width: 50px;
+    height: 26px;
+    background: var(--card-bg);
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.standalone-theme-toggle i {
+    font-size: 14px;
+    color: var(--primary);
+    width: 14px;
+}
+
+body:not(.light) .standalone-theme-toggle i.fa-moon {
+    color: var(--primary);
+}
+
+.toggle-circle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.auth-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 450px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+}
+
+.auth-container h2 {
+    text-align: center;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--inner-card-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.form-helpers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+/* 1. Adds space between the checkbox group and the button */
+.checkbox-group {
+    margin-bottom: 20px; /* Adjust this value as needed */
+
+    /* Optional: This aligns the checkbox and text neatly */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between checkbox and label */
+}
+
+/* 2. Removes the underline from the link */
+.checkbox-group a {
+    text-decoration: none;
+    color: #007bff; /* Optional: Give it a clear "link" color */
+}
+
+/* 3. (Recommended) Adds the underline back when a user hovers over it */
+.checkbox-group a:hover {
+    text-decoration: underline;
+}
+
+.form-helpers a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.form-helpers a:hover {
+    color: var(--secondary);
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: var(--text-color-dark) !important;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--primary);
+    border: none;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.submit-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.02);
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+.auth-switch-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color-muted);
+}
+
+.auth-switch-link a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.auth-switch-link a:hover {
+    color: var(--secondary);
+}
+
+.error-message {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.brand-name {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    text-shadow: 0 0 8px var(--primary);
+    text-align: center;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/** Input with icon styles **/
+
+.form-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    height: 45px;
+    padding-left: 12px;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.form-group .input-icon {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 45px;
+    width: 40px;
+    display: grid;
+    place-items: center;
+    color: #888;
+}
+
+/*
+========================================
+                LIGHT THEME
+========================================
+*/
+
+
+body.light .standalone-theme-toggle i.fa-sun {
+    color: var(--secondary);
+}
+
+body.light .standalone-theme-toggle .fa-moon {
+    display: none;
+}
+
+body.light .toggle-circle {
+    box-shadow: none;
+    background: var(--secondary);
+    left: calc(100% - 23px);
+}
+
+body.light .auth-container {
+    background: var(--card-bg);
+}
+
+body.light .auth-container h2 {
+    color: var(--secondary);
+    text-shadow: none;
+}
+
+body.light .form-group label {
+    color: var(--text-color-dark);
+}
+
+body.light .form-group input[type="text"],
+body.light .form-group input[type="email"],
+body.light .form-group input[type="password"] {
+    background: var(--inner-card-bg);
+    border-color: #ccc;
+    color: var(--text-color-dark);
+}
+
+body.light .form-group input:focus {
+    box-shadow: 0 0 8px var(--primary);
+}
+
+body.light .checkbox-group label {
+    color: var(--text-color-muted);
+}
+
+body.light .submit-btn {
+    color: #fff !important;
+    box-shadow: none;
+    background: var(--primary);
+}
+
+
+body.light .submit-btn:hover {
+    box-shadow: none;
+    background: var(--secondary);
+}
+
+body.light .brand-name {
+    text-shadow: none;
+    color: var(--secondary);
+}
+
+.brand-name:hover {
+    color: var(--secondary);
+}
+
+body.light .brand-name:hover {
+    color: var(--primary);
+}
