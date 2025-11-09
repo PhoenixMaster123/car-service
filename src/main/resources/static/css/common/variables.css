@@ -7,6 +7,7 @@
     --text-color: #eaeaea;
     --text-color-muted: #aaa;
     --text-color-dark: #111;
+    --white-color: #ffffff;
 
     /* Neon Background */
     --bg-color: #0a0f1c;
@@ -19,31 +20,40 @@
     --nav-bg: rgba(10, 15, 28, 0.8);
     --border-color: rgba(0, 225, 255, 0.2);
 
+    /* Hover Effects */
+    --primary-hover: #0ac0fa;
+
+    /* Shadows */
+    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
     /* Action Colors */
     --danger-color: #dc3545;
 }
 
 body.light {
 
-    /* Refined teal/blue palette */
-    --primary: #00bfa5;
-    --secondary: #00796b;
-    --accent: #00bfa5;
-    --text-color: #212529;
-    --text-color-muted: #6c757d;
-    --text-color-dark: #212529;
+    /* Modern Blue & Navy Palette */
+    --primary: #0ea5e9;
+    --secondary: #13e8b8;
+    --accent: #0ea5e9;
+    --text-color: #334155;
+    --text-color-muted: #64748b;
+    --text-cyan: #257e36;
 
-    /* Softer gradient background */
-    --bg-color: #f8f9fa;
-    --bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9fbf8 100%);
+    /* Dark Blue for High Contrast */
+    --text-color-dark: #13adcc;
 
-    /* Subtle Glassmorphism */
-    --card-bg: rgba(255, 255, 255, 0.8);
+    /* Gradient background */
+    --bg-color: #f8fafc;
+    --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+
+    /* Effects & Shadows */
+    --card-bg: rgba(255, 255, 255, 0.95);
     --inner-card-bg: #ffffff;
-    --shadow: 0 6px 15px rgba(0, 121, 107, 0.12);
-    --nav-bg: rgba(255, 255, 255, 0.85);
-    --border-color: rgba(0, 121, 107, 0.15);
+    --shadow: 0 8px 25px rgba(2, 132, 199, 0.15);
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(2, 132, 199, 0.2);
 
-    /* Action Colors */
-    --danger-color: #dc3545;
+    --light-mode-glow: 0 0 15px rgba(14, 165, 233, 0.2);
+    --light-mode-hover-glow: 0 0 20px rgba(2, 132, 199, 0.3);
 }

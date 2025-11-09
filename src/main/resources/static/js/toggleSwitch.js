@@ -1,7 +1,11 @@
 const themeToggles = document.querySelectorAll(".theme-toggle");
 
 function applyTheme(theme) {
-    document.body.classList.toggle("light", theme === "light");
+    if (theme === "light") {
+        document.body.classList.add("light");
+    } else {
+        document.body.classList.remove("light");
+    }
     localStorage.setItem("theme", theme);
 }
 
