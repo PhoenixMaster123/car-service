@@ -2,11 +2,14 @@ package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import springboot.bg.harisauto.common.security.AuthenticationMetaData;
+import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
 import springboot.bg.harisauto.web.dto.LoginRequest;
 import springboot.bg.harisauto.web.dto.RegisterRequest;
@@ -24,6 +27,16 @@ public class AuthController {
   @Autowired
   public AuthController(UserService userService) {
     this.userService = userService;
+  }
+
+  /**
+   * Shows the index page.
+   *
+   * @return The index page.
+   */
+  @GetMapping("/")
+  public String showIndexPage() {
+    return "/public/index";
   }
 
   /**
@@ -71,5 +84,22 @@ public class AuthController {
     userService.register(request);
 
     return new ModelAndView("redirect:/login");
+  }
+
+  /**
+   * Shows the home page.
+   *
+   * @param metaData Authentication metadata.
+   * @return The home page.
+   */
+  @GetMapping("/home")
+  public ModelAndView showHomePage(@AuthenticationPrincipal AuthenticationMetaData metaData) {
+    ModelAndView modelAndView = new ModelAndView();
+    User user = userService.getById(metaData.getUserId());
+    modelAndView.addObject("user", user);
+
+    modelAndView.setViewName("/public/index");
+
+    return modelAndView;
   }
 }

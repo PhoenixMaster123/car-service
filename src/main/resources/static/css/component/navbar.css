@@ -1,0 +1,394 @@
+/* ========================================
+                 DARK THEME
+   ======================================== */
+
+.navbar {
+    background: var(--nav-bg);
+    box-shadow: none;
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    top: 0;
+    z-index: 100;
+    position: sticky;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 2rem;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.brand-name {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    text-shadow: 0 0 8px var(--primary);
+}
+
+.brand-name:hover {
+    color: var(--secondary);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    gap: 0.5em;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: block;
+    position: absolute;
+    background-color: var(--nav-bg);
+    min-width: 160px;
+    box-shadow: var(--shadow);
+    border-radius: 10px;
+    padding: 0.5rem;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background: var(--primary);
+    color: #000;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: var(--primary);
+    color: #000;
+}
+
+.logout-btn i {
+    margin-right: 8px;
+    width: 14px;
+}
+
+/* Buttons */
+.register-btn,
+.cta-button {
+    background: var(--primary);
+    color: #000 !important;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 10px var(--primary);
+    text-decoration: none;
+}
+
+.register-btn {
+    font-weight: 900;
+}
+
+.cta-button {
+    font-weight: 600;
+}
+
+.register-btn:hover,
+.cta-button:hover {
+    background: var(--secondary);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+.user-actions a {
+    margin-left: 0.8rem;
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+    z-index: 101;
+}
+
+.bar {
+    height: 3px;
+    width: 25px;
+    background: var(--text-color);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: var(--card-bg);
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    box-shadow: var(--shadow);
+}
+
+.theme-toggle i {
+    font-size: 14px;
+    color: var(--primary);
+    width: 14px;
+}
+
+.toggle-circle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.mobile-only {
+    display: none !important;
+}
+
+/* ========================================
+                 LIGHT THEME
+   ======================================== */
+
+/** Brand Name **/
+body.light .brand-name {
+    text-shadow: none;
+    color: var(--text-color-dark);
+}
+
+body.light .brand-name:hover {
+    color: var(--secondary);
+}
+
+/** Dropdown Menu **/
+body.light .dropdown-content a:hover {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+body.light .dropdown-content {
+    border: 1px solid var(--border-color);
+}
+
+/* Logout Button **/
+body.light .logout-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+/* Buttons (Register/CTA) */
+body.light .register-btn,
+body.light .cta-button {
+    color: #fff !important;
+    background: var(--primary);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    border: none;
+    text-decoration: none;
+}
+
+body.light .register-btn:hover,
+body.light .cta-button:hover {
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    background: var(--secondary);
+}
+
+/* --- Theme Toggle --- */
+body.light .toggle-circle {
+    box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
+    background: var(--primary);
+    left: calc(100% - 23px);
+}
+
+body.light .theme-toggle {
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+
+/* ========================================
+                RESPONSIVE
+   ======================================== */
+
+@media (max-width: 900px) {
+
+    .navbar-container {
+        padding: 0.8rem 1.5rem;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 320px;
+        height: 100vh;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: 80px;
+        background: var(--nav-bg);
+        backdrop-filter: blur(10px);
+        gap: 0;
+        transform: translateX(100%);
+        transition: transform 0.4s ease-in-out;
+        overflow-y: auto;
+    }
+
+    .nav-links.active {
+        transform: translateX(0);
+        box-shadow: -5px 0 15px var(--shadow);
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links a,
+    .nav-links .dropbtn {
+        display: block;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-links > li:last-of-type > a {
+        border-bottom: none;
+    }
+
+    #theme-toggle-desktop,
+        .cta-button.desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+
+    li.theme-toggle-wrapper {
+        display: flex !important;
+        justify-content: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-links .cta-button {
+        display: block;
+        text-align: center;
+        margin: 1.5rem;
+    }
+
+    .dropdown-content {
+        position: static;
+        box-shadow: none;
+        border-radius: 0;
+        background: rgba(0,0,0,0.1);
+        padding: 0;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition: none;
+        display: none;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: none;
+    }
+
+    .dropdown-content a,
+    .logout-btn {
+        padding: 1rem 1.5rem 1rem 2.5rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+    }
+
+    form {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .dropdown-content a:last-child,
+    .logout-btn {
+        border-bottom: none;
+    }
+
+    form:last-child {
+        border-bottom: none;
+    }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Pricing - Haris Car Care</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/public/index.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{/users/dashboard}">Profile</a>
+                    <form th:action="@{/logout}" method="GET" style="margin:0;">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{/booking}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{/booking}" class="cta-button desktop-only">Book Now</a>
+
+    </div>
+</nav>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-i18n="hero.title">Drive Clean. Feel Fresh.</h1>
+            <p data-i18n="hero.subtitle">Premium car wash and detailing with pro-grade equipment and eco-friendly products.</p>
+            <div class="hero-actions">
+                <a th:href="@{/booking}" class="hero-cta cta-button" data-i18n="hero.ctaPrimary">Book a Wash</a>
+                <a th:href="@{/services}" class="hero-cta cta-button" data-i18n="hero.ctaSecondary">See Services</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="services-container">
+            <h2 data-i18n="services.title">Our Comprehensive Services</h2>
+            <p class="services-intro" data-i18n="services.intro">We offer a wide range of professional services to keep your vehicle in top condition. Our expert technicians use state-of-the-art equipment for everything from a detailed wash to complex mechanical repairs. Click on any service to learn more.</p>
+            <div class="services-grid">
+                <a th:href="@{/services#washing}" class="service-card">
+                    <i class="fa-solid fa-soap"></i>
+                    <h3 data-i18n="services.washing">Car Washing</h3>
+                    <p data-i18n="services.washingDesc">Get a spotless, showroom shine with our premium hand and automatic wash services.</p>
+                </a>
+                <a th:href="@{/services#carpets}" class="service-card">
+                    <i class="fa-solid fa-spray-can-sparkles"></i>
+                    <h3 data-i18n="services.carpets">Carpet Cleaning</h3>
+                    <p data-i18n="services.carpetsDesc">Deep clean your vehicle's interior with our advanced automatic carpet cleaning.</p>
+                </a>
+                <a th:href="@{services#repair}" class="service-card">
+                    <i class="fa-solid fa-ring"></i>
+                    <h3 data-i18n="services.tires">Tire Changes</h3>
+                    <p data-i18n="services.tiresDesc">Fast and reliable seasonal tire changes and balancing for a safer drive.</p>
+                </a>
+                <a th:href="@{services#repair}" class="service-card">
+                    <i class="fa-solid fa-oil-can"></i>
+                    <h3 data-i18n="services.oil">Oil Changes</h3>
+                    <p data-i18n="services.oilDesc">Keep your engine running smoothly with our quick and efficient oil change service.</p>
+                </a>
+                <a th:href="@{services#repair}" class="service-card">
+                    <i class="fa-solid fa-fan"></i>
+                    <h3 data-i18n="services.ac">A/C Refill</h3>
+                    <p data-i18n="services.acDesc">Stay cool and comfortable with our professional air conditioning diagnostic and refill.</p>
+                </a>
+                <a th:href="@{services#repair}" class="service-card">
+                    <i class="fa-solid fa-filter"></i>
+                    <h3 data-i18n="services.dpf">DPF Filter Cleaning</h3>
+                    <p data-i18n="services.dpfDesc">Restore your diesel engine's performance with our specialized DPF cleaning service.</p>
+                </a>
+                <a th:href="@{services#repair}" class="service-card">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <h3 data-i18n="services.repair">Overall Car Repair</h3>
+                    <p data-i18n="services.repairDesc">Comprehensive diagnostics and repairs for any mechanical or electrical issue.</p>
+                </a>
+                <a th:href="@{/services#detailing}" class="service-card">
+                    <i class="fa-solid fa-star"></i>
+                    <h3 data-i18n="services.detailing">Detailing</h3>
+                    <p data-i18n="services.detailingDesc">Full interior and exterior detailing, waxing, and ceramic coating options.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="hiw">
+        <div class="hiw-container">
+            <h2 data-i18n="hiw.title">How It Works</h2>
+            <div class="hiw-steps">
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3 data-ia-i18n="hiw.step1.title">1. Book</h3>
+                    <p data-i18n="hiw.step1.desc">Choose a service and a time that works for you.</p>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-car-side"></i></div>
+                    <h3 data-i18n="hiw.step2.title">2. Arrive</h3>
+                    <p data-i18n="hiw.step2.desc">Visit our location or request pickup where available.</p>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-star"></i></div>
+                    <h3 data-i18n="hiw.step3.title">3. Shine</h3>
+                    <p data-i18n="hiw.step3.desc">Relax while we bring your car back to showroom condition.</p>
+                </div>
+            </div>
+            <div class="trust-badges">
+                <div class="badge"><i class="fa-solid fa-seedling"></i> <span data-i18n="trust.eco">Eco-Friendly</span></div>
+                <div class="badge"><i class="fa-solid fa-bolt"></i> <span data-i18n="trust.fast">Fast Service</span></div>
+                <div class="badge"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="trust.safe">Safe Chemicals</span></div>
+                <div class="badge"><i class="fa-solid fa-thumbs-up"></i> <span data-i18n="trust.rated">4.9/5 Rated</span></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer" th:fragment="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h4>Haris Car Care</h4>
+            <p>Your one-stop shop for premium car washing, detailing, and expert mechanical repairs. Drive clean, feel fresh.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a th:href="@{/home}">Home</a></li>
+                <li><a th:href="@{/services}">Services & Pricing</a></li>
+                <li><a th:href="@{/about}">About Us</a></li>
+                <li><a th:href="@{/booking}">Book Now</a></li>
+                <li><a th:href="@{/careers}">Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Our Services</h4>
+            <ul>
+                <li><a th:href="@{/services}">Car Washing</a></li>
+                <li><a th:href="@{/services}">Carpet Cleaning</a></li>
+                <li><a th:href="@{/services}">Oil Change</a></li>
+                <li><a th:href="@{/services}">Tire Change</a></li>
+                <li><a th:href="@{/services}">A/C Refill</a></li>
+                <li><a th:href="@{/services}">DPF Filter Cleaning</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Contact Us</h4>
+            <ul>
+                <li><i class="fa-solid fa-location-dot"></i> 123 Clean St, Auto City</li>
+                <li><i class="fa-solid fa-phone"></i> (123) 456-7890</li>
+                <li><i class="fa-solid fa-envelope"></i> hariscarcare@gmail.com</li>
+                <li><i class="fa-solid fa-clock"></i> Mon-Sat: 8:00 AM - 6:00 PM</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> Haris Car Care. All Rights Reserved.</p>
+    </div>
+</footer>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+</body>
+</html>

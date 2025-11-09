@@ -71,6 +71,11 @@ body:not(.light) .standalone-theme-toggle i.fa-moon {
     margin-bottom: 2rem;
 }
 
+.auth-container h2:hover {
+    color: var(--secondary);
+    text-shadow: 0 0 8px var(--primary);
+}
+
 .form-group {
     margin-bottom: 1.25rem;
 }
@@ -111,23 +116,19 @@ body:not(.light) .standalone-theme-toggle i.fa-moon {
     font-size: 0.85rem;
 }
 
-/* 1. Adds space between the checkbox group and the button */
 .checkbox-group {
-    margin-bottom: 20px; /* Adjust this value as needed */
+    margin-bottom: 20px;
 
-    /* Optional: This aligns the checkbox and text neatly */
     display: flex;
     align-items: center;
-    gap: 8px; /* Space between checkbox and label */
+    gap: 8px;
 }
 
-/* 2. Removes the underline from the link */
 .checkbox-group a {
     text-decoration: none;
-    color: #007bff; /* Optional: Give it a clear "link" color */
+    color: #007bff;
 }
 
-/* 3. (Recommended) Adds the underline back when a user hovers over it */
 .checkbox-group a:hover {
     text-decoration: underline;
 }
@@ -205,6 +206,10 @@ body:not(.light) .standalone-theme-toggle i.fa-moon {
     margin-bottom: 1rem;
 }
 
+.brand-name:hover {
+    color: var(--secondary);
+}
+
 /** Input with icon styles **/
 
 .form-group {
@@ -238,14 +243,13 @@ body:not(.light) .standalone-theme-toggle i.fa-moon {
 }
 
 /*
-========================================
-                LIGHT THEME
-========================================
+ * ========================================
+ *               LIGHT THEME
+ * ========================================
 */
 
-
 body.light .standalone-theme-toggle i.fa-sun {
-    color: var(--secondary);
+    color: var(--primary);
 }
 
 body.light .standalone-theme-toggle .fa-moon {
@@ -254,7 +258,7 @@ body.light .standalone-theme-toggle .fa-moon {
 
 body.light .toggle-circle {
     box-shadow: none;
-    background: var(--secondary);
+    background: var(--primary);
     left: calc(100% - 23px);
 }
 
@@ -263,6 +267,11 @@ body.light .auth-container {
 }
 
 body.light .auth-container h2 {
+    color: var(--primary);
+    text-shadow: none;
+}
+
+body.light .auth-container h2:hover {
     color: var(--secondary);
     text-shadow: none;
 }
@@ -293,7 +302,6 @@ body.light .submit-btn {
     background: var(--primary);
 }
 
-
 body.light .submit-btn:hover {
     box-shadow: none;
     background: var(--secondary);
@@ -301,13 +309,9 @@ body.light .submit-btn:hover {
 
 body.light .brand-name {
     text-shadow: none;
-    color: var(--secondary);
-}
-
-.brand-name:hover {
-    color: var(--secondary);
+    color: var(--primary);
 }
 
 body.light .brand-name:hover {
-    color: var(--primary);
+    color: var(--secondary);
 }
