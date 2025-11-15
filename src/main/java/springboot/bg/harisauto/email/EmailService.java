@@ -58,6 +58,8 @@ public class EmailService {
 
     String from = realFromUser.isEmpty() ? defaultFromAddress : realFromUser;
     helper.setFrom(from);
+    helper.setSubject("Welcome to Car Service!");
+    helper.setText(htmlBody, true);
 
     String recipient;
     if (notificationEmail != null && !notificationEmail.isEmpty()) {
@@ -67,9 +69,6 @@ public class EmailService {
       recipient = event.getEmail();
     }
     helper.setTo(recipient);
-
-    helper.setSubject("Welcome to Car Service!");
-    helper.setText(htmlBody, true);
 
     log.info("Sending email to: {} (From: {})", recipient, from);
     javaMailSender.send(message);

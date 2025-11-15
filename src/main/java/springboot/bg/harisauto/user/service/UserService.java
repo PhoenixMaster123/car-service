@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
 import springboot.bg.harisauto.common.exception.UserEmailAlreadyExistsException;
-import springboot.bg.harisauto.common.security.AuthenticationMetaData;
 import springboot.bg.harisauto.event.UserRegisteredEvent;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
@@ -33,6 +33,7 @@ public class UserService implements UserDetailsService {
   private final PasswordEncoder passwordEncoder;
   private final ApplicationEventPublisher eventPublisher;
 
+  /** Constructor. */
   @Autowired
   public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
                      ApplicationEventPublisher eventPublisher) {

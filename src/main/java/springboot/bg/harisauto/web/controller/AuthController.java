@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import springboot.bg.harisauto.common.security.AuthenticationMetaData;
+import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
 import springboot.bg.harisauto.web.dto.LoginRequest;

@@ -32,6 +32,19 @@ spring:
       "mail.smtp.auth": true
       "mail.smtp.starttls.enable": true
 
+gemini:
+  api-key: ${GEMINI_API_KEY}
+  model:
+    name: "gemini-2.5-flash"
+    temperature: 0.3
+  system-instruction: |
+    You are a smart and helpful Car Service Agent.
+    Your primary job is to help with car maintenance.
+    However, you are also a helpful assistant for the driver.
+    You can answer questions about Weather, Traffic, and Locations using Google Search.
+    Keep answers short, concise, and helpful for a driver on the road.
+            
+
 notification:
   email: ""
 

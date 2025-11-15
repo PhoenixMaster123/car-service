@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Haris Car Care</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" crossorigin rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/aside.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/account/settings.css}" rel="stylesheet">
+</head>
+<body>
+
+<aside class="sidebar" th:fragment="sidebar">
+    <div class="sidebar-brand">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+    </div>
+
+    <ul class="sidebar-links">
+        <li><a th:href="@{/users/dashboard}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+        <li><a th:href="@{/users/vehicles}"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
+        <li><a th:href="@{/users/bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
+        <li><a th:href="@{/users/invoices}"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
+        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i>Settings</a></li>
+        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
+        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+    </div>
+</aside>
+
+<div class="main-content">
+
+    <main class="page-container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-gear"></i> Settings</h1>
+            <p>Manage your profile, password, and notification preferences.</p>
+        </header>
+
+        <form class="content-card" th:action="@{'/users/' + ${user.id} + '/profile'}" th:method="PUT">
+            <div class="card-header">
+                <i class="fa-solid fa-user-pen"></i>
+                <h3>Edit Profile</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-input">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="country">Country</label>
+                        <select id="country" class="form-input">
+                            <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
+                                    th:value="${country}"
+                                    th:text="${country.getName()}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i>
+                    <span>Save Profile Changes</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-bell"></i>
+                <h3>Notifications</h3>
+            </div>
+            <div class="card-body">
+                <form id="notificationForm">
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Email on New Booking</h4>
+                            <p>Receive an email when you schedule a new appointment.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNewBooking" name="emailNewBooking" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Email on Booking Cancellation</h4>
+                            <p>Get notified if your appointment is canceled.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailBookingCancel" name="emailBookingCancel" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Service Reminders</h4>
+                            <p>Receive a reminder email 24 hours before your appointment.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailReminder" name="emailReminder" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button type="submit" form="notificationForm" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i>
+                    <span>Save Preferences</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="status-message" class="status-message" style="display: none;">
+            <span id="status-icon"><i class="fa-solid fa-check-circle"></i></span>
+            <span id="status-text">Password updated successfully!</span>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-key"></i>
+                <h3>Change Password</h3>
+            </div>
+            <div class="card-body">
+                <form id="password-form" th:method="PUT" th:action="@{'/users/' + ${user.id} + '/change-password'}">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="currentPassword" required autocomplete="current-password" placeholder="Enter your current password">
+                            <button type="button" class="password-toggle" data-target="currentPassword" aria-label="Toggle current password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="newPassword" required autocomplete="new-password" placeholder="Enter your new password">
+                            <button type="button" class="password-toggle" data-target="newPassword" aria-label="Toggle new password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                        <div id="strength-indicator" class="strength-indicator" style="display: none;">
+                            <div class="strength-bar-background">
+                                <div id="strength-bar" class="strength-bar"></div>
+                            </div>
+                            <p class="strength-text">
+                                Strength: <span id="strength-label"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="confirmPassword" required autocomplete="new-password" placeholder="Confirm your new password">
+                            <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle confirm password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button type="submit" form="password-form" id="submit-password-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i>
+                    <span>Change Password</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-user-shield"></i>
+                <h3>Additional Security</h3>
+            </div>
+            <div class="card-body">
+                <div class="setting-item">
+                    <div class="setting-description">
+                        <h4>Two-Factor Authentication (2FA)</h4>
+                        <p id="two-factor-info">Add an extra layer of security to your account.</p>
+                    </div>
+                    <button id="toggle-2fa-btn" class="btn btn-enable" type="button">
+                        <span>Enable 2FA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/js/password.js}"></script>
+
+</body>
+</html>

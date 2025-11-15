@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Haris Car Care</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/aside.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/account/dashboard.css}" rel="stylesheet">
+</head>
+<body>
+
+<aside class="sidebar" th:fragment="sidebar">
+    <div class="sidebar-brand">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+    </div>
+
+    <ul class="sidebar-links">
+        <li><a th:href="@{/users/dashboard}" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+        <li><a th:href="@{/users/vehicles}"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
+        <li><a th:href="@{/users/bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
+        <li><a th:href="@{/users/invoices}"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
+        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i>Settings</a></li>
+        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
+        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+
+    <header class="page-header">
+        <h1 th:text="|Welcome back, ${user.firstName}|">Welcome back, Alex</h1>
+        <p>Your personalized AutoCare dashboard overview</p>
+    </header>
+
+    <section class="dashboard-stats">
+        <div class="stat-card theme-blue">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+                <h3 th:text="${upcomingBookingsCount}">5</h3>
+                <p>Upcoming Bookings</p>
+            </div>
+        </div>
+        <div class="stat-card theme-green">
+            <i class="fas fa-check-circle"></i>
+            <div>
+                <h3 th:text="${completedServicesCount}">12</h3>
+                <p>Completed Services</p>
+            </div>
+        </div>
+        <div class="stat-card theme-accent">
+            <i class="fas fa-star"></i>
+            <div>
+                <h3 th:text="${loyaltyPoints}">340</h3>
+                <p>Loyalty Points</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fas fa-user-circle"></i>
+                <h3>Account Details</h3>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">First name:</span>
+                <span class="detail-value" th:text="${user.firstName}">Alex</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last name:</span>
+                <span class="detail-value" th:text="${user.lastName}">Johnson</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" th:text="${user.email}">alex.j@email.com</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value" th:text="${user.phoneNumber}">+1 234 567 890</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Country:</span>
+                <span class="detail-value" th:text="${user.country}">United States</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Member Since:</span>
+                <span class="detail-value" th:text="${#temporals.format(user.createdOn, 'MMM dd, yyyy')}">Sep 20, 2024</span>
+            </div>
+        </div>
+
+        <div class="content-card">
+
+            <div class="card-header">
+                <i class="fas fa-car-side"></i>
+                <h3>My Vehicles</h3>
+            </div>
+
+            <div class="vehicle-list-wrapper">
+                <table class="vehicle-table">
+                    <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>License Plate</th>
+                        <th>Last Service</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <span class="vehicle-name">Audi A4</span>
+                            <span class="vehicle-sub">2023 • 2.0L Turbo</span>
+                        </td>
+                        <td>WUE-A123</td>
+                        <td>Oct 05, 2025</td>
+                        <td>
+                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('Audi A4', '2023', '2.0L Turbo', 'WUE-A123', 'Oct 05, 2025', 'Sedan', 'Black')">Details</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="vehicle-name">BMW X3</span>
+                            <span class="vehicle-sub">2021 • Diesel</span>
+                        </td>
+                        <td>WUE-B456</td>
+                        <td>Jun 15, 2025</td>
+                        <td>
+                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('BMW X3', '2021', 'Diesel', 'WUE-B456', 'Jun 15, 2025', 'SUV', 'White')">Details</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="vehicle-name">VW Golf GTI</span>
+                            <span class="vehicle-sub">2022 • Petrol</span>
+                        </td>
+                        <td>WEN-C789</td>
+                        <td>N/A</td>
+                        <td>
+                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('VW Golf GTI', '2022', 'Petrol', 'WEN-C789', 'N/A', 'Hatchback', 'Red')">Details</button>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+
+<!-- Vehicle Details Modal -->
+<div class="modal-overlay" id="vehicleModalOverlay" onclick="closeVehicleDetailsModal()">
+    <div class="vehicle-modal" id="vehicleModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-car-side"></i>
+                <h2>Vehicle Details</h2>
+            </div>
+            <button class="modal-close" onclick="closeVehicleDetailsModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="vehicle-modal-content">
+                <div class="vehicle-header-section">
+                    <div class="vehicle-icon-large">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+                    <div class="vehicle-title-section">
+                        <h3 id="modalVehicleName">Audi A4</h3>
+                        <p id="modalVehicleType">Sedan</p>
+                    </div>
+                </div>
+
+                <div class="vehicle-info-grid">
+                    <div class="info-section">
+                        <h3><i class="fa-solid fa-info-circle"></i> Vehicle Information</h3>
+                        <div class="info-item">
+                            <span class="info-label">Make & Model</span>
+                            <span class="info-value" id="modalMakeModel">Audi A4</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Year</span>
+                            <span class="info-value" id="modalYear">2023</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Engine</span>
+                            <span class="info-value" id="modalEngine">2.0L Turbo</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Body Type</span>
+                            <span class="info-value" id="modalBodyType">Sedan</span>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3><i class="fa-solid fa-id-card"></i> Registration Details</h3>
+                        <div class="info-item">
+                            <span class="info-label">License Plate</span>
+                            <span class="info-value" id="modalLicensePlate">WUE-A123</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Color</span>
+                            <span class="info-value" id="modalColor">Black</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Service</span>
+                            <span class="info-value" id="modalLastService">Oct 05, 2025</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Service History</span>
+                            <span class="info-value">5 Services</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vehicle-service-history">
+                    <h3><i class="fa-solid fa-history"></i> Recent Service History</h3>
+                    <div class="service-history-list">
+                        <div class="service-history-item">
+                            <div class="service-history-icon">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                            <div class="service-history-details">
+                                <span class="service-history-name">Premium Car Wash</span>
+                                <span class="service-history-date">Oct 05, 2025</span>
+                            </div>
+                            <div class="service-history-status status-completed">Completed</div>
+                        </div>
+                        <div class="service-history-item">
+                            <div class="service-history-icon">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                            <div class="service-history-details">
+                                <span class="service-history-name">Oil Change</span>
+                                <span class="service-history-date">Aug 15, 2025</span>
+                            </div>
+                            <div class="service-history-status status-completed">Completed</div>
+                        </div>
+                        <div class="service-history-item">
+                            <div class="service-history-icon">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                            <div class="service-history-details">
+                                <span class="service-history-name">Tire Rotation</span>
+                                <span class="service-history-date">Jun 10, 2025</span>
+                            </div>
+                            <div class="service-history-status status-completed">Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-btn-close" onclick="closeVehicleDetailsModal()">
+                <i class="fa-solid fa-times"></i>
+                <span>Close</span>
+            </button>
+            <button class="btn btn-primary">
+                <i class="fa-solid fa-calendar-plus"></i>
+                <span>Book Service</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/invoiceVehicleMenu.js}"></script>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+
+</body>
+</html>
