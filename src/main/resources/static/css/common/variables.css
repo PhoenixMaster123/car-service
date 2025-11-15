@@ -28,6 +28,9 @@
 
     /* Action Colors */
     --danger-color: #dc3545;
+    --danger-glow: 0 0 15px rgba(255, 77, 109, 0.5);
+    --warning-color: #ffc107;
+    --success-color: #28a745;
 }
 
 body.light {

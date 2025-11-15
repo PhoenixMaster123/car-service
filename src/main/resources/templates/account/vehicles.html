@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vehicles - Haris Car Care</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" crossorigin rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/aside.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/account/vehicles.css}" rel="stylesheet">
+</head>
+<body>
+
+<aside class="sidebar" th:fragment="sidebar">
+    <div class="sidebar-brand">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+    </div>
+
+    <ul class="sidebar-links">
+        <li><a th:href="@{/users/dashboard}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+        <li><a th:href="@{/users/vehicles}" class="active"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
+        <li><a th:href="@{/users/bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
+        <li><a th:href="@{/users/invoices}"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
+        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i>Settings</a></li>
+        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
+        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+    </div>
+</aside>
+
+<div class="main-content">
+
+    <main class="page-container">
+        <header class="page-header">
+            <h1>My Vehicles</h1>
+            <p>Manage your registered vehicles for easier booking.</p>
+        </header>
+
+        <div class="vehicle-grid">
+
+            <div class="vehicle-card">
+                <div class="vehicle-header">
+                    <i class="material-icons vehicle-icon">directions_car</i>
+                    <div class="vehicle-title">
+                        <h3>Toyota Camry</h3>
+                        <p>2020</p>
+                    </div>
+                </div>
+                <div class="vehicle-details">
+                    <div class="detail-row">
+                        <span class="detail-label">License Plate</span>
+                        <span class="detail-value">ABC-123</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Color</span>
+                        <span class="detail-value">Silver</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">VIN</span>
+                        <span class="detail-value">1HGCM82...</span>
+                    </div>
+                </div>
+                <div class="vehicle-actions">
+                    <button type="button" class="btn-sm btn-edit"
+                            data-id="1"
+                            data-make="Toyota"
+                            data-model="Camry"
+                            data-year="2020"
+                            data-license="ABC-123"
+                            data-vin="1HGCM82..."
+                            data-color="Silver"
+                            onclick="openEditModal(this)">
+                        <i class="material-icons">edit</i> Edit
+                    </button>
+                    <button type="button" class="btn-sm btn-delete"
+                            onclick="openDeleteModal(1, 'Toyota Camry')">
+                        <i class="material-icons" style="font-size: 16px;">delete</i> Remove
+                    </button>
+                </div>
+            </div>
+
+            <div class="vehicle-card">
+                <div class="vehicle-header">
+                    <i class="material-icons vehicle-icon">directions_car</i>
+                    <div class="vehicle-title">
+                        <h3>Ford Mustang</h3>
+                        <p>2022</p>
+                    </div>
+                </div>
+                <div class="vehicle-details">
+                    <div class="detail-row">
+                        <span class="detail-label">License Plate</span>
+                        <span class="detail-value">XYZ-999</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Color</span>
+                        <span class="detail-value">Red</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">VIN</span>
+                        <span class="detail-value">1FA6P8...</span>
+                    </div>
+                </div>
+                <div class="vehicle-actions">
+                    <a href="#" class="btn-sm btn-edit"><i class="material-icons" style="font-size: 16px;">edit</i> Edit</a>
+                    <a href="#" class="btn-sm btn-delete"><i class="material-icons" style="font-size: 16px;">delete</i> Remove</a>
+                </div>
+            </div>
+
+            <div class="vehicle-card">
+                <div class="vehicle-header">
+                    <i class="material-icons vehicle-icon">directions_car</i>
+                    <div class="vehicle-title">
+                        <h3>Tesla Model 3</h3>
+                        <p>2023</p>
+                    </div>
+                </div>
+                <div class="vehicle-details">
+                    <div class="detail-row">
+                        <span class="detail-label">License Plate</span>
+                        <span class="detail-value">EV-001</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Color</span>
+                        <span class="detail-value">White</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">VIN</span>
+                        <span class="detail-value">5YJ3E1...</span>
+                    </div>
+                </div>
+                <div class="vehicle-actions">
+                    <a href="#" class="btn-sm btn-edit"><i class="material-icons" style="font-size: 16px;">edit</i> Edit</a>
+                    <a href="#" class="btn-sm btn-delete"><i class="material-icons" style="font-size: 16px;">delete</i> Remove</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-vehicle-card">
+            <div class="add-vehicle-header">
+                <i class="material-icons">add_circle_outline</i>
+                <h2>Add New Vehicle</h2>
+            </div>
+
+            <form class="vehicle-form" action="#" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="make" class="required">Make</label>
+                        <input type="text" id="make" name="make" placeholder="e.g. BMW" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="model" class="required">Model</label>
+                        <input type="text" id="model" name="model" placeholder="e.g. X5" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="year" class="required">Year</label>
+                        <input type="number" id="year" name="year" placeholder="e.g. 2023" required min="1900" />
+                    </div>
+                    <div class="form-group">
+                        <label for="licensePlate" class="required">License Plate</label>
+                        <input type="text" id="licensePlate" name="licensePlate" placeholder="e.g. AB-123-CD" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="vin">VIN (Optional)</label>
+                        <input type="text" id="vin" name="vin" placeholder="Vehicle Identification Number"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color (Optional)</label>
+                        <input type="text" id="color" name="color" placeholder="e.g. Black"/>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-primary" onclick="alert('This is a static demo. In a real app, this would save the vehicle.')">
+                        <i class="material-icons">add</i> Add Vehicle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="editVehicleModal">
+        <div class="modal-header">
+            <h2>Edit Vehicle</h2>
+            <button type="button" class="modal-close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="vehicle-form" id="editVehicleForm" action="/vehicles/update" method="post">
+                <input type="hidden" id="edit-id" name="id">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit-make" class="required">Make</label>
+                        <input type="text" id="edit-make" name="make" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-model" class="required">Model</label>
+                        <input type="text" id="edit-model" name="model" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-year" class="required">Year</label>
+                        <input type="number" id="edit-year" name="year" required min="1900" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-licensePlate" class="required">License Plate</label>
+                        <input type="text" id="edit-licensePlate" name="licensePlate" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-vin">VIN</label>
+                        <input type="text" id="edit-vin" name="vin" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-color">Color</label>
+                        <input type="text" id="edit-color" name="color" />
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="deleteVehicleModal">
+        <div class="modal-header">
+            <h2>Remove Vehicle</h2>
+            <button type="button" class="modal-close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove <strong id="delete-vehicle-name">this vehicle</strong>?</p>
+            <p style="color: var(--text-color-muted); font-size: 0.9rem; margin-top: 0.5rem;">This action cannot be undone.</p>
+
+            <form id="deleteVehicleForm" method="post">
+                <div class="form-actions" style="margin-top: 1.5rem; border-top: none; padding-top: 0; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-danger">
+                        Yes, Remove
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/modal.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+
+</body>
+</html>

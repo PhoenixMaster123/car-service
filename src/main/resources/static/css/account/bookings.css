@@ -1,0 +1,754 @@
+.main-content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    background: var(--bg-color);
+    transition: background 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-container {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+/* ========================================
+            DARK THEME
+   ======================================== */
+
+.page-header h1 {
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+    margin: 0 0 0.25rem 0;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header p {
+    color: var(--text-color-muted);
+    opacity: 0.9;
+    font-size: 1.1rem;
+    margin: 0 0 2rem 0;
+}
+
+/* --- Styled Content Card --- */
+.content-card {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+.card-header i {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+.card-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent);
+}
+
+/* booking list style */
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.booking-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    background: var(--inner-card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+}
+
+.booking-card-icon i {
+    font-size: 2rem;
+    color: var(--primary);
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 50%;
+}
+
+.booking-card-details h4 {
+    color: var(--text-color);
+    margin: 0 0 4px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.booking-card-details p {
+    color: var(--text-color-muted);
+    opacity: 0.8;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.booking-card-datetime {
+    text-align: center;
+}
+
+.booking-card-datetime .date {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.booking-card-datetime .time {
+    font-size: 0.9rem;
+    color: var(--text-color-muted);
+}
+
+.booking-card-status {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.booking-card-status.status-upcoming {
+    background-color: var(--primary);
+    color: var(--text-color-dark);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.booking-card-status.status-completed {
+    background-color: var(--secondary);
+    color: var(--text-color-dark);
+    box-shadow: 0 0 10px var(--secondary);
+}
+
+.booking-card-actions {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.booking-action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--text-color-dark);
+    box-shadow: 0 0 10px var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background: var(--secondary);
+    box-shadow: 0 0 15px var(--secondary);
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background: var(--inner-card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    color: var(--text-color);
+    border-color: var(--text-color);
+    background: var(--card-bg);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.btn-danger:hover {
+    background: var(--danger-color);
+    color: var(--text-color-dark);
+    box-shadow: var(--danger-glow);
+}
+
+
+/* ========================================
+            LIGHT THEME
+   ======================================== */
+
+body.light .page-header h1 {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+
+body.light .page-header p {
+    color: var(--text-color-muted);
+}
+
+body.light .content-card {
+    background: var(--inner-card-bg);
+    box-shadow: var(--shadow);
+    border-color: var(--border-color);
+}
+
+body.light .card-header {
+    border-bottom-color: var(--border-color);
+}
+
+body.light .card-header i,
+body.light .card-header h3 {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+
+body.light .booking-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+body.light .booking-card:hover {
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+}
+
+body.light .booking-card-icon i {
+    background: #f0f9ff;
+    color: var(--primary);
+}
+
+body.light .booking-card-details h4 {
+    color: var(--text-color-dark);
+}
+
+body.light .booking-card-details p {
+    color: var(--text-color-muted);
+    opacity: 1;
+}
+
+body.light .booking-card-datetime .date {
+    color: var(--text-color);
+}
+
+body.light .booking-card-datetime .time {
+    color: var(--text-color-muted);
+}
+
+body.light .booking-card-status.status-upcoming {
+    background-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+body.light .booking-card-status.status-completed {
+    background-color: var(--secondary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+body.light .btn-primary {
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    border-color: var(--primary);
+}
+
+body.light .btn-primary:hover {
+    background: var(--secondary);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+}
+
+body.light .btn-secondary {
+    background: #eef2f6;
+    color: var(--text-color-dark);
+    border: 1px solid #e2e8f0;
+}
+
+body.light .btn-secondary:hover {
+    color: var(--text-color-dark);
+    border-color: var(--text-color-dark);
+}
+
+body.light .btn-danger {
+    background: rgba(239, 68, 68, 0.05);
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+body.light .btn-danger:hover {
+    background: var(--danger-color);
+    color: #fff;
+    box-shadow: var(--danger-glow);
+}
+
+/* ========================================
+   INVOICE MODAL
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.invoice-modal {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.modal-overlay.active .invoice-modal {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background: var(--card-bg);
+    z-index: 10;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-title i {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.modal-title h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-color-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: var(--inner-card-bg);
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.invoice-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.invoice-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.invoice-number-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.invoice-label-small {
+    font-size: 0.75rem;
+    color: var(--text-color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-number-large {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+}
+
+.invoice-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.invoice-status-badge.status-paid {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.invoice-status-badge.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
+}
+
+.invoice-status-badge.status-overdue {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.invoice-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent);
+}
+
+.info-section h3 i {
+    font-size: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--text-color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.invoice-items-section {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.invoice-items-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent);
+}
+
+.invoice-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.invoice-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background: var(--inner-card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.item-description {
+    font-size: 0.85rem;
+    color: var(--text-color-muted);
+}
+
+.item-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+}
+
+.invoice-total-section {
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.total-label {
+    font-size: 1rem;
+    color: var(--text-color-muted);
+}
+
+.total-value {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.total-final {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+}
+
+.total-final .total-label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.total-value-large {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+    position: sticky;
+    bottom: 0;
+    background: var(--card-bg);
+}
+
+.modal-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.modal-btn-close {
+    background: var(--inner-card-bg) !important;
+    color: var(--text-color-muted) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.modal-btn-close:hover {
+    background: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--primary) !important;
+}
+
+.modal-btn-download,
+.modal-btn-pay {
+    min-width: 160px;
+}
+
+/* Light Mode Modal Styles */
+body.light .invoice-modal {
+    background: var(--inner-card-bg);
+    border-color: var(--border-color);
+}
+
+body.light .modal-header {
+    background: var(--inner-card-bg);
+    border-bottom-color: var(--border-color);
+}
+
+body.light .modal-title h2 {
+    color: var(--text-color-dark);
+}
+
+body.light .modal-title i {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+
+body.light .invoice-number-large {
+    color: var(--primary);
+    text-shadow: none;
+}
+
+body.light .info-section h3 {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+
+body.light .info-value {
+    color: var(--text-color-dark);
+}
+
+body.light .invoice-items-section h3 {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+
+body.light .invoice-item {
+    background: #ffffff;
+    border-color: var(--border-color);
+}
+
+body.light .item-name {
+    color: var(--text-color-dark);
+}
+
+body.light .item-price {
+    color: var(--primary);
+    text-shadow: none;
+}
+
+body.light .total-value-large {
+    color: var(--primary);
+    text-shadow: none;
+}
+
+body.light .modal-footer {
+    background: var(--inner-card-bg);
+    border-top-color: var(--border-color);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .invoice-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .invoice-info-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .invoice-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
