@@ -1,15 +1,14 @@
-package springboot.bg.harisauto.common.security;
+package springboot.bg.harisauto.common.config.security;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import springboot.bg.harisauto.user.model.UserRole;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * AuthenticationMetaData.java - Represents the authentication metadata of a user.
