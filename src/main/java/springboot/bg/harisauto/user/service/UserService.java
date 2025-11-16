@@ -1,5 +1,6 @@
 package springboot.bg.harisauto.user.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +87,15 @@ public class UserService implements UserDetailsService {
   public User getById(UUID id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserDoesNotExistException("User not found with id: " + id));
+  }
+
+  /**
+   * Gets all users.
+   *
+   * @return The list of users.
+   */
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
   }
 
   /**

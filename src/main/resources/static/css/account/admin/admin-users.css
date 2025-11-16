@@ -1,0 +1,685 @@
+/* ========================================
+   ADMIN USERS PAGE STYLES
+   ======================================== */
+
+.dashboard {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem 2.5rem;
+    overflow-y: auto;
+    min-height: 100vh;
+    width: calc(100% - 260px);
+}
+
+.dashboard-content h1 {
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+body.light .dashboard-content h1 {
+    text-shadow: none;
+    color: var(--secondary);
+}
+
+
+/* ========================================
+   PAGE HEADER
+   ======================================== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+body.light .page-header h1 {
+    text-shadow: none;
+    color: var(--secondary);
+}
+
+.btn-add-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-add-user:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px var(--primary);
+}
+
+body.light .btn-add-user {
+    background: var(--primary);
+    color: #fff;
+}
+
+body.light .btn-add-user:hover {
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
+/* ========================================
+   SEARCH & CONTROLS
+   ======================================== */
+.users-controls {
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+    max-width: 500px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-muted);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    background: var(--inner-card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 225, 255, 0.2);
+}
+
+body.light .search-box input:focus {
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+}
+
+/* ========================================
+   USERS TABLE
+   ======================================== */
+.users-table-container {
+    background: var(--inner-card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table thead {
+    background: var(--card-bg);
+}
+
+.users-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.users-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.users-table tbody tr {
+    transition: background 0.3s ease;
+}
+
+.users-table tbody tr:hover {
+    background: var(--card-bg);
+}
+
+.user-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-dark);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-badge.role-user {
+    background: rgba(0, 225, 255, 0.2);
+    color: var(--primary);
+}
+
+.role-badge.role-admin {
+    background: rgba(255, 77, 109, 0.2);
+    color: #ff4d6d;
+}
+
+body.light .role-badge.role-user {
+    background: rgba(14, 165, 233, 0.15);
+    color: var(--primary);
+}
+
+body.light .role-badge.role-admin {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+/* ========================================
+   ACTION BUTTONS
+   ======================================== */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    /* --- THIS IS THE FIX --- */
+    background: transparent;
+}
+
+.btn-view {
+    /* background: rgba(0, 225, 255, 0.2); <-- Removed */
+    color: var(--primary);
+}
+
+.btn-view:hover {
+    background: var(--primary);
+    color: var(--text-color-dark);
+    transform: scale(1.1);
+}
+
+.btn-edit {
+    /* background: rgba(255, 193, 7, 0.2); <-- Removed */
+    color: #ffc107;
+}
+
+.btn-edit:hover {
+    background: #ffc107;
+    color: var(--text-color-dark);
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    /* background: rgba(255, 77, 109, 0.2); <-- Removed */
+    color: #ff4d6d;
+}
+
+.btn-delete:hover {
+    background: #ff4d6d;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+body.light .btn-view {
+    /* background: rgba(14, 165, 233, 0.15); <-- Removed */
+}
+
+body.light .btn-edit {
+    /* background: rgba(251, 191, 36, 0.15); <-- Removed */
+    color: #fbbf24;
+}
+
+body.light .btn-delete {
+    /* background: rgba(239, 68, 68, 0.15); <-- Removed */
+    color: #ef4444;
+}
+
+/* ========================================
+   NO RESULTS
+   ======================================== */
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-color-muted);
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ========================================
+   MODAL STYLES
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: var(--inner-card-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+    transform: scale(1);
+}
+
+.modal-small {
+    max-width: 450px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-title i {
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.modal-title h2 {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text-color-muted);
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.modal-close:hover {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ========================================
+   VIEW USER MODAL
+   ======================================== */
+.user-details-view {
+    text-align: center;
+}
+
+.user-profile-header {
+    margin-bottom: 2rem;
+}
+
+.user-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: var(--text-color-dark);
+    font-size: 2.5rem;
+}
+
+.user-profile-header h3 {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.user-details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.detail-item {
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.detail-item label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-item label i {
+    color: var(--primary);
+}
+
+.detail-item p {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ========================================
+   FORM STYLES
+   ======================================== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group .required {
+    color: #ff4d6d;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 225, 255, 0.2);
+}
+
+body.light .form-group input:focus,
+body.light .form-group select:focus {
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--text-color-dark);
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px var(--primary);
+}
+
+body.light .btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--inner-card-bg);
+}
+
+.btn-danger {
+    background: #ff4d6d;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #ff3333;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 77, 109, 0.4);
+}
+
+body.light .btn-danger {
+    background: #ef4444;
+}
+
+/* ========================================
+   DELETE CONFIRMATION
+   ======================================== */
+.delete-confirmation {
+    text-align: center;
+    padding: 1rem;
+}
+
+.delete-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 77, 109, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: #ff4d6d;
+    font-size: 2rem;
+}
+
+.delete-confirmation p {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.delete-confirmation strong {
+    color: var(--primary);
+}
+
+.delete-warning {
+    color: var(--text-color-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 900px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .btn-add-user {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .users-table-container {
+        padding: 1rem;
+    }
+
+    .users-table {
+        font-size: 0.9rem;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .user-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* This responsive rule seems to be hiding columns.
+  You can keep it, but it's the reason "Country" and "Role" disappear
+  on small screens. I've left it as-is.
+*/
+@media (max-width: 600px) {
+    .users-table {
+        font-size: 0.8rem;
+    }
+
+    .user-name-cell {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .users-table th:nth-child(4),
+    .users-table td:nth-child(4),
+    .users-table th:nth-child(5),
+    .users-table td:nth-child(5) {
+        display: none;
+    }
+}

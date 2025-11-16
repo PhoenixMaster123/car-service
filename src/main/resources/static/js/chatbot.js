@@ -49,15 +49,11 @@ function displayMessage(message, sender) {
 
 async function getBotResponse(message) {
 
-    const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
     try {
         const response = await fetch('/api/gemini/ask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                [header]: token
             },
             body: JSON.stringify({prompt: message})
         });
