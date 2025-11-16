@@ -13,6 +13,7 @@
     <link th:href="@{/css/common/variables.css}" rel="stylesheet">
     <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
     <link th:href="@{/css/component/toggle.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
     <link th:href="@{/css/component/footer.css}" rel="stylesheet">
     <link th:href="@{/css/public/index.css}" rel="stylesheet">
 </head>
@@ -51,8 +52,8 @@
                     <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
                 </a>
                 <div class="dropdown-content">
-                    <a th:href="@{/users/dashboard}">Profile</a>
-                    <form th:action="@{/logout}" method="GET" style="margin:0;">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
                         <button type="submit" class="logout-btn">
                             <i class="fa-solid fa-right-from-bracket"></i> Logout
                         </button>
@@ -223,7 +224,29 @@
         <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> Haris Car Care. All Rights Reserved.</p>
     </div>
 </footer>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
 <script th:src="@{/js/toggleSwitch.js}"></script>
 <script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
 </body>
 </html>

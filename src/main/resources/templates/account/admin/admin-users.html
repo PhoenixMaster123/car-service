@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/admin-aside.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/account/admin/admin-users.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <aside class="sidebar">
+        <a href="/" class="sidebar-brand">Haris Car Care</a>
+        <ul class="sidebar-nav">
+            <li><a href="/admin/dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+            <li><a href="/admin/users" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li><a href="/admin/services"><i class="fa-solid fa-car"></i> Services</a></li>
+            <li><a href="/admin/bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
+            <li><a href="/admin/repairs"><i class="fa-solid fa-screwdriver-wrench"></i> Repairs</a></li>
+            <li><a href="/admin/reports"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
+            <li><a href="/admin/settings"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
+            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fa-solid fa-sun"></i>
+                <i class="fa-solid fa-moon"></i>
+                <div class="toggle-circle"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="dashboard-content">
+        <div class="page-header">
+            <h1>User Management</h1>
+            <button class="btn-add-user" onclick="openAddUserModal()">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Add Customer</span>
+            </button>
+        </div>
+        <div class="users-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <label for="userSearch"></label><input type="text" id="userSearch" placeholder="Search users by name, email, or phone..." onkeyup="filterUsers()">
+            </div>
+        </div>
+
+        <div class="users-table-container">
+            <table class="users-table" id="usersTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>Role</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="customer : ${allUsers}" th:data-user-id="${customer.id}">
+                    <td>
+                        <div class="user-name-cell">
+                            <span th:text="${customer.firstName + ' ' + customer.lastName}">John Doe</span>
+                        </div>
+                    </td>
+                    <td th:text="${customer.email}">john.doe@example.com</td>
+                    <td th:text="${customer.phoneNumber ?: 'N/A'}">+1234567890</td>
+                    <td th:text="${customer.country?.name ?: 'N/A'}">United States</td>
+                    <td>
+                            <span class="role-badge" th:classappend="${customer.role.name() == 'ADMIN' ? 'role-admin' : 'role-user'}"
+                                  th:text="${customer.role.name()}">USER</span>
+                    </td>
+                    <td th:text="${#temporals.format(customer.createdOn, 'dd MMM yyyy')}">01 Jan 2024</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view"
+                                    th:data-id="${customer.id}"
+                                    th:data-first-name="${customer.firstName}"
+                                    th:data-last-name="${customer.lastName}"
+                                    th:data-email="${customer.email}"
+                                    th:data-phone="${customer.phoneNumber ?: 'N/A'}"
+                                    th:data-country="${customer.country?.getName() ?: 'N/A'}"
+                                    th:data-role="${customer.role.name()}"
+                                    th:data-created="${#temporals.format(customer.createdOn, 'dd MMM yyyy HH:mm')}"
+                                    th:data-updated="${#temporals.format(customer.updatedOn, 'dd MMM yyyy HH:mm')}"
+                                    onclick="openViewUserModal(this)"
+                                    aria-label="View User">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+
+                            <button class="btn-action btn-edit"
+                                    th:data-id="${customer.id}"
+                                    th:data-first-name="${customer.firstName}"
+                                    th:data-last-name="${customer.lastName}"
+                                    th:data-email="${customer.email}"
+                                    th:data-phone="${customer.phoneNumber ?: ''}"
+                                    th:data-country="${customer.country?.getName() ?: ''}"
+                                    th:data-role="${customer.role.name()}"
+                                    onclick="openEditUserModal(this)"
+                                    aria-label="Edit User">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+
+                            <button class="btn-action btn-delete"
+                                    th:data-id="${customer.id}"
+                                    th:data-name="${customer.firstName + ' ' + customer.lastName}"
+                                    onclick="openDeleteUserModal(this)"
+                                    aria-label="Delete User">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fa-solid fa-users-slash"></i>
+                <p>No users found matching your search.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="viewUserModalOverlay" onclick="closeViewUserModal()">
+    <div class="modal" id="viewUserModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-eye"></i>
+                <h2>User Details</h2>
+            </div>
+            <button class="modal-close" onclick="closeViewUserModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="user-details-view">
+                <div class="user-profile-header">
+                    <div class="user-avatar-large">
+                        <i class="fa-solid fa-user" id="viewUserAvatar"></i>
+                    </div>
+                    <h3 id="viewUserName">John Doe</h3>
+                    <span class="role-badge" id="viewUserRole">USER</span>
+                </div>
+                <div class="user-details-grid">
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-envelope"></i> Email</label>
+                        <p id="viewUserEmail">john.doe@example.com</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-phone"></i> Phone</label>
+                        <p id="viewUserPhone">+1234567890</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-globe"></i> Country</label>
+                        <p id="viewUserCountry">United States</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-calendar-plus"></i> Created On</label>
+                        <p id="viewUserCreated">01 Jan 2024 10:00</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-calendar-check"></i> Last Updated</label>
+                        <p id="viewUserUpdated">01 Jan 2024 10:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeViewUserModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="editUserModalOverlay" onclick="closeEditUserModal()">
+    <div class="modal" id="editUserModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-pencil"></i>
+                <h2>Edit User</h2>
+            </div>
+            <button class="modal-close" onclick="closeEditUserModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="editUserForm" onsubmit="saveUserEdit(event)">
+            <div class="modal-body">
+                <input type="hidden" id="editUserId" name="userId">
+                <div class="form-group">
+                    <label for="editFirstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="editFirstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="editLastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email <span class="required">*</span></label>
+                    <input type="email" id="editEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="tel" id="editPhone" name="phoneNumber">
+                </div>
+                <div class="form-group">
+                    <label for="editCountry">Country</label>
+                    <select id="editCountry" name="country">
+                        <option value="">Select Country</option>
+                        <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
+                                th:value="${country}"
+                                th:text="${country.getName()}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editRole">Role <span class="required">*</span></label>
+                    <select id="editRole" name="role" required>
+                        <option value="USER">User</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="deleteUserModalOverlay" onclick="closeDeleteUserModal()">
+    <div class="modal modal-small" id="deleteUserModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-trash"></i>
+                <h2>Delete User</h2>
+            </div>
+            <button class="modal-close" onclick="closeDeleteUserModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="delete-confirmation">
+                <div class="delete-icon">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                </div>
+                <p>Are you sure you want to delete the user account for <strong id="deleteUserName">John Doe</strong>?</p>
+                <p class="delete-warning">This action cannot be undone.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteUserModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" onclick="confirmDeleteUser()">Delete User</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="addUserModalOverlay" onclick="closeAddUserModal()">
+    <div class="modal" id="addUserModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-user-plus"></i>
+                <h2>Add New Customer</h2>
+            </div>
+            <button class="modal-close" onclick="closeAddUserModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="addUserForm" onsubmit="saveNewUser(event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="addFirstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="addFirstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addLastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="addLastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addEmail">Email <span class="required">*</span></label>
+                    <input type="email" id="addEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="addPassword">Password <span class="required">*</span></label>
+                    <input type="password" id="addPassword" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="addPhone">Phone Number</label>
+                    <input type="tel" id="addPhone" name="phoneNumber">
+                </div>
+                <div class="form-group">
+                    <label for="addCountry">Country</label>
+                    <select id="addCountry" name="country">
+                        <option value="">Select Country</option>
+                        <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
+                                th:value="${country}"
+                                th:text="${country.getName()}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="addRole">Role <span class="required">*</span></label>
+                    <select id="addRole" name="role" required>
+                        <option value="USER">User</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddUserModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Customer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+</body>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/js/admin-users.js}"></script>
+</html>
