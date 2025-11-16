@@ -15,10 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
 import springboot.bg.harisauto.common.exception.UserEmailAlreadyExistsException;
+import springboot.bg.harisauto.common.exception.UserPasswordDoesNotMatchException;
 import springboot.bg.harisauto.event.UserRegisteredEvent;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
 import springboot.bg.harisauto.user.repository.UserRepository;
+import springboot.bg.harisauto.web.dto.ChangeProfileInfoRequest;
+import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
 import springboot.bg.harisauto.web.dto.RegisterRequest;
 
 /**
@@ -96,6 +99,48 @@ public class UserService implements UserDetailsService {
    */
   public List<User> getAllUsers() {
     return userRepository.findAll();
+  }
+
+  /**
+   * Updates user details.
+   *
+   * @param user The user.
+   * @param request The request containing the new details.
+   */
+  public void updateUserDetails(User user, ChangeProfileInfoRequest request) {
+
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setPhoneNumber(request.getPhoneNumber());
+    user.setCountry(request.getCountry());
+
+    log.info("Updating user profile: {}", user.getEmail());
+
+    userRepository.save(user);
+  }
+
+  /**
+   * Changes the user's password.
+   *
+   * @param user The user.
+   * @param request The request containing the current and new passwords.
+   */
+  public void changeUserPassword(User user, ChangeUserPasswordRequest request) {
+
+    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("Invalid current password");
+    }
+
+    if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("New password cannot be the same "
+                                                 + "as the current password");
+    }
+
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+    log.info("Updating user password: {}", user.getEmail());
+
+    userRepository.save(user);
   }
 
   /**
