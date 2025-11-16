@@ -1,9 +1,6 @@
 package springboot.bg.harisauto.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +11,11 @@ import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.user.service.UserService;
 
+/**
+ * AdminController.java - Controller for handling admin-related web requests.
+ *
+ * @author Kristian Popov
+ */
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
@@ -68,15 +70,15 @@ public class AdminController {
    */
   @GetMapping("/services")
   public ModelAndView showServicePage(@AuthenticationPrincipal AuthenticationMetaData metaData,
-    @RequestParam(defaultValue = "0") int page,
-    @RequestParam(defaultValue = "10") int size) {
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size) {
 
-      ModelAndView modelAndView = new ModelAndView();
-      modelAndView.setViewName("account/admin/admin-services");
-      modelAndView.addObject("user", metaData.getUserId());
+    ModelAndView modelAndView = new ModelAndView();
+    modelAndView.setViewName("account/admin/admin-services");
+    modelAndView.addObject("user", metaData.getUserId());
 
-      return modelAndView;
-    }
+    return modelAndView;
+  }
 
   /**
    * Shows the appointment page.
@@ -103,11 +105,11 @@ public class AdminController {
   @GetMapping("/repairs")
   public ModelAndView showRepairsPage(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("account/admin/admin-repairs");
-        modelAndView.addObject("user", metaData.getUserId());
+    ModelAndView modelAndView = new ModelAndView();
+    modelAndView.setViewName("account/admin/admin-repairs");
+    modelAndView.addObject("user", metaData.getUserId());
 
-        return modelAndView;
+    return modelAndView;
   }
 
   /**
