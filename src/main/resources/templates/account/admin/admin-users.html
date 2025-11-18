@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Admin Users - Haris Car Care</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,28 +196,28 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <form id="editUserForm" onsubmit="saveUserEdit(event)">
+        <form id="editUserForm" th:action="@{/admin/update-user}" th:method="PUT" th:object="${updateUserRequest}">
             <div class="modal-body">
                 <input type="hidden" id="editUserId" name="userId">
                 <div class="form-group">
                     <label for="editFirstName">First Name <span class="required">*</span></label>
-                    <input type="text" id="editFirstName" name="firstName" required>
+                    <input type="text" id="editFirstName" name="firstName" required th:field="*{firstName}">
                 </div>
                 <div class="form-group">
                     <label for="editLastName">Last Name <span class="required">*</span></label>
-                    <input type="text" id="editLastName" name="lastName" required>
+                    <input type="text" id="editLastName" name="lastName" required th:field="*{lastName}">
                 </div>
                 <div class="form-group">
                     <label for="editEmail">Email <span class="required">*</span></label>
-                    <input type="email" id="editEmail" name="email" required>
+                    <input type="email" id="editEmail" name="email" required th:field="*{email}">
                 </div>
                 <div class="form-group">
                     <label for="editPhone">Phone Number</label>
-                    <input type="tel" id="editPhone" name="phoneNumber">
+                    <input type="tel" id="editPhone" name="phoneNumber" th:field="*{phoneNumber}">
                 </div>
                 <div class="form-group">
                     <label for="editCountry">Country</label>
-                    <select id="editCountry" name="country">
+                    <select id="editCountry" name="country" th:field="*{country}">
                         <option value="">Select Country</option>
                         <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
                                 th:value="${country}"
@@ -224,7 +226,7 @@
                 </div>
                 <div class="form-group">
                     <label for="editRole">Role <span class="required">*</span></label>
-                    <select id="editRole" name="role" required>
+                    <select id="editRole" name="role" required th:field="*{role}">
                         <option value="USER">User</option>
                         <option value="ADMIN">Admin</option>
                     </select>
@@ -276,31 +278,36 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <form id="addUserForm" onsubmit="saveNewUser(event)">
+        <form id="addUserForm" th:action="@{/admin/new-user}" th:method="POST" th:object="${registerNewUserRequest}" >
             <div class="modal-body">
                 <div class="form-group">
                     <label for="addFirstName">First Name <span class="required">*</span></label>
-                    <input type="text" id="addFirstName" name="firstName" required>
+                    <input type="text" id="addFirstName" name="firstName" required th:field="*{firstName}">
+                    <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
                 </div>
                 <div class="form-group">
                     <label for="addLastName">Last Name <span class="required">*</span></label>
-                    <input type="text" id="addLastName" name="lastName" required>
+                    <input type="text" id="addLastName" name="lastName" required th:field="*{lastName}">
+                    <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
                 </div>
                 <div class="form-group">
                     <label for="addEmail">Email <span class="required">*</span></label>
-                    <input type="email" id="addEmail" name="email" required>
+                    <input type="email" id="addEmail" name="email" required th:field="*{email}">
+                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
                 </div>
                 <div class="form-group">
                     <label for="addPassword">Password <span class="required">*</span></label>
-                    <input type="password" id="addPassword" name="password" required minlength="6">
+                    <input type="password" id="addPassword" name="password" required th:field="*{password}">
+                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                 </div>
                 <div class="form-group">
                     <label for="addPhone">Phone Number</label>
-                    <input type="tel" id="addPhone" name="phoneNumber">
+                    <input type="tel" id="addPhone" name="phoneNumber" th:field="*{phoneNumber}">
+                    <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
                 </div>
                 <div class="form-group">
                     <label for="addCountry">Country</label>
-                    <select id="addCountry" name="country">
+                    <select id="addCountry" name="country" th:field="*{country}">
                         <option value="">Select Country</option>
                         <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
                                 th:value="${country}"
@@ -309,7 +316,7 @@
                 </div>
                 <div class="form-group">
                     <label for="addRole">Role <span class="required">*</span></label>
-                    <select id="addRole" name="role" required>
+                    <select id="addRole" name="role" required th:field="*{role}">
                         <option value="USER">User</option>
                         <option value="ADMIN">Admin</option>
                     </select>
@@ -322,7 +329,6 @@
         </form>
     </div>
 </div>
-
 
 <button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
     <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
@@ -340,7 +346,7 @@
         </div>
     </div>
     <form class="chat-footer" id="chat-form">
-        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
         <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 </div>

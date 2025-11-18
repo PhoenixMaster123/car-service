@@ -51,7 +51,7 @@
             <p>Manage your profile, password, and notification preferences.</p>
         </header>
 
-        <form class="content-card" th:action="@{'/users/' + ${user.id} + '/profile'}" th:method="PUT">
+        <form class="content-card" th:action="@{/users/profile}" th:method="PUT" th:object="${changeProfileInfoRequest}">
             <div class="card-header">
                 <i class="fa-solid fa-user-pen"></i>
                 <h3>Edit Profile</h3>
@@ -60,23 +60,23 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" class="form-input">
+                        <input type="text" id="firstName" class="form-input" th:field="*{firstName}">
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" class="form-input">
+                        <input type="text" id="lastName" class="form-input" th:field="*{lastName}">
                     </div>
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-input">
+                        <input type="email" id="email" class="form-input" th:field="*{email}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="form-input">
+                        <input type="tel" id="phone" class="form-input" th:field="*{phoneNumber}">
                     </div>
                     <div class="form-group full-width">
                         <label for="country">Country</label>
-                        <select id="country" class="form-input">
+                        <select id="country" class="form-input" th:field="*{country}">
                             <option th:each="country : ${T(springboot.bg.harisauto.user.model.Country).values()}"
                                     th:value="${country}"
                                     th:text="${country.getName()}">
@@ -140,9 +140,20 @@
             </div>
         </div>
 
-        <div id="status-message" class="status-message" style="display: none;">
-            <span id="status-icon"><i class="fa-solid fa-check-circle"></i></span>
-            <span id="status-text">Password updated successfully!</span>
+        <div id="status-message"
+             class="status-message success"
+             th:if="${successMessage}"
+             style="display: block;"> <span id="status-icon"><i class="fa-solid fa-check-circle"></i></span>
+
+            <span id="status-text" th:text="${successMessage}"></span>
+        </div>
+
+        <div id="error-message"
+             class="status-message error"
+             th:if="${errorMessage}"
+             style="display: block;"> <span id="error-icon"><i class="fa-solid fa-check-circle"></i></span>
+
+            <span id="error-text" th:text="${errorMessage}"></span>
         </div>
 
         <div class="content-card">
@@ -151,26 +162,34 @@
                 <h3>Change Password</h3>
             </div>
             <div class="card-body">
-                <form id="password-form" th:method="PUT" th:action="@{'/users/' + ${user.id} + '/change-password'}">
+                <form id="password-form" th:method="PUT" th:action="@{/users/password}" th:object="${changePasswordRequest}">
                     <div class="form-group">
                         <label for="currentPassword">Current Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="currentPassword" required autocomplete="current-password" placeholder="Enter your current password">
+                            <input type="password" id="currentPassword" required placeholder="Enter your current password" th:field="*{currentPassword}">
                             <button type="button" class="password-toggle" data-target="currentPassword" aria-label="Toggle current password visibility">
                                 <i class="fa-solid fa-eye password-icon"></i>
                             </button>
                         </div>
+                        <span class="text-danger"
+                              th:if="${#fields.hasErrors('currentPassword')}"
+                              th:errors="*{currentPassword}">
+                        </span>
                     </div>
 
                     <div class="form-group">
                         <label for="newPassword">New Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="newPassword" required autocomplete="new-password" placeholder="Enter your new password">
+                            <input type="password" id="newPassword" required placeholder="Enter your new password" th:field="*{newPassword}">
                             <button type="button" class="password-toggle" data-target="newPassword" aria-label="Toggle new password visibility">
                                 <i class="fa-solid fa-eye password-icon"></i>
                             </button>
                         </div>
-                        <div id="strength-indicator" class="strength-indicator" style="display: none;">
+                        <span class="text-danger"
+                              th:if="${#fields.hasErrors('newPassword')}"
+                              th:errors="*{newPassword}">
+                        </span>
+                        <div id="strength-indicator" class="strength-indicator">
                             <div class="strength-bar-background">
                                 <div id="strength-bar" class="strength-bar"></div>
                             </div>
@@ -183,11 +202,15 @@
                     <div class="form-group">
                         <label for="confirmPassword">Confirm New Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="confirmPassword" required autocomplete="new-password" placeholder="Confirm your new password">
+                            <input type="password" id="confirmPassword" required placeholder="Confirm your new password" th:field="*{confirmNewPassword}">
                             <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle confirm password visibility">
                                 <i class="fa-solid fa-eye password-icon"></i>
                             </button>
                         </div>
+                        <span class="text-danger"
+                              th:if="${#fields.hasErrors('confirmNewPassword')}"
+                              th:errors="*{confirmNewPassword}">
+                        </span>
                     </div>
                 </form>
             </div>

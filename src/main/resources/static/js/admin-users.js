@@ -30,7 +30,6 @@ function closeViewUserModal() {
     document.body.style.overflow = '';
 }
 
-// Edit User Modal
 let currentEditUserId = null;
 
 /**
@@ -49,22 +48,21 @@ function openEditUserModal(button) {
     document.getElementById('editPhone').value = data.phone;
 
     const countrySelect = document.getElementById('editCountry');
-    const countryName = data.country; // This is the display name, e.g., "United States"
+    const countryName = data.country;
 
     if (countryName && countryName !== 'N/A' && countryName !== '') {
         const options = countrySelect.options;
         let found = false;
         for (let i = 0; i < options.length; i++) {
-            // Match against the option's visible text
             if (options[i].text === countryName) {
                 countrySelect.value = options[i].value;
                 found = true;
                 break;
             }
         }
-        if (!found) countrySelect.value = ''; // Default if no match
+        if (!found) countrySelect.value = '';
     } else {
-        countrySelect.value = ''; // No country provided
+        countrySelect.value = '';
     }
 
     document.getElementById('editRole').value = data.role;
@@ -74,6 +72,9 @@ function openEditUserModal(button) {
     document.body.style.overflow = 'hidden';
 }
 
+/**
+ * Closes the Edit User modal and resets the form.
+ */
 function closeEditUserModal() {
     const overlay = document.getElementById('editUserModalOverlay');
     overlay.classList.remove('active');
@@ -82,44 +83,6 @@ function closeEditUserModal() {
     document.getElementById('editUserForm').reset();
 }
 
-function saveUserEdit(event) {
-    event.preventDefault();
-
-    const formData = {
-        userId: document.getElementById('editUserId').value,
-        firstName: document.getElementById('editFirstName').value,
-        lastName: document.getElementById('editLastName').value,
-        email: document.getElementById('editEmail').value,
-        phoneNumber: document.getElementById('editPhone').value,
-        country: document.getElementById('editCountry').value,
-        role: document.getElementById('editRole').value
-    };
-
-    // TODO: Add CSRF tokens to this fetch request
-    fetch('/admin/users/update', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // [csrfHeader]: csrfToken  // <-- You will need to add this
-        },
-        body: JSON.stringify(formData)
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('User updated successfully!');
-                closeEditUserModal();
-                location.reload();
-            } else {
-                alert('Error updating user. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error updating user. Please try again.');
-        });
-}
-
-// Delete User Modal
 let currentDeleteUserId = null;
 let currentDeleteUserName = null;
 
@@ -139,6 +102,9 @@ function openDeleteUserModal(button) {
     document.body.style.overflow = 'hidden';
 }
 
+/**
+ * Closes the Delete User confirmation modal.
+ */
 function closeDeleteUserModal() {
     const overlay = document.getElementById('deleteUserModalOverlay');
     overlay.classList.remove('active');
@@ -147,26 +113,32 @@ function closeDeleteUserModal() {
     currentDeleteUserName = null;
 }
 
+/**
+ * Deletes the user from the admin users table.
+ */
 function confirmDeleteUser() {
+
+    const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
+    const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
+
+    const csrfToken = csrfTokenTag ? csrfTokenTag.getAttribute('content') : '';
+    const csrfHeader = csrfHeaderTag ? csrfHeaderTag.getAttribute('content') : 'X-CSRF-TOKEN';
+
     if (!currentDeleteUserId) return;
 
-    // TODO: Add CSRF tokens to this fetch request
-    fetch('/admin/users/delete/' + currentDeleteUserId, {
+    fetch('/admin/delete-user/' + currentDeleteUserId, {
         method: 'DELETE',
         headers: {
-            // [csrfHeader]: csrfToken  // <-- You will need to add this
+            [csrfHeader]: csrfToken
         }
     })
         .then(response => {
             if (response.ok) {
-                alert('User deleted successfully!');
-                // Optimistically remove the row instead of reloading
                 const rowToRemove = document.querySelector(`tr[data-user-id="${currentDeleteUserId}"]`);
                 if (rowToRemove) {
                     rowToRemove.remove();
                 }
                 closeDeleteUserModal();
-                // location.reload(); // Reloading is simpler but slower
             } else {
                 alert('Error deleting user. Please try again.');
             }
@@ -177,7 +149,9 @@ function confirmDeleteUser() {
         });
 }
 
-// Add User Modal
+/**
+ * Opens the Add User modal.
+ */
 function openAddUserModal() {
     document.getElementById('addUserForm').reset();
 
@@ -186,6 +160,9 @@ function openAddUserModal() {
     document.body.style.overflow = 'hidden';
 }
 
+/**
+ * Closes the Add User modal and resets the form.
+ */
 function closeAddUserModal() {
     const overlay = document.getElementById('addUserModalOverlay');
     overlay.classList.remove('active');
@@ -193,48 +170,9 @@ function closeAddUserModal() {
     document.getElementById('addUserForm').reset();
 }
 
-function saveNewUser(event) {
-    event.preventDefault();
-
-    const formData = {
-        firstName: document.getElementById('addFirstName').value,
-        lastName: document.getElementById('addLastName').value,
-        email: document.getElementById('addEmail').value,
-        password: document.getElementById('addPassword').value,
-        phoneNumber: document.getElementById('addPhone').value,
-        country: document.getElementById('addCountry').value,
-        role: document.getElementById('addRole').value
-    };
-
-    // TODO: Add CSRF tokens to this fetch request
-    fetch('/admin/users/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // [csrfHeader]: csrfToken  // <-- You will need to add this
-        },
-        body: JSON.stringify(formData)
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('User added successfully!');
-                closeAddUserModal();
-                location.reload();
-            } else {
-                response.json().then(data => {
-                    alert(data.message || 'Error adding user. Please try again.');
-                }).catch(() => {
-                    alert('Error adding user. Please try again.');
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error adding user. Please try again.');
-        });
-}
-
-// Search/Filter Functionality
+/**
+ * Filters the admin users table based on the search input.
+ */
 function filterUsers() {
     const searchInput = document.getElementById('userSearch');
     const filter = searchInput.value.toLowerCase();
@@ -259,7 +197,6 @@ function filterUsers() {
     }
 
     if (visibleCount === 0 && rows.length > 0) {
-        // Only show "no results" if there are rows to hide
         noResults.style.display = 'block';
     } else {
         noResults.style.display = 'none';
@@ -268,7 +205,9 @@ function filterUsers() {
 
 // Global Event Listeners
 
-// Close modals on Escape key
+/**
+ * Closes all modals when the Escape key is pressed.
+ */
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeViewUserModal();
@@ -278,12 +217,12 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Close modals when clicking on the overlay
+/**
+ * Closes the modal when the overlay is clicked.
+ */
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(event) {
-        // Check if the click is on the overlay itself, not a child (the modal)
         if (event.target === overlay) {
-            // Find which modal this overlay belongs to and call its close function
             const modalId = overlay.id.replace('Overlay', '');
             switch(modalId) {
                 case 'viewUserModal':

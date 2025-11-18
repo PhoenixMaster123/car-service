@@ -1,24 +1,34 @@
-const menuToggle = document.getElementById("mobile-menu");
-const navLinks = document.getElementById("nav-links");
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById("mobile-menu");
+    const navLinks = document.getElementById("nav-links");
 
-menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("active");
-    menuToggle.classList.toggle("active");
-});
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+            menuToggle.classList.toggle("active");
+        });
+    }
 
-document.querySelectorAll('.dropdown .dropbtn').forEach(dropbtn => {
-    dropbtn.addEventListener('click', function(e) {
-        if (window.innerWidth <= 900) {
-            e.preventDefault();
-            const dropdownContent = this.nextElementSibling;
-            const isVisible = dropdownContent.style.display === 'block';
+    const dropdowns = document.querySelectorAll('.dropdown .dropbtn');
+    if (dropdowns.length > 0) {
+        dropdowns.forEach(dropbtn => {
+            dropbtn.addEventListener('click', function(e) {
+                if (window.innerWidth <= 900) {
+                    e.preventDefault();
+                    const dropdownContent = this.nextElementSibling;
 
-            if (!isVisible) {
-                document.querySelectorAll('.nav-links .dropdown-content').forEach(dc => {
-                    dc.style.display = 'none';
-                });
-            }
-            dropdownContent.style.display = isVisible ? 'none' : 'block';
-        }
-    });
+                    if (dropdownContent) {
+                        const isVisible = dropdownContent.style.display === 'block';
+
+                        if (!isVisible) {
+                            document.querySelectorAll('.nav-links .dropdown-content').forEach(dc => {
+                                dc.style.display = 'none';
+                            });
+                        }
+                        dropdownContent.style.display = isVisible ? 'none' : 'block';
+                    }
+                }
+            });
+        });
+    }
 });

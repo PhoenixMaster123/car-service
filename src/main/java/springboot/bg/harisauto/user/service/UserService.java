@@ -1,7 +1,6 @@
 package springboot.bg.harisauto.user.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
 import springboot.bg.harisauto.common.exception.UserEmailAlreadyExistsException;
+import springboot.bg.harisauto.common.exception.UserPasswordDoesNotMatchException;
 import springboot.bg.harisauto.event.UserRegisteredEvent;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
 import springboot.bg.harisauto.user.repository.UserRepository;
+import springboot.bg.harisauto.web.dto.ChangeProfileInfoRequest;
+import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
+import springboot.bg.harisauto.web.dto.RegisterNewUserRequest;
 import springboot.bg.harisauto.web.dto.RegisterRequest;
+import springboot.bg.harisauto.web.dto.UpdateUserRequest;
 
 /**
  * UserService.java - Service class for managing user-related operations.
@@ -44,18 +48,14 @@ public class UserService implements UserDetailsService {
   }
 
   /**
-   * Registers a new user.
+   * Registers a new user (Public registration).
    *
    * @param request The registration request.
    */
   @Transactional
   public void register(RegisterRequest request) {
 
-    Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
-
-    if (existingUser.isPresent()) {
-      throw new UserEmailAlreadyExistsException("Email already in use: " + request.getEmail());
-    }
+    checkEmailExists(request.getEmail());
 
     User newUser = User.builder()
         .email(request.getEmail())
@@ -76,6 +76,32 @@ public class UserService implements UserDetailsService {
     userRepository.save(newUser);
 
     log.info("New user registered: {}", newUser.getEmail());
+  }
+
+
+  /**
+   * Register new user from admin page.
+   *
+   * @param request The registration request.
+   */
+  @Transactional
+  public void registerNewUser(RegisterNewUserRequest request) {
+
+    checkEmailExists(request.getEmail());
+
+    User newUser = User.builder()
+        .email(request.getEmail())
+        .firstName(request.getFirstName())
+        .lastName(request.getLastName())
+        .phoneNumber(request.getPhoneNumber())
+        .country(request.getCountry())
+        .password(passwordEncoder.encode(request.getPassword()))
+        .role(request.getRole())
+        .build();
+
+    log.info("New user registered by admin: {}", newUser.getEmail());
+
+    userRepository.save(newUser);
   }
 
   /**
@@ -99,6 +125,83 @@ public class UserService implements UserDetailsService {
   }
 
   /**
+   * Updates user details (Self-update profile).
+   *
+   * @param user The user.
+   * @param request The request containing the new details.
+   */
+  public void updateUserDetails(User user, ChangeProfileInfoRequest request) {
+
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setPhoneNumber(request.getPhoneNumber());
+    user.setCountry(request.getCountry());
+
+    log.info("Updating user profile: {}", user.getEmail());
+
+    userRepository.save(user);
+  }
+
+  /**
+   * Changes the user's password.
+   *
+   * @param user The user.
+   * @param request The request containing the current and new passwords.
+   */
+  public void changeUserPassword(User user, ChangeUserPasswordRequest request) {
+
+    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("Invalid current password");
+    }
+
+    if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("New password cannot be the same "
+                                                 + "as the current password");
+    }
+
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+    log.info("Updating user password: {}", user.getEmail());
+
+    userRepository.save(user);
+  }
+
+  /**
+   * Updates user details.
+   *
+   * @param request The request containing the new details.
+   */
+  public void updateUser(UpdateUserRequest request) {
+
+    User user = userRepository.findByEmail(request.getEmail())
+        .orElseThrow(() -> new UserDoesNotExistException("User not found: " + request.getEmail()));
+
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setPhoneNumber(request.getPhoneNumber());
+    user.setCountry(request.getCountry());
+
+    if (request.getRole() != null) {
+      user.setRole(request.getRole());
+    }
+
+    userRepository.save(user);
+    log.info("Admin updated user: {}", user.getEmail());
+  }
+
+  /**
+   * Deletes a user by its id.
+   *
+   * @param userId The user id.
+   */
+  public void deleteUserById(UUID userId) {
+
+    userRepository.deleteById(userId);
+
+    log.info("User deleted with id: {}", userId);
+  }
+
+  /**
    * Loads user details by email.
    *
    * @param email The user email.
@@ -113,5 +216,17 @@ public class UserService implements UserDetailsService {
 
     return new AuthenticationMetaData(user.getId(), email,
         user.getPassword(), user.getRole(), true);
+  }
+
+  /**
+   * Check if email already exists.
+   *
+   * @param email The email to check.
+   */
+  private void checkEmailExists(String email) {
+
+    if (userRepository.findByEmail(email).isPresent()) {
+      throw new UserEmailAlreadyExistsException("Email already in use: " + email);
+    }
   }
 }
