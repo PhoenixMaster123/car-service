@@ -248,12 +248,10 @@ body.light .role-badge.role-admin {
     justify-content: center;
     transition: all 0.3s ease;
     font-size: 0.9rem;
-    /* --- THIS IS THE FIX --- */
     background: transparent;
 }
 
 .btn-view {
-    /* background: rgba(0, 225, 255, 0.2); <-- Removed */
     color: var(--primary);
 }
 
@@ -264,7 +262,6 @@ body.light .role-badge.role-admin {
 }
 
 .btn-edit {
-    /* background: rgba(255, 193, 7, 0.2); <-- Removed */
     color: #ffc107;
 }
 
@@ -275,7 +272,6 @@ body.light .role-badge.role-admin {
 }
 
 .btn-delete {
-    /* background: rgba(255, 77, 109, 0.2); <-- Removed */
     color: #ff4d6d;
 }
 
@@ -285,17 +281,11 @@ body.light .role-badge.role-admin {
     transform: scale(1.1);
 }
 
-body.light .btn-view {
-    /* background: rgba(14, 165, 233, 0.15); <-- Removed */
-}
-
 body.light .btn-edit {
-    /* background: rgba(251, 191, 36, 0.15); <-- Removed */
     color: #fbbf24;
 }
 
 body.light .btn-delete {
-    /* background: rgba(239, 68, 68, 0.15); <-- Removed */
     color: #ef4444;
 }
 
@@ -506,13 +496,14 @@ body.light .btn-delete {
 .form-group select {
     width: 100%;
     padding: 0.75rem;
-    background: var(--card-bg);
+    background: var(--inner-card-bg); /* Ensure dark background */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-color);
     font-size: 1rem;
     transition: all 0.3s ease;
     font-family: inherit;
+    cursor: pointer;
 }
 
 .form-group input:focus,
@@ -522,9 +513,27 @@ body.light .btn-delete {
     box-shadow: 0 0 10px rgba(0, 225, 255, 0.2);
 }
 
+.form-group select option {
+    background-color: #1a1f2e;
+    color: #ffffff;
+}
+
+body.light .form-group input,
+body.light .form-group select {
+    background: #ffffff;
+    color: #333333;
+    border-color: #ccc;
+}
+
+body.light .form-group select option {
+    background-color: #ffffff;
+    color: #333333;
+}
+
 body.light .form-group input:focus,
 body.light .form-group select:focus {
     box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+    border-color: var(--primary);
 }
 
 /* ========================================
@@ -661,10 +670,6 @@ body.light .btn-danger {
     }
 }
 
-/* This responsive rule seems to be hiding columns.
-  You can keep it, but it's the reason "Country" and "Role" disappear
-  on small screens. I've left it as-is.
-*/
 @media (max-width: 600px) {
     .users-table {
         font-size: 0.8rem;
