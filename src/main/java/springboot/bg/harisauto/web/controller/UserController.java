@@ -74,7 +74,7 @@ public class UserController {
    * @param metaData The authentication metadata.
    * @return The bookings page.
    */
-  @GetMapping("/bookings")
+  @GetMapping("/my-bookings")
   public ModelAndView showBookings(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
     User user = userService.getById(metaData.getUserId());

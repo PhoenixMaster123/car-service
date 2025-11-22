@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Pricing - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/public/services.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{/users/dashboard}">Profile</a>
+                    <form th:action="@{/logout}" method="GET" style="margin:0;">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+            <li class="mobile-only"><a th:href="@{/bookings}" class="cta-button">Book Now</a></li>
+        </ul>
+        <a th:href="@{/bookings}" class="cta-button desktop-only">Book Now</a>
+    </div>
+</nav>
+
+<header>
+    <h1><span>Haris</span> Car Care</h1>
+    <p>Your car deserves more than just a wash — it deserves a glow.</p>
+</header>
+
+<main class="sp-wrapper">
+    <div th:each="entry : ${servicesByCategory}">
+        <section class="category">
+            <h2><i class="fa-solid fa-wrench"></i> <span th:text="${entry.key.displayName}">Category</span></h2>
+            <p th:text="'Check out our ' + ${entry.key.displayName} + ' options.'">Description</p>
+
+            <table class="price-table">
+                <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th sec:authorize="isAuthenticated()">Add</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="service : ${entry.value}">
+                    <td class="service-cell" th:text="${service.name}">Service Name</td>
+                    <td class="description-cell" th:text="${service.description}">Description...</td>
+                    <td class="price-cell" th:text="'€' + ${#numbers.formatDecimal(service.basePrice, 1, 2)}">€0.00</td>
+                    <td sec:authorize="isAuthenticated()">
+                        <div class="add-cell">
+                            <form th:action="@{/cart/add/{id}(id=${service.id})}" method="post">
+                                <button type="submit" class="add-to-cart">Add</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <hr class="glow">
+    </div>
+</main>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+
+<div class="cart-modal" id="cart-modal">
+    <div class="cart-header">
+        <h3><i class="fa-solid fa-bag-shopping"></i> Your Cart</h3>
+        <button class="close-cart" id="close-cart-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="cart-content">
+
+        <div class="empty-state" th:if="${cart == null or cart.count == 0}">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <p>Your cart is empty.</p>
+            <span>Add services to get started.</span>
+        </div>
+
+        <div class="cart-items" th:if="${cart != null and cart.count > 0}">
+            <div class="cart-item" th:each="item : ${cart.items}">
+                <div class="item-info">
+                    <span class="item-name" th:text="${item.name}">Service Name</span>
+                    <span class="item-price" th:text="'€' + ${#numbers.formatDecimal(item.basePrice, 1, 2)}">€0.00</span>
+                </div>
+
+                <form th:action="@{/cart/remove/{id}(id=${item.id})}" method="post">
+                    <button type="submit" class="remove-btn" title="Remove Item">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-footer" th:if="${cart != null and cart.count > 0}">
+        <div class="cart-summary">
+            <span>Total Amount</span>
+            <span class="total-price" th:text="'€' + ${#numbers.formatDecimal(cart.total, 1, 2)}">€0.00</span>
+        </div>
+
+        <div class="cart-actions">
+            <form th:action="@{/cart/checkout}" method="get" style="flex: 2;">
+                <button type="submit" class="cta-button checkout-btn">
+                    Checkout <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <form th:action="@{/cart/clear}" method="post" style="flex: 1;">
+                <button type="submit" class="clear-btn">Clear</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="cart" id="cart-btn">
+    <div class="cart-icon-wrapper">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge"
+              th:if="${cart != null and cart.count > 0}"
+              th:text="${cart.count}">0</span>
+    </div>
+    <div class="cart-text">
+        <span class="cart-label">Total</span>
+        <span class="cart-total" th:text="'€' + ${#numbers.formatDecimal((cart != null ? cart.total : 0), 1, 2)}">€0.00</span>
+    </div>
+</div>
+
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/public/services.js}"></script>
+</body>
+</html>

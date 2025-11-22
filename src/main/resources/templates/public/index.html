@@ -12,7 +12,6 @@
     <link th:href="@{/css/common/base.css}" rel="stylesheet">
     <link th:href="@{/css/common/variables.css}" rel="stylesheet">
     <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/toggle.css}" rel="stylesheet">
     <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
     <link th:href="@{/css/component/footer.css}" rel="stylesheet">
     <link th:href="@{/css/public/index.css}" rel="stylesheet">
@@ -69,7 +68,7 @@
                 </div>
             </li>
             <li class="mobile-only">
-                <a th:href="@{/booking}" class="cta-button">Book Now</a>
+                <a th:href="@{bookings}" class="cta-button">Book Now</a>
             </li>
         </ul>
 
@@ -79,7 +78,7 @@
             <div class="toggle-circle"></div>
         </div>
 
-        <a th:href="@{/booking}" class="cta-button desktop-only">Book Now</a>
+        <a th:href="@{bookings}" class="cta-button desktop-only">Book Now</a>
 
     </div>
 </nav>
@@ -90,7 +89,7 @@
             <h1 data-i18n="hero.title">Drive Clean. Feel Fresh.</h1>
             <p data-i18n="hero.subtitle">Premium car wash and detailing with pro-grade equipment and eco-friendly products.</p>
             <div class="hero-actions">
-                <a th:href="@{/booking}" class="hero-cta cta-button" data-i18n="hero.ctaPrimary">Book a Wash</a>
+                <a th:href="@{bookings}" class="hero-cta cta-button" data-i18n="hero.ctaPrimary">Book a Wash</a>
                 <a th:href="@{/services}" class="hero-cta cta-button" data-i18n="hero.ctaSecondary">See Services</a>
             </div>
         </div>
