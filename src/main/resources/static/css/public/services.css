@@ -1,0 +1,539 @@
+/* =========================================
+   1. HEADER & HERO SECTION
+   ========================================= */
+header {
+    text-align: center;
+    padding: 60px 20px 20px;
+}
+
+h1 {
+    font-size: 2.8rem;
+    color: var(--primary);
+    text-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+    margin: 0;
+}
+
+h1 span {
+    color: var(--secondary);
+}
+
+header p {
+    color: #c8c8c8;
+    margin-top: 8px;
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   2. SERVICES LAYOUT & TABLES
+   ========================================= */
+.sp-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 100px; /* Bottom padding for scrolling past cart btn */
+    display: grid;
+    gap: 60px;
+}
+
+.category {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeUp 1s ease both;
+    border: 1px solid var(--border-color);
+}
+
+.category:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px var(--primary);
+}
+
+.category h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    margin-top: 0;
+}
+
+.category p {
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+/* --- Table Styling --- */
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.price-table th,
+.price-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.price-table thead {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+.price-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* --- Add Button in Table --- */
+.add-to-cart {
+    background: var(--primary);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.add-to-cart:hover {
+    background: var(--secondary);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+/* Divider Animation */
+hr.glow {
+    border: none;
+    height: 2px;
+    margin: 40px auto;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    width: 70%;
+    animation: pulse 2s infinite;
+}
+
+/* =========================================
+   3. FLOATING CART BUTTON (Always Visible)
+   ========================================= */
+.cart {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--secondary);
+    color: #000;
+    padding: 12px 25px;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 255, 200, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+    border: 2px solid transparent;
+}
+
+.cart:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 255, 200, 0.6);
+    background: #fff;
+}
+
+.cart-icon-wrapper {
+    position: relative;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: #ff4757;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.cart-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.cart-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.cart-total {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+/* =========================================
+   4. CART MODAL / ASIDE MENU (Redesigned)
+   ========================================= */
+.cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+    z-index: 1000;
+}
+
+.cart-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.cart-modal {
+    position: fixed;
+    top: 0;
+    right: -500px; /* Hidden by default */
+    width: 400px;
+    height: 100vh; /* Full height */
+    background: rgba(15, 20, 25, 0.95); /* Deep dark bg */
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column; /* Stack Header, Body, Footer */
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cart-modal.active {
+    right: 0;
+}
+
+/* --- 4a. Modal Header --- */
+.cart-header {
+    padding: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.cart-header h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-cart {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.2s;
+    padding: 5px;
+}
+
+.close-cart:hover {
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* --- 4b. Modal Content (Scrollable) --- */
+.cart-content {
+    flex: 1; /* Takes all remaining height */
+    overflow-y: auto; /* Enables scrolling */
+    padding: 20px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    margin-top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+/* Cart Items */
+.cart-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+.cart-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.item-price {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+.remove-btn {
+    background: rgba(255, 94, 94, 0.1);
+    color: #ff5e5e;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.remove-btn:hover {
+    background: #ff5e5e;
+    color: white;
+}
+
+/* --- 4c. Modal Footer (Sticky) --- */
+.cart-footer {
+    padding: 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #ccc;
+}
+
+.total-price {
+    color: var(--secondary);
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px rgba(0,255,200,0.3);
+}
+
+.cart-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--secondary);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+.checkout-btn:hover {
+    background: var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.clear-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #aaa;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.clear-btn:hover {
+    border-color: #ff5e5e;
+    color: #ff5e5e;
+    background: rgba(255, 94, 94, 0.05);
+}
+
+/* =========================================
+   5. ANIMATIONS
+   ========================================= */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* =========================================
+   6. LIGHT MODE OVERRIDES
+   ========================================= */
+body.light header h1 {
+    color: var(--text-color-dark);
+    text-shadow: none;
+}
+body.light header h1 span {
+    color: var(--primary);
+}
+body.light header p {
+    color: var(--text-color-muted);
+}
+
+body.light .category {
+    background: var(--inner-card-bg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+body.light .category:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(2, 132, 199, 0.25);
+}
+body.light .category h2 { color: var(--text-color-dark); }
+body.light .category p { color: var(--text-color-muted); }
+
+body.light .price-table th,
+body.light .price-table td {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color-dark);
+}
+body.light .price-table thead {
+    background: #f0f9ff;
+    color: var(--secondary);
+}
+body.light .price-table tr:hover {
+    background: #f8fafc;
+}
+body.light .add-to-cart {
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+body.light hr.glow {
+    background: var(--border-color);
+    animation: none;
+    opacity: 0.5;
+}
+
+/* Light Mode - Cart Button */
+body.light .cart {
+    background: var(--primary); /* Solid blue usually */
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+body.light .cart:hover {
+    background: var(--secondary);
+}
+body.light .cart-badge {
+    border: 2px solid var(--primary);
+}
+
+/* Light Mode - Cart Modal */
+body.light .cart-modal {
+    background: rgba(255, 255, 255, 0.98);
+    color: #333;
+    border-left: 1px solid #eee;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+}
+
+body.light .cart-header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+body.light .cart-header h3 { color: var(--text-color-dark); }
+body.light .close-cart { color: #999; }
+body.light .close-cart:hover { color: #333; }
+
+body.light .empty-state p { color: #333; }
+body.light .empty-state { color: #aaa; }
+
+body.light .cart-item {
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+body.light .item-name { color: #333; }
+body.light .item-price { color: var(--primary); }
+
+body.light .cart-footer {
+    background: #fff;
+    border-top: 1px solid #eee;
+}
+body.light .cart-summary { color: #666; }
+body.light .total-price { color: var(--text-color-dark); text-shadow: none; }
+
+body.light .checkout-btn {
+    background: var(--primary);
+    color: #fff;
+}
+body.light .checkout-btn:hover {
+    background: var(--secondary);
+}
+body.light .clear-btn {
+    border-color: #ddd;
+    color: #666;
+}
+body.light .clear-btn:hover {
+    background: #fff5f5;
+}
+body.light .cart-overlay {
+    background: rgba(255, 255, 255, 0.6);
+}

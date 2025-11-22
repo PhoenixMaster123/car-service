@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Booking - Haris Car Care</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/public/booking.css}" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{/bookings}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{/bookings}" class="cta-button desktop-only">Book Now</a>
+
+    </div>
+</nav>
+
+<main class="page-container">
+    <div class="booking-container">
+        <h1><i class="fa-solid fa-calendar-check"></i> Book Your Appointment</h1>
+
+        <div class="form-group">
+            <label><i class="fa-solid fa-list-check"></i> Selected Services <span style="color:var(--primary)">*</span></label>
+
+            <div class="selected-services-box">
+                <div th:if="${cart == null or cart.count == 0}" class="empty-cart-state">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <p>No services selected yet.</p>
+                </div>
+
+                <div th:if="${cart != null and cart.count > 0}">
+                    <div th:each="item : ${cart.items}" class="service-item-row">
+                        <div class="service-item-info">
+                            <span class="service-name" th:text="${item.name}">Premium Wash</span>
+                            <span class="service-price" th:text="'€' + ${#numbers.formatDecimal(item.basePrice, 1, 2)}">€25.00</span>
+                        </div>
+
+                        <form th:action="@{/cart/remove/{id}(id=${item.id})}" method="post" style="margin:0;">
+                            <input type="hidden" name="redirect" value="/bookings">
+                            <button type="submit" class="btn-remove-item" title="Remove">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-summary" th:if="${cart != null and cart.count > 0}">
+                <span>Total Estimate:</span>
+                <span class="total-amount" th:text="'€' + ${#numbers.formatDecimal(cart.total, 1, 2)}">€0.00</span>
+            </div>
+
+            <button type="button" class="btn-select-services" onclick="window.location.href='/services'">
+                <i class="fa-solid fa-plus"></i>
+                <span th:text="${cart != null and cart.count > 0 ? 'Add More Services' : 'Browse Service Menu'}">Browse</span>
+            </button>
+        </div>
+
+        <form id="bookingForm" th:action="@{/bookings/create}" method="post">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="bookingDate"><i class="fa-solid fa-calendar-days"></i> Date & Time *</label>
+                    <input type="datetime-local" id="bookingDate" name="bookingDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicle"><i class="fa-solid fa-car"></i> Vehicle *</label>
+                    <select id="vehicle" name="vehicleId" required>
+                        <option value="" disabled selected>Select Car</option>
+                        <option value="sedan">Toyota Camry (Sedan)</option>
+                        <option value="suv">BMW X5 (SUV)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group" id="phoneGroup">
+                    <label for="phoneNumber"><i class="fa-solid fa-phone"></i> Phone Number *</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+49 151 1234567" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod"><i class="fa-solid fa-credit-card"></i> Payment *</label>
+                    <select id="paymentMethod" name="paymentMethod" required onchange="updateSubmitButton()">
+                        <option value="" disabled selected>Method</option>
+                        <option value="CASH">Cash on Arrival</option>
+                        <option value="CARD">Credit / Debit Card</option>
+                        <option value="PAYPAL">PayPal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <small><i class="fa-solid fa-lock security-icon"></i> Your contact details are secure and encrypted.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="notes"><i class="fa-solid fa-comment"></i> Special Instructions</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Gate code, specific scratches to look at, etc..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span id="btnText">Confirm Booking</span>
+                <i id="btnIcon" class="fa-solid fa-arrow-right submit-icon"></i>
+            </button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+</main>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+</body>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/js/public/booking.js}"></script>
+</html>

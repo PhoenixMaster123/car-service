@@ -63,7 +63,7 @@
 .dropdown-content {
     display: block;
     position: absolute;
-    background-color: var(--nav-bg);
+    background-color: var(--inner-card-bg);
     min-width: 160px;
     box-shadow: var(--shadow);
     border-radius: 10px;
@@ -73,7 +73,9 @@
     visibility: hidden;
     transform: translateY(10px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
 }
 
 .dropdown:hover .dropdown-content {
@@ -240,7 +242,9 @@ body.light .dropdown-content a:hover {
 }
 
 body.light .dropdown-content {
+    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.15);
 }
 
 /* Logout Button **/
