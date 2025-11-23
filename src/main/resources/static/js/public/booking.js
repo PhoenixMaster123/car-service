@@ -34,7 +34,9 @@ function updateSubmitButton() {
         submitBtnIcon.className = "fa-solid fa-credit-card submit-icon";
 
         // Change this URL to your actual payment controller endpoint
-        form.action = "/bookings/checkout-start";
+        form.action = "/bookings/checkout";
+        // Ensure we submit using GET so the controller's @GetMapping handles it
+        form.method = 'get';
     } else {
         // Scenario: Cash -> Create Booking & Go to Profile
         submitBtnText.textContent = "Confirm Booking";
@@ -42,5 +44,7 @@ function updateSubmitButton() {
 
         // Change this URL to your standard creation endpoint
         form.action = "/bookings/create";
+        // Use POST for creating a booking
+        form.method = 'post';
     }
 }

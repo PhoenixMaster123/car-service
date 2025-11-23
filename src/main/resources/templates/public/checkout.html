@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Secure Checkout - Haris Car Care</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/public/checkout.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{/bookings}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{/bookings}" class="cta-button desktop-only">Book Now</a>
+
+    </div>
+</nav>
+
+<main class="checkout-wrapper">
+
+    <div class="checkout-header">
+        <h1><i class="fa-solid fa-lock"></i> Secure Checkout</h1>
+        <p>Complete your payment to finalize your booking.</p>
+    </div>
+
+    <div class="checkout-grid">
+
+        <div class="payment-section">
+            <div class="card-box">
+                <div class="card-header-row">
+                    <h3>Select Payment Method</h3>
+                    <div class="secure-badge">
+                        <i class="fa-solid fa-shield-halved"></i> Encrypted
+                    </div>
+                </div>
+
+                <form id="paymentForm" th:data-stripe-key="${stripePublicKey}">
+                    <div id="payment-element"></div>
+
+                    <div id="payment-message" class="hidden"></div>
+
+                    <button type="submit" class="btn-pay" id="payBtn">
+                        <span id="button-text">
+                            Pay €<span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}">0.00</span>
+                        </span>
+                        <div class="spinner" id="spinner" style="display:none;"></div>
+                    </button>
+
+                    <p class="terms-text">
+                        By clicking pay, you agree to our <a href="#">Terms of Service</a>.
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-card">
+                <h3><i class="fa-solid fa-receipt"></i> Order Summary</h3>
+
+                <div class="summary-items">
+                    <div th:if="${cart == null or cart.count == 0}" style="text-align: center; color: #888;">
+                        No items in cart.
+                    </div>
+
+                    <div th:each="item : ${cart.items}" class="summary-item">
+                        <div class="item-left">
+                            <span class="s-name" th:text="${item.name}">Service Name</span>
+                            <span class="s-desc">Service category</span>
+                        </div>
+                        <span class="s-price" th:text="'€' + ${#numbers.formatDecimal(item.basePrice, 1, 2)}">€0.00</span>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="cost-breakdown">
+                    <div class="cost-row">
+                        <span>Subtotal</span>
+                        <span th:text="'€' + ${#numbers.formatDecimal(cart.total, 1, 2)}">€0.00</span>
+                    </div>
+                    <div class="cost-row small">
+                        <span>Tax (Included)</span>
+                        <span>€0.00</span>
+                    </div>
+                    <div class="cost-row total">
+                        <span>Total Due</span>
+                        <span class="neon-text" th:text="'€' + ${#numbers.formatDecimal(cart.total, 1, 2)}">€0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div class="processing-overlay" id="processingOverlay">
+    <div class="spinner"></div>
+    <h3>Processing Payment...</h3>
+    <p>Please do not close this window.</p>
+</div>
+
+</body>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script th:src="@{/js/public/checkout.js}"></script>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+
+</html>

@@ -43,7 +43,6 @@ gemini:
     However, you are also a helpful assistant for the driver.
     You can answer questions about Weather, Traffic, and Locations using Google Search.
     Keep answers short, concise, and helpful for a driver on the road.
-            
 
 notification:
   email: ""
@@ -79,5 +78,9 @@ springdoc:
       email: "harisauto@gmail.com"
 
 
+# Service URLs
 payment-service:
   url: http://localhost:8081
+
+booking-service:
+  url: http://localhost:8082
