@@ -19,6 +19,8 @@ import springboot.bg.harisauto.event.UserRegisteredEvent;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
 import springboot.bg.harisauto.user.repository.UserRepository;
+import springboot.bg.harisauto.web.dto.AdminChangeEmailRequest;
+import springboot.bg.harisauto.web.dto.AdminChangePasswordRequest;
 import springboot.bg.harisauto.web.dto.ChangeProfileInfoRequest;
 import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
 import springboot.bg.harisauto.web.dto.RegisterNewUserRequest;
@@ -216,6 +218,52 @@ public class UserService implements UserDetailsService {
 
     return new AuthenticationMetaData(user.getId(), email,
         user.getPassword(), user.getRole(), true);
+  }
+
+  /**
+   * Changes the admin's email.
+   *
+   * @param user The admin user.
+   * @param request The request containing the new email.
+   */
+  @Transactional
+  public void changeAdminEmail(User user, AdminChangeEmailRequest request) {
+
+    if (userRepository.findByEmail(request.getNewEmail()).isPresent()
+        && !user.getEmail().equals(request.getNewEmail())) {
+      throw new UserEmailAlreadyExistsException("Email already in use: " + request.getNewEmail());
+    }
+
+    user.setEmail(request.getNewEmail());
+
+    log.info("Admin email updated: {}", request.getNewEmail());
+
+    userRepository.save(user);
+  }
+
+  /**
+   * Changes the admin's password.
+   *
+   * @param user The admin user.
+   * @param request The request containing the current and new passwords.
+   */
+  @Transactional
+  public void changeAdminPassword(User user, AdminChangePasswordRequest request) {
+
+    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("Invalid current password");
+    }
+
+    if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+      throw new UserPasswordDoesNotMatchException("New password cannot be the same "
+                                                 + "as the current password");
+    }
+
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+    log.info("Admin password updated: {}", user.getEmail());
+
+    userRepository.save(user);
   }
 
   /**

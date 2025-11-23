@@ -2,6 +2,7 @@ package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +15,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.service.service.CatalogService;
+import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.web.dto.AdminChangeEmailRequest;
+import springboot.bg.harisauto.web.dto.AdminChangePasswordRequest;
+import springboot.bg.harisauto.web.dto.CreateServiceRequest;
 import springboot.bg.harisauto.web.dto.RegisterNewUserRequest;
+import springboot.bg.harisauto.web.dto.UpdateServiceRequest;
 import springboot.bg.harisauto.web.dto.UpdateUserRequest;
 
 /**
@@ -27,16 +33,20 @@ import springboot.bg.harisauto.web.dto.UpdateUserRequest;
  *
  * @author Kristian Popov
  */
+@Slf4j
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
   private final UserService userService;
+  private final CatalogService catalogService;
 
+  /** Constructor. */
   @Autowired
-  public AdminController(UserService userService) {
+  public AdminController(UserService userService, CatalogService catalogService) {
     this.userService = userService;
+    this.catalogService = catalogService;
   }
 
   /**
@@ -82,13 +92,17 @@ public class AdminController {
    * @return The admin services page.
    */
   @GetMapping("/services")
-  public ModelAndView showServicePage(@AuthenticationPrincipal AuthenticationMetaData metaData,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size) {
+  public ModelAndView showServicePage(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
     ModelAndView modelAndView = new ModelAndView();
+
     modelAndView.setViewName("account/admin/admin-services");
+
     modelAndView.addObject("user", metaData.getUserId());
+    modelAndView.addObject("allServices", catalogService.findAll());
+    modelAndView.addObject("allCategories", catalogService.getAllCategories());
+    modelAndView.addObject("createServiceRequest", new CreateServiceRequest());
+    modelAndView.addObject("updateServiceRequest", new UpdateServiceRequest());
 
     return modelAndView;
   }
@@ -150,9 +164,13 @@ public class AdminController {
   @GetMapping("/settings")
   public ModelAndView showSettingsPage(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
+    User adminUser = userService.getById(metaData.getUserId());
+
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("account/admin/admin-settings");
-    modelAndView.addObject("user", metaData.getUserId());
+    modelAndView.addObject("user", adminUser);
+    modelAndView.addObject("adminChangeEmailRequest", new AdminChangeEmailRequest());
+    modelAndView.addObject("adminChangePasswordRequest", new AdminChangePasswordRequest());
 
     return modelAndView;
   }
@@ -222,5 +240,135 @@ public class AdminController {
   @ResponseStatus(HttpStatus.OK)
   public void deleteUser(@PathVariable("userId") UUID userId) {
     userService.deleteUserById(userId);
+  }
+
+  /**
+   * Changes the admin's email.
+   *
+   * @param metaData The authentication metadata.
+   * @param request The change email request.
+   * @param result The binding result.
+   * @return The settings page.
+   */
+  @PutMapping("/settings/email")
+  public ModelAndView changeAdminEmail(@AuthenticationPrincipal AuthenticationMetaData metaData,
+      @Valid AdminChangeEmailRequest request, BindingResult result) {
+
+    User adminUser = userService.getById(metaData.getUserId());
+
+    if (result.hasErrors()) {
+      ModelAndView modelAndView = new ModelAndView();
+      modelAndView.setViewName("account/admin/admin-settings");
+      modelAndView.addObject("user", adminUser);
+      modelAndView.addObject("adminChangeEmailRequest", request);
+      modelAndView.addObject("adminChangePasswordRequest", new AdminChangePasswordRequest());
+
+      return modelAndView;
+    }
+
+    userService.changeAdminEmail(adminUser, request);
+
+    return new ModelAndView("redirect:/admin/settings");
+  }
+
+  /**
+   * Changes the admin's password.
+   *
+   * @param metaData The authentication metadata.
+   * @param request The change password request.
+   * @param result The binding result.
+   * @return The settings page.
+   */
+  @PutMapping("/settings/password")
+  public ModelAndView changeAdminPassword(@AuthenticationPrincipal AuthenticationMetaData metaData,
+      @Valid AdminChangePasswordRequest request, BindingResult result) {
+
+    User adminUser = userService.getById(metaData.getUserId());
+
+    if (result.hasErrors()) {
+      ModelAndView modelAndView = new ModelAndView();
+      modelAndView.setViewName("account/admin/admin-settings");
+      modelAndView.addObject("user", adminUser);
+      modelAndView.addObject("adminChangeEmailRequest", new AdminChangeEmailRequest());
+      modelAndView.addObject("adminChangePasswordRequest", request);
+
+      return modelAndView;
+    }
+
+    userService.changeAdminPassword(adminUser, request);
+
+    return new ModelAndView("redirect:/admin/settings");
+  }
+
+  /**
+   * Creates a new service.
+   *
+   * @param metaData The authentication metadata.
+   * @param request The create service request.
+   * @param result The binding result.
+   * @return The services page.
+   */
+  @PostMapping("/new-service")
+  public ModelAndView createService(@AuthenticationPrincipal AuthenticationMetaData metaData,
+      @Valid CreateServiceRequest request, BindingResult result) {
+
+    ModelAndView modelAndView = new ModelAndView();
+
+    if (result.hasErrors()) {
+      modelAndView.setViewName("account/admin/admin-services");
+      modelAndView.addObject("user", metaData.getUserId());
+      modelAndView.addObject("allServices", catalogService.findAll());
+      modelAndView.addObject("allCategories", catalogService.getAllCategories());
+      modelAndView.addObject("createServiceRequest", request);
+      modelAndView.addObject("updateServiceRequest", new UpdateServiceRequest());
+
+      return modelAndView;
+    }
+
+    catalogService.createService(request);
+
+    return new ModelAndView("redirect:/admin/services");
+
+  }
+
+  /**
+   * Updates an existing service.
+   *
+   * @param metaData The authentication metadata.
+   * @param request The update service request.
+   * @param result The binding result.
+   * @return The services page.
+   */
+  @PutMapping("/update-service")
+  public ModelAndView updateService(@AuthenticationPrincipal AuthenticationMetaData metaData,
+      @Valid UpdateServiceRequest request, BindingResult result) {
+
+    ModelAndView modelAndView = new ModelAndView();
+
+    if (result.hasErrors()) {
+      modelAndView.setViewName("account/admin/admin-services");
+      modelAndView.addObject("user", metaData.getUserId());
+      modelAndView.addObject("allServices", catalogService.findAll());
+      modelAndView.addObject("allCategories", catalogService.getAllCategories());
+      modelAndView.addObject("createServiceRequest", new CreateServiceRequest());
+      modelAndView.addObject("updateServiceRequest", request);
+
+      return modelAndView;
+    }
+
+    catalogService.updateService(request);
+
+    return new ModelAndView("redirect:/admin/services");
+  }
+
+  /**
+   * Deletes a service by id.
+   *
+   * @param serviceId The service id.
+   */
+  @DeleteMapping("/delete-service/{serviceId}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteService(@PathVariable("serviceId") UUID serviceId) {
+    catalogService.deleteService(serviceId);
   }
 }

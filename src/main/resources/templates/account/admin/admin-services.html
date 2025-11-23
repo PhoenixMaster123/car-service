@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Admin Services - Haris Car Care</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +17,8 @@
     <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
     <link th:href="@{/css/account/admin/admin-services.css}" rel="stylesheet">
 </head>
-
 <body>
+
 <div class="dashboard">
     <aside class="sidebar">
         <a href="/" class="sidebar-brand">Haris Car Care</a>
@@ -39,45 +41,275 @@
             </div>
         </div>
     </aside>
-<!--    <main class="dashboard-content">-->
-<!--        <div class="content-header">-->
-<!--            <h1>Manage Services</h1>-->
-<!--            <button class="add-btn"><i class="fa-solid fa-plus"></i> Add New Service</button>-->
-<!--        </div>-->
 
-<!--        <div class="content-table-container">-->
-<!--            <table class="content-table">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th>Name</th>-->
-<!--                    <th>Category</th>-->
-<!--                    <th>Description</th>-->
-<!--                    <th>Price (€)</th>-->
-<!--                    <th>Actions</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <tr th:each="service : ${T(com.example.carservice.service.model.ServiceType).values()}">-->
-<!--                    <td data-label="Name" th:text="${service.displayName}">Standard Wash</td>-->
-<!--                    <td data-label="Category" th:text="${service.category}">Washing</td>-->
+    <main class="dashboard-content">
+        <div class="page-header">
+            <h1>Service Management</h1>
+            <button class="btn-add-service" onclick="openAddServiceModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Service</span>
+            </button>
+        </div>
 
-<!--                    <td data-label="Description" th:text="${service.description}">Exterior wash, interior vacuum, dash wipe.</td>-->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fa-solid fa-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
 
-<!--                    <td data-label="Price (€)" th:text="${#numbers.formatDecimal(service.price, 1, 2)}">20.00</td>-->
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
 
-<!--                    <td data-label="Actions">-->
-<!--                        <div class="action-buttons">-->
-<!--                            <button class="action-btn edit-btn" aria-label="Edit"><i class="fa-solid fa-pencil"></i></button>-->
-<!--                            <button class="action-btn delete-btn" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>-->
-<!--                        </div>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
-<!--    </main>-->
-<!--</div>-->
+        <div class="services-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <label for="serviceSearch"></label><input type="text" id="serviceSearch" placeholder="Search services by name, category, or description..." onkeyup="filterServices()">
+            </div>
+        </div>
+
+        <div class="services-table-container">
+            <table class="services-table" id="servicesTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Price (€)</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="service : ${allServices}" th:data-service-id="${service.id}">
+                    <td>
+                        <div class="service-name-cell">
+                            <span th:text="${service.name}">Service Name</span>
+                        </div>
+                    </td>
+                    <td th:text="${service.category.displayName}">Category</td>
+                    <td>
+                        <div class="service-description-cell" th:text="${service.description}">Service description</div>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(service.basePrice, 1, 2)}">0.00</td>
+                    <td th:text="${service.estimatedDurationInMinutes + ' min'}">0 min</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view"
+                                    th:data-id="${service.id}"
+                                    th:data-name="${service.name}"
+                                    th:data-description="${service.description}"
+                                    th:data-price="${service.basePrice}"
+                                    th:data-duration="${service.estimatedDurationInMinutes}"
+                                    th:data-category="${service.category.displayName}"
+                                    th:data-category-id="${service.category.id}"
+                                    onclick="openViewServiceModal(this)"
+                                    aria-label="View Service">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+
+                            <button class="btn-action btn-edit"
+                                    th:data-id="${service.id}"
+                                    th:data-name="${service.name}"
+                                    th:data-description="${service.description}"
+                                    th:data-price="${service.basePrice}"
+                                    th:data-duration="${service.estimatedDurationInMinutes}"
+                                    th:data-category-id="${service.category.id}"
+                                    onclick="openEditServiceModal(this)"
+                                    aria-label="Edit Service">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+
+                            <button class="btn-action btn-delete"
+                                    th:data-id="${service.id}"
+                                    th:data-name="${service.name}"
+                                    onclick="openDeleteServiceModal(this)"
+                                    aria-label="Delete Service">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fa-solid fa-car-side"></i>
+                <p>No services found matching your search.</p>
+            </div>
+        </div>
+    </main>
 </div>
+
+<!-- View Service Modal -->
+<div class="modal-overlay" id="viewServiceModalOverlay" onclick="closeViewServiceModal()">
+    <div class="modal" id="viewServiceModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-eye"></i>
+                <h2>Service Details</h2>
+            </div>
+            <button class="modal-close" onclick="closeViewServiceModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="service-details-view">
+                <div class="service-header">
+                    <h3 id="viewServiceName">Service Name</h3>
+                    <span class="category-badge" id="viewServiceCategory">Category</span>
+                </div>
+                <div class="service-details-grid">
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-file-text"></i> Description</label>
+                        <p id="viewServiceDescription">Service description</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-euro-sign"></i> Price</label>
+                        <p id="viewServicePrice">€0.00</p>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fa-solid fa-clock"></i> Duration</label>
+                        <p id="viewServiceDuration">0 min</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeViewServiceModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Service Modal -->
+<div class="modal-overlay" id="editServiceModalOverlay" onclick="closeEditServiceModal()">
+    <div class="modal" id="editServiceModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-pencil"></i>
+                <h2>Edit Service</h2>
+            </div>
+            <button class="modal-close" onclick="closeEditServiceModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="editServiceForm" th:action="@{/admin/update-service}" th:method="PUT" th:object="${updateServiceRequest}">
+            <div class="modal-body">
+                <input type="hidden" id="editServiceId" name="id" th:field="*{id}">
+                <div class="form-group">
+                    <label for="editServiceName">Service Name <span class="required">*</span></label>
+                    <input type="text" id="editServiceName" name="name" required th:field="*{name}">
+                </div>
+                <div class="form-group">
+                    <label for="editServiceDescription">Description <span class="required">*</span></label>
+                    <textarea id="editServiceDescription" name="description" required th:field="*{description}" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editServicePrice">Base Price (€) <span class="required">*</span></label>
+                    <input type="number" id="editServicePrice" name="basePrice" step="0.01" min="0.01" required th:field="*{basePrice}">
+                </div>
+                <div class="form-group">
+                    <label for="editServiceDuration">Estimated Duration (minutes) <span class="required">*</span></label>
+                    <input type="number" id="editServiceDuration" name="estimatedDurationInMinutes" min="1" required th:field="*{estimatedDurationInMinutes}">
+                </div>
+                <div class="form-group">
+                    <label for="editServiceCategory">Category <span class="required">*</span></label>
+                    <select id="editServiceCategory" name="categoryId" required th:field="*{categoryId}">
+                        <option value="">Select Category</option>
+                        <option th:each="category : ${allCategories}"
+                                th:value="${category.id}"
+                                th:text="${category.displayName}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditServiceModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Service Modal -->
+<div class="modal-overlay" id="deleteServiceModalOverlay" onclick="closeDeleteServiceModal()">
+    <div class="modal modal-small" id="deleteServiceModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-trash"></i>
+                <h2>Delete Service</h2>
+            </div>
+            <button class="modal-close" onclick="closeDeleteServiceModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="delete-confirmation">
+                <div class="delete-icon">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                </div>
+                <p>Are you sure you want to delete the service <strong id="deleteServiceName">Service Name</strong>?</p>
+                <p class="delete-warning">This action cannot be undone.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteServiceModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" onclick="confirmDeleteService()">Delete Service</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Service Modal -->
+<div class="modal-overlay" id="addServiceModalOverlay" onclick="closeAddServiceModal()">
+    <div class="modal" id="addServiceModal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fa-solid fa-plus"></i>
+                <h2>Add New Service</h2>
+            </div>
+            <button class="modal-close" onclick="closeAddServiceModal()" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="addServiceForm" th:action="@{/admin/new-service}" th:method="POST" th:object="${createServiceRequest}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="addServiceName">Service Name <span class="required">*</span></label>
+                    <input type="text" id="addServiceName" name="name" required th:field="*{name}">
+                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addServiceDescription">Description <span class="required">*</span></label>
+                    <textarea id="addServiceDescription" name="description" required th:field="*{description}" rows="4"></textarea>
+                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addServicePrice">Base Price (€) <span class="required">*</span></label>
+                    <input type="number" id="addServicePrice" name="basePrice" step="0.01" min="0.01" required th:field="*{basePrice}">
+                    <span th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addServiceDuration">Estimated Duration (minutes) <span class="required">*</span></label>
+                    <input type="number" id="addServiceDuration" name="estimatedDurationInMinutes" min="1" required th:field="*{estimatedDurationInMinutes}">
+                    <span th:if="${#fields.hasErrors('estimatedDurationInMinutes')}" th:errors="*{estimatedDurationInMinutes}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addServiceCategory">Category <span class="required">*</span></label>
+                    <select id="addServiceCategory" name="categoryId" required th:field="*{categoryId}">
+                        <option value="">Select Category</option>
+                        <option th:each="category : ${allCategories}"
+                                th:value="${category.id}"
+                                th:text="${category.displayName}"></option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddServiceModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Service</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
     <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
     <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
@@ -94,7 +326,7 @@
         </div>
     </div>
     <form class="chat-footer" id="chat-form">
-        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
         <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 </div>
@@ -102,7 +334,7 @@
 <script th:src="@{/js/toggleSwitch.js}"></script>
 <script th:src="@{/js/navbarMobileView.js}"></script>
 <script th:src="@{/js/chatbot.js}"></script>
-<script th:src="@{/js/admin-users.js}"></script>
+<script th:src="@{/js/admin-services.js}"></script>
 
 </body>
 </html>
