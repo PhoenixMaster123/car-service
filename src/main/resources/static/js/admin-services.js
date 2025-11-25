@@ -72,10 +72,12 @@ let currentDeleteServiceName = null;
  */
 function openDeleteServiceModal(button) {
     const data = button.dataset;
+    const serviceId = data.id;
 
-    currentDeleteServiceId = data.id;
-    currentDeleteServiceName = data.name;
     document.getElementById('deleteServiceName').textContent = data.name;
+
+    const form = document.getElementById('deleteServiceForm');
+    form.action = '/admin/delete-service/' + serviceId;
 
     const overlay = document.getElementById('deleteServiceModalOverlay');
     overlay.classList.add('active');

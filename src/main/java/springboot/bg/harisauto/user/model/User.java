@@ -1,5 +1,6 @@
 package springboot.bg.harisauto.user.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -69,6 +70,6 @@ public class User {
   @Column(nullable = false)
   private LocalDateTime updatedOn;
 
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Vehicle> vehicles;
 }

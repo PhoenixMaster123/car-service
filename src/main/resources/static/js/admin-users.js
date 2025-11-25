@@ -91,11 +91,12 @@ let currentDeleteUserName = null;
  * @param {HTMLButtonElement} button - The button element that was clicked.
  */
 function openDeleteUserModal(button) {
-    const data = button.dataset;
+    const userId = button.dataset.id;
+    document.getElementById('deleteUserName').textContent = button.dataset.name;
 
-    currentDeleteUserId = data.id;
-    currentDeleteUserName = data.name;
-    document.getElementById('deleteUserName').textContent = data.name;
+    const form = document.getElementById('deleteUserForm');
+
+    form.action = '/admin/delete-user/' + userId;
 
     const overlay = document.getElementById('deleteUserModalOverlay');
     overlay.classList.add('active');
@@ -111,42 +112,6 @@ function closeDeleteUserModal() {
     document.body.style.overflow = '';
     currentDeleteUserId = null;
     currentDeleteUserName = null;
-}
-
-/**
- * Deletes the user from the admin users table.
- */
-function confirmDeleteUser() {
-
-    const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
-    const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
-
-    const csrfToken = csrfTokenTag ? csrfTokenTag.getAttribute('content') : '';
-    const csrfHeader = csrfHeaderTag ? csrfHeaderTag.getAttribute('content') : 'X-CSRF-TOKEN';
-
-    if (!currentDeleteUserId) return;
-
-    fetch('/admin/delete-user/' + currentDeleteUserId, {
-        method: 'DELETE',
-        headers: {
-            [csrfHeader]: csrfToken
-        }
-    })
-        .then(response => {
-            if (response.ok) {
-                const rowToRemove = document.querySelector(`tr[data-user-id="${currentDeleteUserId}"]`);
-                if (rowToRemove) {
-                    rowToRemove.remove();
-                }
-                closeDeleteUserModal();
-            } else {
-                alert('Error deleting user. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error deleting user. Please try again.');
-        });
 }
 
 /**

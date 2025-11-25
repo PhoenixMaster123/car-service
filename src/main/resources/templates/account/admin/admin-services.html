@@ -229,7 +229,6 @@
     </div>
 </div>
 
-<!-- Delete Service Modal -->
 <div class="modal-overlay" id="deleteServiceModalOverlay" onclick="closeDeleteServiceModal()">
     <div class="modal modal-small" id="deleteServiceModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -250,10 +249,12 @@
                 <p class="delete-warning">This action cannot be undone.</p>
             </div>
         </div>
-        <div class="modal-footer">
+
+        <form id="deleteServiceForm" th:method="DELETE" th:action="@{/admin/delete-service/}" class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeDeleteServiceModal()">Cancel</button>
-            <button type="button" class="btn btn-danger" onclick="confirmDeleteService()">Delete Service</button>
-        </div>
+            <button type="submit" class="btn btn-danger">Delete Service</button>
+        </form>
+
     </div>
 </div>
 
