@@ -25,14 +25,26 @@ function openEditModal(button) {
 }
 
 // --- DELETE MODAL LOGIC ---
-function openDeleteModal(id, vehicleName) {
+
+function openDeleteModal(button) {
+    // 1. Get data from the button's data attributes
+    const id = button.getAttribute('data-id');
+    const vehicleName = button.getAttribute('data-name');
+
+    // 2. Set the text in the modal
     const deleteNameSpan = document.getElementById('delete-vehicle-name');
-    const deleteForm = document.getElementById('deleteVehicleForm');
+    if (deleteNameSpan) {
+        deleteNameSpan.textContent = vehicleName;
+    }
 
-    deleteNameSpan.textContent = vehicleName;
+    // 3. Set the hidden input ID (This matches the HTML I gave you in the previous step)
+    // We do NOT change the form.action anymore, we just change the hidden input value
+    const deleteIdInput = document.getElementById('delete-vehicle-id');
+    if (deleteIdInput) {
+        deleteIdInput.value = id;
+    }
 
-    deleteForm.action = '/vehicles/delete/' + id;
-
+    // 4. Show Modal
     modalOverlay.classList.add('active');
     deleteModal.classList.add('active');
 }
@@ -40,11 +52,14 @@ function openDeleteModal(id, vehicleName) {
 // --- CLOSE LOGIC ---
 function closeModal() {
     modalOverlay.classList.remove('active');
-    editModal.classList.remove('active');
-    deleteModal.classList.remove('active');
+    if (editModal) editModal.classList.remove('active');
+    if (deleteModal) deleteModal.classList.remove('active');
 }
+
+if (modalOverlay) {
     modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) {
-    closeModal();
+        if (e.target === modalOverlay) {
+            closeModal();
+        }
+    });
 }
-});

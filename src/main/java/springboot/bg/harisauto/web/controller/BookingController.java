@@ -1,6 +1,7 @@
 package springboot.bg.harisauto.web.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import springboot.bg.harisauto.booking.dto.BookingRequest;
 import springboot.bg.harisauto.cart.ShoppingCart;
+import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.user.model.User;
+import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.service.VehicleService;
 
 /**
  * BookingController.java - Controller for handling booking-related web requests.
@@ -19,12 +24,18 @@ import springboot.bg.harisauto.cart.ShoppingCart;
 @RequestMapping("/bookings")
 public class BookingController {
 
+  private final UserService userService;
+  private final VehicleService vehicleService;
   private final ShoppingCart shoppingCart;
 
   @Value("${stripe.public.key}")
   private String stripePublicKey;
 
-  public BookingController(ShoppingCart shoppingCart) {
+  /** Constructor. */
+  public BookingController(UserService userService,
+      VehicleService vehicleService, ShoppingCart shoppingCart) {
+    this.userService = userService;
+    this.vehicleService = vehicleService;
     this.shoppingCart = shoppingCart;
   }
 
@@ -34,12 +45,15 @@ public class BookingController {
    * @return The booking page.
    */
   @GetMapping
-  public ModelAndView showBookingPage() {
+  public ModelAndView showBookingPage(@AuthenticationPrincipal AuthenticationMetaData metaData) {
+
+    User user = userService.getById(metaData.getUserId());
 
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("/public/booking");
     modelAndView.addObject("cart", shoppingCart);
     modelAndView.addObject("bookingRequest", new BookingRequest());
+    modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
 
     return modelAndView;
   }
