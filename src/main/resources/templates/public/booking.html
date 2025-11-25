@@ -124,7 +124,7 @@
             </button>
         </div>
 
-        <form id="bookingForm" th:action="@{/bookings/create}" method="post">
+        <form id="bookingForm" th:action="@{/bookings/create}" th:method="POST">
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
@@ -136,8 +136,11 @@
                     <label for="vehicle"><i class="fa-solid fa-car"></i> Vehicle *</label>
                     <select id="vehicle" name="vehicleId" required>
                         <option value="" disabled selected>Select Car</option>
-                        <option value="sedan">Toyota Camry (Sedan)</option>
-                        <option value="suv">BMW X5 (SUV)</option>
+
+                        <option th:each="vehicle : ${vehicles}"
+                                th:value="${vehicle.id}"
+                                th:text="|${vehicle.make} ${vehicle.model} (${vehicle.licensePlate})|">
+                        </option>
                     </select>
                 </div>
             </div>

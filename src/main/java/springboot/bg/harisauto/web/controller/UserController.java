@@ -1,20 +1,26 @@
 package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.service.VehicleService;
 import springboot.bg.harisauto.web.dto.ChangeProfileInfoRequest;
 import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
+import springboot.bg.harisauto.web.dto.CreateVehicleRequest;
 import springboot.bg.harisauto.web.mapper.DtoMapper;
 
 /**
@@ -27,10 +33,12 @@ import springboot.bg.harisauto.web.mapper.DtoMapper;
 public class UserController {
 
   private final UserService userService;
+  private final VehicleService vehicleService;
 
   @Autowired
-  public UserController(UserService userService) {
+  public UserController(UserService userService, VehicleService vehicleService) {
     this.userService = userService;
+    this.vehicleService = vehicleService;
   }
 
   /**
@@ -64,6 +72,8 @@ public class UserController {
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("/account/vehicles");
     modelAndView.addObject("user", user);
+    modelAndView.addObject("createVehicleRequest", new CreateVehicleRequest());
+    modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
 
     return modelAndView;
   }
@@ -121,6 +131,50 @@ public class UserController {
     modelAndView.addObject("changePasswordRequest", new ChangeUserPasswordRequest());
 
     return modelAndView;
+  }
+
+  /**
+   * Creates a new vehicle for the authenticated user.
+   *
+   * @param metaData user authentication metadata
+   * @param request vehicle creation request
+   * @param bindingResult binding result
+   * @return redirect to vehicles page
+   */
+  @PostMapping("/new-vehicle")
+  public ModelAndView createVehicle(@AuthenticationPrincipal AuthenticationMetaData metaData,
+      @Valid CreateVehicleRequest request, BindingResult bindingResult) {
+
+    User user = userService.getById(metaData.getUserId());
+
+    if (bindingResult.hasErrors()) {
+
+      ModelAndView modelAndView = new ModelAndView("account/vehicles");
+      modelAndView.addObject("user", user);
+      modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
+      return modelAndView;
+    }
+
+    vehicleService.createVehicle(user, request);
+
+    return new ModelAndView("redirect:/users/vehicles");
+  }
+
+  /**
+   * Deletes a vehicle by id.
+   *
+   * @param id vehicle id
+   * @param metaData user authentication metadata
+   * @return redirect to vehicles page
+   */
+  @DeleteMapping("/vehicle")
+  public String deleteVehicle(@RequestParam("id") UUID id,
+      @AuthenticationPrincipal AuthenticationMetaData metaData) {
+    User user = userService.getById(metaData.getUserId());
+
+    vehicleService.deleteVehicle(user, id);
+
+    return "redirect:/users/vehicles";
   }
 
   /**

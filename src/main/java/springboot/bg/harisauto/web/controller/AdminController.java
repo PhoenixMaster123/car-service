@@ -237,9 +237,11 @@ public class AdminController {
    * @param userId The user id.
    */
   @DeleteMapping("/delete-user/{userId}")
-  @ResponseStatus(HttpStatus.OK)
-  public void deleteUser(@PathVariable("userId") UUID userId) {
+  public ModelAndView deleteUser(@PathVariable("userId") UUID userId) {
+
     userService.deleteUserById(userId);
+
+    return new ModelAndView("redirect:/admin/users");
   }
 
   /**
@@ -367,8 +369,10 @@ public class AdminController {
    * @param serviceId The service id.
    */
   @DeleteMapping("/delete-service/{serviceId}")
-  @ResponseStatus(HttpStatus.OK)
-  public void deleteService(@PathVariable("serviceId") UUID serviceId) {
+  public ModelAndView deleteService(@PathVariable("serviceId") UUID serviceId) {
+
     catalogService.deleteService(serviceId);
+
+    return new ModelAndView("redirect:/admin/services");
   }
 }

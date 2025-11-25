@@ -15,6 +15,35 @@
     <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
     <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
     <link th:href="@{/css/account/vehicles.css}" rel="stylesheet">
+
+    <style>
+        /* Inline style for error visibility */
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f87171;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-text {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px dashed var(--border-color);
+        }
+    </style>
 </head>
 <body>
 
@@ -50,104 +79,65 @@
             <p>Manage your registered vehicles for easier booking.</p>
         </header>
 
-        <div class="vehicle-grid">
+        <div th:if="${errorMessage}" class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${errorMessage}">Error message</span>
+        </div>
 
-            <div class="vehicle-card">
+        <div th:if="${#fields.hasErrors('${createVehicleRequest.*}')}" class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>Please correct the errors in the form below.</span>
+        </div>
+
+        <div class="vehicle-grid" th:unless="${#lists.isEmpty(vehicles)}">
+            <div th:each="vehicle : ${vehicles}" class="vehicle-card">
                 <div class="vehicle-header">
                     <i class="material-icons vehicle-icon">directions_car</i>
                     <div class="vehicle-title">
-                        <h3>Toyota Camry</h3>
-                        <p>2020</p>
+                        <h3 th:text="${vehicle.make}">Toyota Camry</h3>
+                        <p th:text="${vehicle.manufacturingYear}">2020</p>
                     </div>
                 </div>
                 <div class="vehicle-details">
                     <div class="detail-row">
                         <span class="detail-label">License Plate</span>
-                        <span class="detail-value">ABC-123</span>
+                        <span class="detail-value" th:text="${vehicle.licensePlate}">ABC-123</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Color</span>
-                        <span class="detail-value">Silver</span>
+                        <span class="detail-value" th:text="${vehicle.color}">Silver</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">VIN</span>
-                        <span class="detail-value">1HGCM82...</span>
+                        <span class="detail-value" th:text="${vehicle.vin}">1HGCM82...</span>
                     </div>
                 </div>
                 <div class="vehicle-actions">
                     <button type="button" class="btn-sm btn-edit"
-                            data-id="1"
-                            data-make="Toyota"
-                            data-model="Camry"
-                            data-year="2020"
-                            data-license="ABC-123"
-                            data-vin="1HGCM82..."
-                            data-color="Silver"
+                            th:data-id="${vehicle.id}"
+                            th:data-make="${vehicle.make}"
+                            th:data-model="${vehicle.model}"
+                            th:data-year="${vehicle.manufacturingYear}"
+                            th:data-license="${vehicle.licensePlate}"
+                            th:data-vin="${vehicle.vin}"
+                            th:data-color="${vehicle.color}"
                             onclick="openEditModal(this)">
                         <i class="material-icons">edit</i> Edit
                     </button>
                     <button type="button" class="btn-sm btn-delete"
-                            onclick="openDeleteModal(1, 'Toyota Camry')">
+                            th:data-id="${vehicle.id}"
+                            th:data-name="${vehicle.make} + ' ' + ${vehicle.model}"
+                            onclick="openDeleteModal(this)">
                         <i class="material-icons" style="font-size: 16px;">delete</i> Remove
                     </button>
                 </div>
             </div>
+        </div>
 
-            <div class="vehicle-card">
-                <div class="vehicle-header">
-                    <i class="material-icons vehicle-icon">directions_car</i>
-                    <div class="vehicle-title">
-                        <h3>Ford Mustang</h3>
-                        <p>2022</p>
-                    </div>
-                </div>
-                <div class="vehicle-details">
-                    <div class="detail-row">
-                        <span class="detail-label">License Plate</span>
-                        <span class="detail-value">XYZ-999</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Color</span>
-                        <span class="detail-value">Red</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">VIN</span>
-                        <span class="detail-value">1FA6P8...</span>
-                    </div>
-                </div>
-                <div class="vehicle-actions">
-                    <a href="#" class="btn-sm btn-edit"><i class="material-icons" style="font-size: 16px;">edit</i> Edit</a>
-                    <a href="#" class="btn-sm btn-delete"><i class="material-icons" style="font-size: 16px;">delete</i> Remove</a>
-                </div>
-            </div>
-
-            <div class="vehicle-card">
-                <div class="vehicle-header">
-                    <i class="material-icons vehicle-icon">directions_car</i>
-                    <div class="vehicle-title">
-                        <h3>Tesla Model 3</h3>
-                        <p>2023</p>
-                    </div>
-                </div>
-                <div class="vehicle-details">
-                    <div class="detail-row">
-                        <span class="detail-label">License Plate</span>
-                        <span class="detail-value">EV-001</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Color</span>
-                        <span class="detail-value">White</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">VIN</span>
-                        <span class="detail-value">5YJ3E1...</span>
-                    </div>
-                </div>
-                <div class="vehicle-actions">
-                    <a href="#" class="btn-sm btn-edit"><i class="material-icons" style="font-size: 16px;">edit</i> Edit</a>
-                    <a href="#" class="btn-sm btn-delete"><i class="material-icons" style="font-size: 16px;">delete</i> Remove</a>
-                </div>
-            </div>
+        <div th:if="${#lists.isEmpty(vehicles)}" class="empty-state">
+            <i class="material-icons" style="font-size: 48px; color: var(--text-color-muted); margin-bottom: 1rem;">no_crash</i>
+            <h3 style="margin-bottom: 0.5rem; color: var(--text-color);">No vehicles in your garage</h3>
+            <p style="color: var(--text-color-muted);">Add your first vehicle below to get started with bookings.</p>
         </div>
 
         <div class="add-vehicle-card">
@@ -156,36 +146,41 @@
                 <h2>Add New Vehicle</h2>
             </div>
 
-            <form class="vehicle-form" action="#" method="post">
+            <form class="vehicle-form" th:action="@{/users/new-vehicle}" th:method="POST" th:object="${createVehicleRequest}">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="make" class="required">Make</label>
-                        <input type="text" id="make" name="make" placeholder="e.g. BMW" required />
+                        <input type="text" id="make" th:field="*{make}" placeholder="e.g. BMW" required />
+                        <span class="error-text" th:if="${#fields.hasErrors('make')}" th:errors="*{make}"></span>
                     </div>
                     <div class="form-group">
                         <label for="model" class="required">Model</label>
-                        <input type="text" id="model" name="model" placeholder="e.g. X5" required />
+                        <input type="text" id="model" th:field="*{model}" placeholder="e.g. X5" required />
+                        <span class="error-text" th:if="${#fields.hasErrors('model')}" th:errors="*{model}"></span>
                     </div>
                     <div class="form-group">
                         <label for="year" class="required">Year</label>
-                        <input type="number" id="year" name="year" placeholder="e.g. 2023" required min="1900" />
+                        <input type="number" id="year" th:field="*{manufacturingYear}" placeholder="e.g. 2023" required min="1900" />
+                        <span class="error-text" th:if="${#fields.hasErrors('manufacturingYear')}" th:errors="*{manufacturingYear}"></span>
                     </div>
                     <div class="form-group">
                         <label for="licensePlate" class="required">License Plate</label>
-                        <input type="text" id="licensePlate" name="licensePlate" placeholder="e.g. AB-123-CD" required />
+                        <input type="text" id="licensePlate" th:field="*{licensePlate}" placeholder="e.g. AB-123-CD" required />
+                        <span class="error-text" th:if="${#fields.hasErrors('licensePlate')}" th:errors="*{licensePlate}"></span>
                     </div>
                     <div class="form-group">
-                        <label for="vin">VIN (Optional)</label>
-                        <input type="text" id="vin" name="vin" placeholder="Vehicle Identification Number"/>
+                        <label for="vin" class="required">VIN</label>
+                        <input type="text" id="vin" th:field="*{vin}" placeholder="Vehicle Identification Number" required />
+                        <span class="error-text" th:if="${#fields.hasErrors('vin')}" th:errors="*{vin}"></span>
                     </div>
                     <div class="form-group">
                         <label for="color">Color (Optional)</label>
-                        <input type="text" id="color" name="color" placeholder="e.g. Black"/>
+                        <input type="text" id="color" th:field="*{color}" placeholder="e.g. Black" />
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn-primary" onclick="alert('This is a static demo. In a real app, this would save the vehicle.')">
+                    <button type="submit" class="btn-primary">
                         <i class="material-icons">add</i> Add Vehicle
                     </button>
                 </div>
@@ -247,7 +242,9 @@
             <p>Are you sure you want to remove <strong id="delete-vehicle-name">this vehicle</strong>?</p>
             <p style="color: var(--text-color-muted); font-size: 0.9rem; margin-top: 0.5rem;">This action cannot be undone.</p>
 
-            <form id="deleteVehicleForm" method="post">
+            <form id="deleteVehicleForm" th:action="@{/users/vehicle}" th:method="DELETE">
+                <input type="hidden" name="id" id="delete-vehicle-id">
+
                 <div class="form-actions" style="margin-top: 1.5rem; border-top: none; padding-top: 0; justify-content: flex-end;">
                     <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
                     <button type="submit" class="btn-danger">
