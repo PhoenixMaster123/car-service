@@ -242,6 +242,65 @@ body:not(.light) .standalone-theme-toggle i.fa-moon {
     color: #888;
 }
 
+/* Social Login Separator  for Google and Github */
+.social-login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: #666;
+}
+.social-login-separator::before,
+.social-login-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+.social-login-separator span {
+    padding: 0 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Social Buttons */
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.social-btn.google {
+    background-color: #4285F4;
+    color: #ffffff;
+    border: 1px solid #4285F4;
+}
+
+.social-btn.github {
+    background-color: #24292e;
+    color: #fff;
+    border: 1px solid #24292e;
+}
+
 /*
  * ========================================
  *               LIGHT THEME

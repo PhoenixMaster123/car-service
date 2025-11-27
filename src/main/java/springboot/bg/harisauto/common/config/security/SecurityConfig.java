@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,8 @@ public class SecurityConfig {
   /** Security filter chain for all requests. **/
   @Bean
   @Order(4)
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOAuth2UserService oauth2Service,
+      CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
     http.authorizeHttpRequests(matcher -> matcher
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         .requestMatchers("/register", "/").permitAll()
@@ -34,6 +36,7 @@ public class SecurityConfig {
             "/careers",
             "/checkout")
             .permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
     )
         .formLogin(form -> form
@@ -43,6 +46,16 @@ public class SecurityConfig {
             .failureUrl("/login?error")
             .permitAll()
     )
+        .oauth2Login(oauth2 -> oauth2
+            .loginPage("/login")
+            .defaultSuccessUrl("/home", true)
+            .failureUrl("/login?error")
+            .userInfoEndpoint(userInfo -> userInfo.userService(oauth2Service))
+            .defaultSuccessUrl("/home", true)
+        )
+        .exceptionHandling(exception -> exception
+            .accessDeniedHandler(accessDeniedHandler)
+        )
         .logout(logout -> logout
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
             .logoutSuccessUrl("/")

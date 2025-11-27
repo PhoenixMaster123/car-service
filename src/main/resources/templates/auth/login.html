@@ -58,6 +58,21 @@
                 <a th:href="@{/register}">Register</a>
             </div>
         </form>
+
+        <div class="social-login-separator">
+            <span>OR</span>
+        </div>
+
+        <div class="social-buttons">
+            <a href="/oauth2/authorization/google" class="social-btn google">
+                <i class="fa-brands fa-google"></i> Continue with Google
+            </a>
+
+            <a href="/oauth2/authorization/github" class="social-btn github">
+                <i class="fa-brands fa-github"></i> Continue with GitHub
+            </a>
+        </div>
+
     </div>
 </main>
 <script src="/js/toggleSwitch.js"></script>

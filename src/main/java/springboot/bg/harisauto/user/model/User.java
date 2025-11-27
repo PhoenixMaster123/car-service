@@ -53,8 +53,10 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Country country;
 
-  @Column(nullable = false)
   private String password;
+
+  @Enumerated(EnumType.STRING)
+  private LoginProvider authProvider;
 
   private String profilePicture;
 
@@ -70,6 +72,6 @@ public class User {
   @Column(nullable = false)
   private LocalDateTime updatedOn;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Vehicle> vehicles;
 }
