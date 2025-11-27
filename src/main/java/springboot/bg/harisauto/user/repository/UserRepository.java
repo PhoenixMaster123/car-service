@@ -13,5 +13,12 @@ import springboot.bg.harisauto.user.model.User;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
+
+  /**
+   * Find user by email.
+   *
+   * @param email - user email
+   * @return user
+   */
   Optional<User> findByEmail(String email);
 }

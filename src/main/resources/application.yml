@@ -31,6 +31,19 @@ spring:
     properties:
       "mail.smtp.auth": true
       "mail.smtp.starttls.enable": true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope: email, profile
+
+          github:
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}
+            scope: user:email
 
 gemini:
   api-key: ${GEMINI_API_KEY}

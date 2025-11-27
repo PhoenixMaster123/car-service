@@ -64,6 +64,12 @@ public class VehicleService {
     vehicleRepository.save(vehicle);
   }
 
+  /**
+   * Get vehicles by user.
+   *
+   * @param user - user
+   * @return list of vehicles
+   */
   public List<Vehicle> getVehiclesByUser(User user) {
     return vehicleRepository.findByOwner(user);
   }

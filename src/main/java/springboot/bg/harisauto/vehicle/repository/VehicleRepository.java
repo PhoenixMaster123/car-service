@@ -14,5 +14,12 @@ import springboot.bg.harisauto.vehicle.model.Vehicle;
  */
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
+
+  /**
+   * Find vehicles by owner.
+   *
+   * @param user - user
+   * @return vehicles
+   */
   List<Vehicle> findByOwner(User user);
 }
