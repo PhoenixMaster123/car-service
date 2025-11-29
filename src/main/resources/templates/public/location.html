@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location - Haris Car Care</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/public/location.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{bookings}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{bookings}" class="cta-button desktop-only">Book Now</a>
+
+    </div>
+</nav>
+
+<header>
+    <h1>Our <span>Location</span></h1>
+    <p>Come visit us. We're open 7 days a week.</p>
+</header>
+
+<main class="sp-wrapper">
+
+    <section class="content-card">
+        <h2><i class="fa-solid fa-map-marked-alt"></i> Find Us on the Map</h2>
+        <p class="section-description">We are conveniently located in Ruse.</p>
+        <iframe class="map-embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46067.8282361771!2d25.92723758656114!3d43.84373145116787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40ae60b69171587f%3A0x400a01269bf5a60!2sRuse%2C%20Bulgaria!5e0!3m2!1sen!2sde!4v1729690000000!5m2!1sen!2sde"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <section class="content-card">
+        <h2><i class="fa-solid fa-circle-info"></i> Shop Details</h2>
+        <div class="location-grid">
+            <div class="info-card">
+                <h3><i class="fa-solid fa-location-dot"></i> Address</h3>
+                <p>Maria Luiza Blvd<br>Ruse, Bulgaria</p>
+            </div>
+            <div class="info-card">
+                <h3><i class="fa-solid fa-clock"></i> Hours</h3>
+                <p>Mon-Sat: 08:00 - 19:00<br>Sun: 10:00 - 16:00</p>
+            </div>
+            <div class="info-card">
+                <h3><i class="fa-solid fa-phone"></i> Contact</h3>
+                <p><a href="tel:+3590000000">+359 00 000 000</a><br><a href="mailto:harisauto@gmail.com">harisauto@gmail.com</a></p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+</body>
+</html>

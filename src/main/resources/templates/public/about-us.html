@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>About Us - Haris Car Care</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/common/base.css}" rel="stylesheet">
+    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
+    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/css/public/about-us.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{bookings}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{bookings}" class="cta-button desktop-only">Book Now</a>
+
+    </div>
+</nav>
+
+<header class="about-hero">
+    <div class="hero-content">
+        <h1>Driven by <span class="neon-text">Passion</span>.<br>Defined by <span class="neon-text">Quality</span>.</h1>
+        <p>We don't just wash cars; we rejuvenate them. Experience the future of auto care.</p>
+    </div>
+</header>
+
+<main class="about-container">
+
+    <section class="story-section">
+        <div class="story-grid">
+            <div class="story-image">
+                <img src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop" alt="Car Detailing">
+                <div class="exp-badge">
+                    <span class="years">10+</span>
+                    <span class="text">Years of<br>Excellence</span>
+                </div>
+            </div>
+            <div class="story-text">
+                <h4 class="sub-heading">Who We Are</h4>
+                <h2>More Than Just a Garage</h2>
+                <p>
+                    Founded in 2015, <strong>Haris Car Care</strong> began with a simple mission: to provide a level of detailing and mechanical care that didn't exist in the market. What started as a single-bay garage has grown into the region's premier auto care center.
+                </p>
+                <p>
+                    We combine state-of-the-art technology with old-school craftsmanship. Whether it's a routine oil change or a full ceramic coating, we treat every vehicle as if it were our own.
+                </p>
+                <div class="signature">
+                    <p>Haris P.</p>
+                    <span>Founder & CEO</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="values-section">
+        <div class="section-header">
+            <h2>Why Choose Us?</h2>
+            <div class="bar"></div>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <i class="fa-solid fa-leaf"></i>
+                <h3>Eco-Friendly</h3>
+                <p>We use biodegradable products and water-reclamation systems to protect the planet while cleaning your car.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-certificate"></i>
+                <h3>Certified Experts</h3>
+                <p>Our mechanics and detailers undergo rigorous training and certification to ensure top-tier service.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-gem"></i>
+                <h3>Premium Products</h3>
+                <p>We only use the highest quality waxes, oils, and parts. No shortcuts, just showroom results.</p>
+            </div>
+            <div class="value-card">
+                <i class="fa-solid fa-clock"></i>
+                <h3>Fast & Reliable</h3>
+                <p>We respect your time. Book online, track progress, and get back on the road faster.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-banner">
+        <div class="stat-item">
+            <i class="fa-solid fa-car-side"></i>
+            <span class="count">15,000+</span>
+            <span class="label">Cars Serviced</span>
+        </div>
+        <div class="stat-item">
+            <i class="fa-solid fa-users"></i>
+            <span class="count">8,500+</span>
+            <span class="label">Happy Clients</span>
+        </div>
+        <div class="stat-item">
+            <i class="fa-solid fa-wrench"></i>
+            <span class="count">50+</span>
+            <span class="label">Expert Staff</span>
+        </div>
+        <div class="stat-item">
+            <i class="fa-solid fa-star"></i>
+            <span class="count">4.9</span>
+            <span class="label">Average Rating</span>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <div class="section-header">
+            <h2>Meet The Masters</h2>
+            <div class="bar"></div>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="img-box">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member">
+                </div>
+                <h3>Haris P.</h3>
+                <span>Founder & Lead Detailer</span>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="img-box">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Team Member">
+                </div>
+                <h3>Sarah J.</h3>
+                <span>Senior Mechanic</span>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="img-box">
+                    <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="Team Member">
+                </div>
+                <h3>Mike T.</h3>
+                <span>Paint Correction Specialist</span>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-cta">
+        <h2>Ready to give your car the treatment it deserves?</h2>
+        <a th:href="@{/bookings}" class="cta-button big">Book an Appointment</a>
+    </section>
+
+</main>
+
+<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+</button>
+
+<div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+        <h3>Haris AI Assistant</h3>
+        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">
+            <p>Hello! How can I help you with your car care questions today?</p>
+        </div>
+    </div>
+    <form class="chat-footer" id="chat-form">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/js/navbarMobileView.js}"></script>
+<script th:src="@{/js/chatbot.js}"></script>
+</body>
+</html>
