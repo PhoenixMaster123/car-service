@@ -75,6 +75,16 @@ public class VehicleService {
   }
 
   /**
+   * Get vehicle by id.
+   *
+   * @param vehicleId - vehicle id
+   * @return vehicle
+   */
+  public Vehicle getById(UUID vehicleId) {
+    return vehicleRepository.findById(vehicleId).orElse(null);
+  }
+
+  /**
    * Deletes a vehicle.
    *
    * @param user The user who owns the vehicle.

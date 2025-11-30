@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings - Haris Car Care</title>
+
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <link th:href="@{/css/common/base.css}" rel="stylesheet">
     <link th:href="@{/css/common/variables.css}" rel="stylesheet">
     <link th:href="@{/css/component/aside.css}" rel="stylesheet">
@@ -45,77 +50,99 @@
 <div class="main-content">
     <header class="page-header">
         <h1><i class="fa-solid fa-calendar-check"></i> My Bookings</h1>
-        <p>View your upcoming and past appointments.</p>
     </header>
 
     <main class="page-container">
+
         <div class="content-card">
             <div class="card-header">
-                <i class="fa-solid fa-hourglass-half"></i>
+                <i class="fa-solid fa-hourglass-half" style="color: var(--primary);"></i>
                 <h3>Upcoming Appointments</h3>
             </div>
+
             <div class="booking-list">
-                <div class="booking-card">
-                    <div class="booking-card-icon"><i class="fa-solid fa-soap"></i></div>
-                    <div class="booking-card-details">
-                        <h4>Premium Car Wash</h4>
-                        <p>Audi A4 (WUE-A123)</p>
-                    </div>
-                    <div class="booking-card-datetime">
-                        <span class="date">Oct 05, 2025</span>
-                        <span class="time">10:00 AM</span>
-                    </div>
-                    <div class="booking-card-status status-upcoming">Upcoming</div>
-                    <div class="booking-card-actions">
-                        <a href="#" class="booking-action-btn btn-secondary">Reschedule</a>
-                        <a href="#" class="booking-action-btn btn-danger">Cancel</a>
-                        <button class="booking-action-btn btn-secondary" onclick="openInvoiceModal('INV-2025-001', 'Premium Car Wash', 'Audi A4 (WUE-A123)', 'Oct 05, 2025', 'Oct 15, 2025', 'Paid', '89.99')">
-                            <i class="fa-solid fa-file-invoice"></i> View Invoice
-                        </button>
-                    </div>
+
+                <div th:if="${upcomingBookings.isEmpty()}" style="padding: 2rem; text-align: center; color: #666;">
+                    <p>No upcoming appointments.</p>
+                    <a th:href="@{/bookings}" class="btn btn-primary" style="margin-top: 10px;">Book Now</a>
                 </div>
-                <div class="booking-card">
-                    <div class="booking-card-icon"><i class="fa-solid fa-oil-can"></i></div>
+
+                <div class="booking-card" th:each="booking : ${upcomingBookings}">
+                    <div class="booking-card-icon">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
                     <div class="booking-card-details">
-                        <h4>Oil Change & Inspection</h4>
-                        <p>Audi A4 (WUE-A123)</p>
+                        <h4 th:text="${booking.serviceNames}">Premium Wash</h4>
+                        <p th:text="${booking.vehicleDescription}">Audi A4 (WUE-123)</p>
                     </div>
                     <div class="booking-card-datetime">
-                        <span class="date">Nov 12, 2025</span>
-                        <span class="time">2:30 PM</span>
+                        <span class="date" th:text="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}">Date</span>
+                        <span class="time" th:text="${#temporals.format(booking.bookingDate, 'HH:mm')}">Time</span>
                     </div>
-                    <div class="booking-card-status status-upcoming">Upcoming</div>
+
+                    <div class="booking-card-status"
+                         th:classappend="${#strings.toString(booking.status) == 'PENDING' ? 'status-upcoming' : 'status-completed'}"
+                         th:text="${booking.status}">
+                        Upcoming
+                    </div>
+
                     <div class="booking-card-actions">
-                        <a href="#" class="booking-action-btn btn-secondary">Reschedule</a>
-                        <a href="#" class="booking-action-btn btn-danger">Cancel</a>
-                        <button class="booking-action-btn btn-secondary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change & Inspection', 'Audi A4 (WUE-A123)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
-                            <i class="fa-solid fa-file-invoice"></i> View Invoice
+                        <button class="booking-action-btn btn-secondary"
+                                type="button"
+                                th:data-id="'INV-' + ${booking.id}"
+                                th:data-service="${booking.serviceNames}"
+                                th:data-vehicle="${booking.vehicleDescription}"
+                                th:data-date="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}"
+                                th:data-status="${booking.status}"
+                                th:data-price="${booking.totalPrice}"
+                                onclick="openInvoiceModal(this.getAttribute('data-id'), this.getAttribute('data-service'), this.getAttribute('data-vehicle'), this.getAttribute('data-date'), this.getAttribute('data-date'), this.getAttribute('data-status'), this.getAttribute('data-price'))">
+                            <i class="fa-solid fa-file-invoice"></i> Invoice
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" style="margin-top: 2rem;">
             <div class="card-header">
-                <i class="fa-solid fa-history"></i>
+                <i class="fa-solid fa-history" style="color: #666;"></i>
                 <h3>Past Appointments</h3>
             </div>
+
             <div class="booking-list">
-                <div class="booking-card">
-                    <div class="booking-card-icon"><i class="fa-solid fa-ring"></i></div>
+
+                <div th:if="${pastBookings.isEmpty()}" style="padding: 2rem; text-align: center; color: #666;">
+                    <p>No past booking history.</p>
+                </div>
+
+                <div class="booking-card" th:each="booking : ${pastBookings}" style="opacity: 0.8;">
+                    <div class="booking-card-icon" style="background: #e0e0e0; color: #666;">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
                     <div class="booking-card-details">
-                        <h4>Tire Rotation</h4>
-                        <p>Audi A4 (WUE-A123)</p>
+                        <h4 th:text="${booking.serviceNames}">Service Name</h4>
+                        <p th:text="${booking.vehicleDescription}">Vehicle</p>
                     </div>
                     <div class="booking-card-datetime">
-                        <span class="date">Aug 15, 2025</span>
+                        <span class="date" th:text="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}">Date</span>
                     </div>
-                    <div class="booking-card-status status-completed">Completed</div>
+
+                    <div class="booking-card-status status-completed" th:text="${booking.status}">Completed</div>
+
                     <div class="booking-card-actions">
-                        <a href="#" class="booking-action-btn btn-primary">Book Again</a>
-                        <button class="booking-action-btn btn-secondary" onclick="openInvoiceModal('INV-2025-003', 'Tire Rotation', 'Audi A4 (WUE-A123)', 'Aug 15, 2025', 'Aug 25, 2025', 'Paid', '79.99')">
-                            <i class="fa-solid fa-file-invoice"></i> View Invoice
+                        <button class="booking-action-btn btn-primary">
+                            <i class="fa-solid fa-rotate-right"></i> Book Again
+                        </button>
+                        <button class="booking-action-btn btn-secondary"
+                                type="button"
+                                th:data-id="'INV-' + ${booking.id}"
+                                th:data-service="${booking.serviceNames}"
+                                th:data-vehicle="${booking.vehicleDescription}"
+                                th:data-date="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}"
+                                th:data-status="${#strings.toString(booking.status)}"
+                                th:data-price="${booking.totalPrice}"
+                                onclick="openInvoiceModal(this.getAttribute('data-id'), this.getAttribute('data-service'), this.getAttribute('data-vehicle'), this.getAttribute('data-date'), this.getAttribute('data-date'), this.getAttribute('data-status'), this.getAttribute('data-price'))">
+                            <i class="fa-solid fa-file-invoice"></i> Invoice
                         </button>
                     </div>
                 </div>
@@ -145,7 +172,6 @@
     </form>
 </div>
 
-<!-- Invoice Modal -->
 <div class="modal-overlay" id="invoiceModalOverlay" onclick="closeInvoiceModal()">
     <div class="invoice-modal" id="invoiceModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -157,7 +183,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        
+
         <div class="modal-body">
             <div class="invoice-modal-content">
                 <div class="invoice-header-section">

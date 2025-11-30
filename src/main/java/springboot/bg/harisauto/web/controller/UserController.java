@@ -1,6 +1,8 @@
 package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import springboot.bg.harisauto.booking.dto.response.BookingResponse;
+import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
@@ -36,11 +40,13 @@ public class UserController {
 
   private final UserService userService;
   private final VehicleService vehicleService;
+  private final BookingService bookingService;
 
   @Autowired
-  public UserController(UserService userService, VehicleService vehicleService) {
+  public UserController(UserService userService, VehicleService vehicleService, BookingService bookingService) {
     this.userService = userService;
     this.vehicleService = vehicleService;
+    this.bookingService = bookingService;
   }
 
   /**
@@ -92,10 +98,24 @@ public class UserController {
   public ModelAndView showBookings(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
     User user = userService.getById(metaData.getUserId());
+    List<BookingResponse> allBookings = bookingService.getBookingsByUser(user.getId());
+    LocalDateTime now = LocalDateTime.now();
 
-    ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/account/bookings");
+    List<BookingResponse> upcoming = allBookings.stream()
+        .filter(b -> b.getBookingDate().isAfter(now))
+        .sorted(Comparator.comparing(BookingResponse::getBookingDate))
+        .toList();
+
+    List<BookingResponse> past = allBookings.stream()
+        .filter(b -> b.getBookingDate().isBefore(now))
+        .sorted((b1, b2) -> b2.getBookingDate().compareTo(b1.getBookingDate()))
+        .toList();
+
+    ModelAndView modelAndView = new ModelAndView("/account/bookings");
     modelAndView.addObject("user", user);
+
+    modelAndView.addObject("upcomingBookings", upcoming);
+    modelAndView.addObject("pastBookings", past);
 
     return modelAndView;
   }
@@ -110,9 +130,11 @@ public class UserController {
   public ModelAndView showInvoices(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
     User user = userService.getById(metaData.getUserId());
+    List<BookingResponse> allBookings = bookingService.getBookingsByUser(user.getId());
 
     ModelAndView modelAndView = new ModelAndView("account/invoices");
     modelAndView.addObject("user", user);
+    modelAndView.addObject("bookings", allBookings);
 
     return modelAndView;
   }
