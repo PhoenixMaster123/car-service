@@ -124,12 +124,12 @@
             </button>
         </div>
 
-        <form id="bookingForm" th:action="@{/bookings/create}" th:method="POST">
+        <form id="bookingForm" th:action="@{/bookings}" th:method="POST" th:object="${bookingFormRequest}">
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
                     <label for="bookingDate"><i class="fa-solid fa-calendar-days"></i> Date & Time *</label>
-                    <input type="datetime-local" id="bookingDate" name="bookingDate" required>
+                    <input type="datetime-local" id="bookingDate" name="bookingDate" required th:field="*{bookingDate}">
                 </div>
 
                 <div class="form-group">
@@ -139,7 +139,7 @@
 
                         <option th:each="vehicle : ${vehicles}"
                                 th:value="${vehicle.id}"
-                                th:text="|${vehicle.make} ${vehicle.model} (${vehicle.licensePlate})|">
+                                th:text="|${vehicle.make} ${vehicle.model} (${vehicle.licensePlate})|" th:field="*{vehicleId}">
                         </option>
                     </select>
                 </div>
@@ -148,7 +148,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group" id="phoneGroup">
                     <label for="phoneNumber"><i class="fa-solid fa-phone"></i> Phone Number *</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+49 151 1234567" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+49 151 1234567" required th:field="*{phoneNumber}">
                 </div>
 
                 <div class="form-group">
@@ -168,7 +168,7 @@
 
             <div class="form-group">
                 <label for="notes"><i class="fa-solid fa-comment"></i> Special Instructions</label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Gate code, specific scratches to look at, etc..."></textarea>
+                <textarea id="notes" name="notes" rows="3" placeholder="Gate code, specific scratches to look at, etc..." th:field="*{additionalNotes}"></textarea>
             </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">

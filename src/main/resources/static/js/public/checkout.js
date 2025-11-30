@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: window.location.origin + "/bookings/process-payment",
+                return_url: window.location.origin + "/process-payment",
             },
         });
 

@@ -24,7 +24,6 @@ function updateSubmitButton() {
     const paymentSelect = document.getElementById('paymentMethod');
     const submitBtnText = document.getElementById('btnText');
     const submitBtnIcon = document.getElementById('btnIcon');
-    const form = document.getElementById('bookingForm');
 
     const method = paymentSelect.value;
 
@@ -32,19 +31,9 @@ function updateSubmitButton() {
         // Scenario: Online Payment -> Go to Checkout
         submitBtnText.textContent = "Proceed to Checkout";
         submitBtnIcon.className = "fa-solid fa-credit-card submit-icon";
-
-        // Change this URL to your actual payment controller endpoint
-        form.action = "/bookings/checkout";
-        // Ensure we submit using GET so the controller's @GetMapping handles it
-        form.method = 'get';
     } else {
         // Scenario: Cash -> Create Booking & Go to Profile
         submitBtnText.textContent = "Confirm Booking";
         submitBtnIcon.className = "fa-solid fa-check submit-icon";
-
-        // Change this URL to your standard creation endpoint
-        form.action = "/bookings/create";
-        // Use POST for creating a booking
-        form.method = 'post';
     }
 }
