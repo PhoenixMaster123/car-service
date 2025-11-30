@@ -123,42 +123,26 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
+                    <tr th:each="vehicle : ${vehicles}">
                         <td>
-                            <span class="vehicle-name">Audi A4</span>
-                            <span class="vehicle-sub">2023 • 2.0L Turbo</span>
+                            <span class="vehicle-name" th:text="${vehicle.make} + ' ' + ${vehicle.model}">Audi A4</span>
+                            <span class="vehicle-sub" th:text="${vehicle.manufacturingYear} + ' • ' + (${vehicle.engineType} ?: 'N/A')">2023 • 2.0L Turbo</span>
                         </td>
-                        <td>WUE-A123</td>
-                        <td>Oct 05, 2025</td>
-                        <td>
-                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('Audi A4', '2023', '2.0L Turbo', 'WUE-A123', 'Oct 05, 2025', 'Sedan', 'Black')">Details</button>
-                        </td>
+                        <td th:text="${vehicle.licensePlate}">WUE-A123</td>
+                        <td>Oct 05, 2025</td> <td>
+                        <button class="btn btn-secondary btn-small"
+                                th:data-make="${vehicle.make}"
+                                th:data-model="${vehicle.model}"
+                                th:data-year="${vehicle.manufacturingYear}"
+                                th:data-engine="${vehicle.engineType}"
+                                th:data-body="${vehicle.bodyType}"
+                                th:data-plate="${vehicle.licensePlate}"
+                                th:data-color="${vehicle.color}"
+                                onclick="openVehicleDetailsModal(this)">
+                            Details
+                        </button>
+                    </td>
                     </tr>
-
-                    <tr>
-                        <td>
-                            <span class="vehicle-name">BMW X3</span>
-                            <span class="vehicle-sub">2021 • Diesel</span>
-                        </td>
-                        <td>WUE-B456</td>
-                        <td>Jun 15, 2025</td>
-                        <td>
-                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('BMW X3', '2021', 'Diesel', 'WUE-B456', 'Jun 15, 2025', 'SUV', 'White')">Details</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="vehicle-name">VW Golf GTI</span>
-                            <span class="vehicle-sub">2022 • Petrol</span>
-                        </td>
-                        <td>WEN-C789</td>
-                        <td>N/A</td>
-                        <td>
-                            <button class="btn btn-secondary btn-small" onclick="openVehicleDetailsModal('VW Golf GTI', '2022', 'Petrol', 'WEN-C789', 'N/A', 'Hatchback', 'Red')">Details</button>
-                        </td>
-                    </tr>
-
                     </tbody>
                 </table>
             </div>
@@ -199,7 +183,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        
+
         <div class="modal-body">
             <div class="vehicle-modal-content">
                 <div class="vehicle-header-section">
@@ -207,8 +191,8 @@
                         <i class="fa-solid fa-car"></i>
                     </div>
                     <div class="vehicle-title-section">
-                        <h3 id="modalVehicleName">Audi A4</h3>
-                        <p id="modalVehicleType">Sedan</p>
+                        <h3 id="modalVehicleName">Vehicle Name</h3>
+                        <p id="modalVehicleType">Body Type</p>
                     </div>
                 </div>
 
@@ -217,19 +201,19 @@
                         <h3><i class="fa-solid fa-info-circle"></i> Vehicle Information</h3>
                         <div class="info-item">
                             <span class="info-label">Make & Model</span>
-                            <span class="info-value" id="modalMakeModel">Audi A4</span>
+                            <span class="info-value" id="modalMakeModel"></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Year</span>
-                            <span class="info-value" id="modalYear">2023</span>
+                            <span class="info-value" id="modalYear"></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Engine</span>
-                            <span class="info-value" id="modalEngine">2.0L Turbo</span>
+                            <span class="info-value" id="modalEngine"></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Body Type</span>
-                            <span class="info-value" id="modalBodyType">Sedan</span>
+                            <span class="info-value" id="modalBodyType"></span>
                         </div>
                     </div>
 
@@ -237,19 +221,15 @@
                         <h3><i class="fa-solid fa-id-card"></i> Registration Details</h3>
                         <div class="info-item">
                             <span class="info-label">License Plate</span>
-                            <span class="info-value" id="modalLicensePlate">WUE-A123</span>
+                            <span class="info-value" id="modalLicensePlate"></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Color</span>
-                            <span class="info-value" id="modalColor">Black</span>
+                            <span class="info-value" id="modalColor"></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Last Service</span>
                             <span class="info-value" id="modalLastService">Oct 05, 2025</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Service History</span>
-                            <span class="info-value">5 Services</span>
                         </div>
                     </div>
                 </div>
@@ -267,40 +247,11 @@
                             </div>
                             <div class="service-history-status status-completed">Completed</div>
                         </div>
-                        <div class="service-history-item">
-                            <div class="service-history-icon">
-                                <i class="fa-solid fa-check-circle"></i>
-                            </div>
-                            <div class="service-history-details">
-                                <span class="service-history-name">Oil Change</span>
-                                <span class="service-history-date">Aug 15, 2025</span>
-                            </div>
-                            <div class="service-history-status status-completed">Completed</div>
-                        </div>
-                        <div class="service-history-item">
-                            <div class="service-history-icon">
-                                <i class="fa-solid fa-check-circle"></i>
-                            </div>
-                            <div class="service-history-details">
-                                <span class="service-history-name">Tire Rotation</span>
-                                <span class="service-history-date">Jun 10, 2025</span>
-                            </div>
-                            <div class="service-history-status status-completed">Completed</div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="modal-footer">
-            <button class="btn btn-secondary modal-btn-close" onclick="closeVehicleDetailsModal()">
-                <i class="fa-solid fa-times"></i>
-                <span>Close</span>
-            </button>
-            <button class="btn btn-primary">
-                <i class="fa-solid fa-calendar-plus"></i>
-                <span>Book Service</span>
-            </button>
         </div>
     </div>
 </div>

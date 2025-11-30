@@ -52,6 +52,12 @@ public class Vehicle {
   @Column
   private String color;
 
+  @Column(name = "engine_type")
+  private String engineType;
+
+  @Column(name = "body_type")
+  private String bodyType;
+
   @ManyToOne
   private User owner;
 }

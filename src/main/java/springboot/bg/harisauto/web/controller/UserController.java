@@ -1,6 +1,7 @@
 package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.model.Vehicle;
 import springboot.bg.harisauto.vehicle.service.VehicleService;
 import springboot.bg.harisauto.web.dto.ChangeProfileInfoRequest;
 import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
@@ -51,10 +53,12 @@ public class UserController {
   public ModelAndView showDashboard(@AuthenticationPrincipal AuthenticationMetaData metaData) {
 
     User user = userService.getById(metaData.getUserId());
+    List<Vehicle> vehicles = vehicleService.getVehiclesByUser(user);
 
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("/account/dashboard");
     modelAndView.addObject("user", user);
+    modelAndView.addObject("vehicles", vehicles);
 
     return modelAndView;
   }
