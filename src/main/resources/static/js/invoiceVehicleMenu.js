@@ -1,17 +1,28 @@
-function openVehicleDetailsModal(makeModel, year, engine, licensePlate, lastService, bodyType, color) {
+function openVehicleDetailsModal(button) {
+    // 1. Extract data from the clicked button
+    const make = button.getAttribute('data-make');
+    const model = button.getAttribute('data-model');
+    const year = button.getAttribute('data-year');
+    const engine = button.getAttribute('data-engine') || 'N/A';
+    const body = button.getAttribute('data-body') || 'N/A';
+    const plate = button.getAttribute('data-plate');
+    const color = button.getAttribute('data-color') || 'N/A';
+
+    // 2. Populate the Modal DOM elements
+    document.getElementById('modalVehicleName').innerText = `${make} ${model}`;
+    document.getElementById('modalVehicleType').innerText = body;
+
+    document.getElementById('modalMakeModel').innerText = `${make} ${model}`;
+    document.getElementById('modalYear').innerText = year;
+    document.getElementById('modalEngine').innerText = engine;
+    document.getElementById('modalBodyType').innerText = body;
+
+    document.getElementById('modalLicensePlate').innerText = plate;
+    document.getElementById('modalColor').innerText = color;
+
+    // 3. Show the modal
     const modal = document.getElementById('vehicleModal');
     const overlay = document.getElementById('vehicleModalOverlay');
-
-    // Set vehicle data
-    document.getElementById('modalVehicleName').textContent = makeModel;
-    document.getElementById('modalMakeModel').textContent = makeModel;
-    document.getElementById('modalVehicleType').textContent = bodyType;
-    document.getElementById('modalYear').textContent = year;
-    document.getElementById('modalEngine').textContent = engine;
-    document.getElementById('modalBodyType').textContent = bodyType;
-    document.getElementById('modalLicensePlate').textContent = licensePlate;
-    document.getElementById('modalColor').textContent = color;
-    document.getElementById('modalLastService').textContent = lastService;
 
     overlay.classList.add('active');
     modal.classList.add('active');
@@ -25,10 +36,3 @@ function closeVehicleDetailsModal() {
     modal.classList.remove('active');
     document.body.style.overflow = '';
 }
-
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeVehicleDetailsModal();
-    }
-});
