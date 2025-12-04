@@ -60,8 +60,8 @@ Configuration lives primarily in:
 Set these environment variables before running the app (copy/paste ready):
 ```bash
 # Database (default profile uses MySQL)
-export DB_USERNAME="your_mysql_user"
-export DB_PASSWORD="your_mysql_password"
+export DB_USERNAME="your_database_username"
+export DB_PASSWORD="your_database_password"
 
 # Outbound email (default profile uses Gmail SMTP)
 export EMAIL_USERNAME="your_gmail_address"
@@ -77,7 +77,7 @@ export GITHUB_CLIENT_SECRET="your_github_client_secret"
 export GEMINI_API_KEY="your_gemini_api_key"
 
 # Payments (Stripe)
-export STRIPE_PUBLIC_KEY="your_stripe_publishable_key"
+export STRIPE_PUBLIC_KEY="your_stripe_public_key"
 ```
 
 Explanation and where to obtain keys:
