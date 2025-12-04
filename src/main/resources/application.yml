@@ -73,24 +73,6 @@ logging:
           descriptor: trace
     blog: debug
 
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-  info:
-    title: "Car Service REST API"
-    version: "1.0.0"
-    description: |
-      Welcome to the Car Service REST API documentation.
-      Most endpoints can be executed by using the 'Try it out' function.
-      Please be careful with this function on production environments.
-    contact:
-      name: "Your Company Name"
-      url: "https://harisauto.com"
-      email: "harisauto@gmail.com"
-
-
 # Service URLs
 payment-service:
   url: http://localhost:8081

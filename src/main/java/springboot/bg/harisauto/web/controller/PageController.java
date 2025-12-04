@@ -49,6 +49,6 @@ public class PageController {
    */
   @GetMapping("/news")
   public ModelAndView showNewsPage() {
-    return new ModelAndView("public/news");
+    return new ModelAndView("/public/news");
   }
 }
