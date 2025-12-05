@@ -1,0 +1,137 @@
+package springboot.bg.harisauto.vehicle.service;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import springboot.bg.harisauto.common.exception.VehicleBusinessException;
+import springboot.bg.harisauto.user.model.User;
+import springboot.bg.harisauto.vehicle.model.Vehicle;
+import springboot.bg.harisauto.vehicle.repository.VehicleRepository;
+import springboot.bg.harisauto.web.dto.CreateVehicleRequest;
+
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
+
+class VehicleServiceTest {
+
+    private VehicleRepository vehicleRepository;
+    private VehicleService vehicleService;
+
+    @BeforeEach
+    void setup() {
+        vehicleRepository = mock(VehicleRepository.class);
+        vehicleService = new VehicleService(vehicleRepository);
+    }
+
+    private CreateVehicleRequest req(String vin) {
+        return CreateVehicleRequest.builder()
+                .make("Toyota")
+                .model("Corolla")
+                .manufacturingYear(Year.of(2020))
+                .licensePlate("ABC123")
+                .vin(vin)
+                .color("Blue")
+                .build();
+    }
+
+    @Test
+    void createVehicle_whenMoreThan3Vehicles_throws() {
+        User user = new User();
+        user.setEmail("u@x.com");
+        user.setVehicles(new ArrayList<>(List.of(new Vehicle(), new Vehicle(), new Vehicle())));
+
+        assertThatThrownBy(() -> vehicleService.createVehicle(user, req("VINVINVINVINVINV1")))
+                .isInstanceOf(VehicleBusinessException.class)
+                .hasMessageContaining("cannot add more than 3 vehicles");
+        verifyNoInteractions(vehicleRepository);
+    }
+
+    @Test
+    void createVehicle_whenDuplicateVin_throws() {
+        User user = new User();
+        user.setEmail("u@x.com");
+        ArrayList<Vehicle> vs = new ArrayList<>();
+        Vehicle v = Vehicle.builder().vin("DUPLICATEVIN123456").build();
+        vs.add(v);
+        user.setVehicles(vs);
+
+        assertThatThrownBy(() -> vehicleService.createVehicle(user, req("DUPLICATEVIN123456")))
+                .isInstanceOf(VehicleBusinessException.class)
+                .hasMessageContaining("already registered");
+        verifyNoInteractions(vehicleRepository);
+    }
+
+    @Test
+    void createVehicle_happyPath_savesToRepository() {
+        User user = new User();
+        user.setEmail("u@x.com");
+        user.setVehicles(new ArrayList<>());
+
+        vehicleService.createVehicle(user, req("UNIQUEVIN12345678"));
+
+        verify(vehicleRepository, times(1)).save(any(Vehicle.class));
+        assertThat(user.getVehicles()).hasSize(1);
+    }
+
+    @Test
+    void getById_returnsNullWhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
+        assertThat(vehicleService.getById(id)).isNull();
+    }
+
+    @Test
+    void deleteVehicle_checksOwnerAndDeletes() {
+        UUID id = UUID.randomUUID();
+        User owner = new User();
+        owner.setId(UUID.randomUUID());
+        owner.setVehicles(new ArrayList<>());
+
+        Vehicle v = new Vehicle();
+        v.setOwner(owner);
+        owner.getVehicles().add(v);
+
+        when(vehicleRepository.findById(id)).thenReturn(Optional.of(v));
+
+        vehicleService.deleteVehicle(owner, id);
+        verify(vehicleRepository, times(1)).delete(v);
+        assertThat(owner.getVehicles()).isEmpty();
+    }
+
+    @Test
+    void deleteVehicle_whenNotOwner_throws() {
+        UUID id = UUID.randomUUID();
+        User owner = new User();
+        owner.setId(UUID.randomUUID());
+        owner.setVehicles(new ArrayList<>());
+
+        User other = new User();
+        other.setId(UUID.randomUUID());
+
+        Vehicle v = new Vehicle();
+        v.setOwner(other);
+        when(vehicleRepository.findById(id)).thenReturn(Optional.of(v));
+
+        assertThatThrownBy(() -> vehicleService.deleteVehicle(owner, id))
+                .isInstanceOf(VehicleBusinessException.class)
+                .hasMessageContaining("not authorized");
+        verify(vehicleRepository, never()).delete(any());
+    }
+
+    @Test
+    void deleteVehicle_whenMissing_throws() {
+        UUID id = UUID.randomUUID();
+        User owner = new User();
+        owner.setId(UUID.randomUUID());
+        when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> vehicleService.deleteVehicle(owner, id))
+                .isInstanceOf(springboot.bg.harisauto.common.exception.VehicleBusinessException.class)
+                .hasMessageContaining("Vehicle not found");
+    }
+}

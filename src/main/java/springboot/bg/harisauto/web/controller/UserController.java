@@ -62,7 +62,7 @@ public class UserController {
     List<Vehicle> vehicles = vehicleService.getVehiclesByUser(user);
 
     ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/account/dashboard");
+    modelAndView.setViewName("account/dashboard");
     modelAndView.addObject("user", user);
     modelAndView.addObject("vehicles", vehicles);
 
@@ -80,7 +80,7 @@ public class UserController {
     User user = userService.getById(metaData.getUserId());
 
     ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/account/vehicles");
+    modelAndView.setViewName("account/vehicles");
     modelAndView.addObject("user", user);
     modelAndView.addObject("createVehicleRequest", new CreateVehicleRequest());
     modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
@@ -111,7 +111,8 @@ public class UserController {
         .sorted((b1, b2) -> b2.getBookingDate().compareTo(b1.getBookingDate()))
         .toList();
 
-    ModelAndView modelAndView = new ModelAndView("/account/bookings");
+    ModelAndView modelAndView = new ModelAndView();
+    modelAndView.setViewName("account/bookings");
     modelAndView.addObject("user", user);
 
     modelAndView.addObject("upcomingBookings", upcoming);
@@ -207,13 +208,13 @@ public class UserController {
    * Updates the user's profile.
    *
    * @param metaData The authentication metadata.
-   * @param request The request containing the new profile information.
+   * @param changeProfileInfoRequest The request containing the new profile information.
    * @param bindingResult The binding result.
    * @return The updated settings page.
    */
   @PutMapping("/profile")
   public ModelAndView updateProfile(@AuthenticationPrincipal AuthenticationMetaData metaData,
-      @Valid ChangeProfileInfoRequest request, BindingResult bindingResult) {
+      @Valid ChangeProfileInfoRequest changeProfileInfoRequest, BindingResult bindingResult) {
 
     User user = userService.getById(metaData.getUserId());
 
@@ -221,12 +222,13 @@ public class UserController {
       ModelAndView modelAndView = new ModelAndView();
       modelAndView.setViewName("account/settings");
       modelAndView.addObject("user", user);
-      modelAndView.addObject("changeProfileInfoRequest", request);
+      modelAndView.addObject("changeProfileInfoRequest", changeProfileInfoRequest);
+      modelAndView.addObject("changePasswordRequest", new ChangeUserPasswordRequest());
 
       return modelAndView;
     }
 
-    userService.updateUserDetails(user, request);
+    userService.updateUserDetails(user, changeProfileInfoRequest);
 
     return new ModelAndView("redirect:/users/dashboard");
   }
@@ -235,14 +237,14 @@ public class UserController {
    * Changes the user's password.
    *
    * @param metaData The authentication metadata.
-   * @param request The request containing the new password.
+   * @param changeUserPasswordRequest The request containing the new password.
    * @param result The binding result.
    * @param redirectAttributes The redirect attributes.
    * @return The updated settings page.
    */
   @PutMapping("/password")
   public ModelAndView changePassword(@AuthenticationPrincipal AuthenticationMetaData metaData,
-      @Valid ChangeUserPasswordRequest request, BindingResult result,
+      @Valid ChangeUserPasswordRequest changeUserPasswordRequest, BindingResult result,
       RedirectAttributes redirectAttributes) {
 
     User user = userService.getById(metaData.getUserId());
@@ -251,7 +253,7 @@ public class UserController {
       ModelAndView modelAndView = new ModelAndView();
       modelAndView.setViewName("account/settings");
       modelAndView.addObject("user", user);
-      modelAndView.addObject("changePasswordRequest", request);
+      modelAndView.addObject("changePasswordRequest", changeUserPasswordRequest);
       modelAndView.addObject("changeProfileInfoRequest", DtoMapper.fromUser(user));
 
       modelAndView.addObject("errorMessage", "Password update failed.");
@@ -259,7 +261,7 @@ public class UserController {
       return modelAndView;
     }
 
-    userService.changeUserPassword(user, request);
+    userService.changeUserPassword(user, changeUserPasswordRequest);
 
     redirectAttributes.addFlashAttribute("successMessage", "Password updated successfully!");
     return new ModelAndView("redirect:/users/settings#status-message");

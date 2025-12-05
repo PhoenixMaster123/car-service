@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.service.service.CatalogService;
@@ -193,6 +191,8 @@ public class AdminController {
       modelAndView.setViewName("account/admin/admin-users");
       modelAndView.addObject("user", metaData.getUserId());
       modelAndView.addObject("registerNewUserRequest", request);
+      // template requires updateUserRequest as well
+      modelAndView.addObject("updateUserRequest", new UpdateUserRequest());
       modelAndView.addObject("allUsers", userService.getAllUsers());
 
       return modelAndView;
@@ -221,6 +221,8 @@ public class AdminController {
       modelAndView.setViewName("account/admin/admin-users");
       modelAndView.addObject("user", metaData.getUserId());
       modelAndView.addObject("updateUserRequest", request);
+      // template requires registerNewUserRequest as well
+      modelAndView.addObject("registerNewUserRequest", new RegisterNewUserRequest());
       modelAndView.addObject("allUsers", userService.getAllUsers());
 
       return modelAndView;
@@ -376,3 +378,4 @@ public class AdminController {
     return new ModelAndView("redirect:/admin/services");
   }
 }
+

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Admin Settings - Haris Car Care</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +43,96 @@
             </div>
         </div>
     </aside>
+
+    <main class="dashboard-content">
+        <h1>Admin Settings</h1>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fa-solid fa-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="settings-section">
+            <h2><i class="fa-solid fa-user"></i> Account Settings</h2>
+
+            <!-- Change Email -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-envelope"></i> Change Email</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/settings/email}" th:method="PUT" th:object="${adminChangeEmailRequest}">
+                        <div class="form-group">
+                            <label for="currentEmail">Current Email</label>
+                            <input type="email" id="currentEmail" class="form-input" th:value="${user.email}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEmail">New Email</label>
+                            <input type="email" id="newEmail" class="form-input" th:field="*{newEmail}" required>
+                            <span class="error-message" th:if="${#fields.hasErrors('newEmail')}" th:errors="*{newEmail}"></span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> Update Email
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-key"></i> Change Password</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/settings/password}" th:method="PUT" th:object="${adminChangePasswordRequest}">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="currentPassword" class="form-input" th:field="*{currentPassword}" required>
+                                <button type="button" class="password-toggle" data-target="currentPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="newPassword" class="form-input" th:field="*{newPassword}" required>
+                                <button type="button" class="password-toggle" data-target="newPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirmNewPassword" class="form-input" th:field="*{confirmNewPassword}" required>
+                                <button type="button" class="password-toggle" data-target="confirmNewPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 
 <button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
@@ -59,12 +151,34 @@
         </div>
     </div>
     <form class="chat-footer" id="chat-form">
-        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
         <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 </div>
-</body>
+
 <script th:src="@{/js/toggleSwitch.js}"></script>
 <script th:src="@{/js/navbarMobileView.js}"></script>
 <script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/js/password.js}"></script>
+<script>
+    // Password toggle functionality
+    document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+</script>
+</body>
 </html>
