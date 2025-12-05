@@ -14,84 +14,91 @@ import springboot.bg.harisauto.service.service.CatalogService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.web.dto.*;
 
+import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @MockitoBean
-  private UserService userService;
+    @MockitoBean
+    private UserService userService;
 
-  @MockitoBean
-  private CatalogService catalogService;
+    @MockitoBean
+    private CatalogService catalogService;
 
-  private AuthenticationMetaData principal;
-  private UUID adminId;
+    private AuthenticationMetaData principal;
+    private UUID adminId;
 
-  @BeforeEach
-  public void setUp() {
+    @BeforeEach
+    public void setUp() {
 
-    this.adminId = UUID.randomUUID();
+        this.adminId = UUID.randomUUID();
 
-    this.principal = new AuthenticationMetaData(
-        adminId,
-        "user@gmail.com",
-        "Qwer4321!",
-        UserRole.ADMIN,
-        true
-    );
+        this.principal = new AuthenticationMetaData(
+                adminId,
+                "user@gmail.com",
+                "Qwer4321!",
+                UserRole.ADMIN,
+                true
+        );
 
-    User mockUser = User.builder()
-        .id(adminId)
-        .firstName("TestFirstName")
-        .lastName("TestLastName")
-        .email("user@gmail.com")
-        .build();
+        User mockUser = User.builder()
+                .id(adminId)
+                .firstName("TestFirstName")
+                .lastName("TestLastName")
+                .email("user@gmail.com")
+                .build();
 
-    when(this.userService.getById(adminId)).thenReturn(mockUser);
-  }
+        // default stubs used by many tests
+        when(this.userService.getById(adminId)).thenReturn(mockUser);
+        when(this.userService.getAllUsers()).thenReturn(Collections.emptyList());
+        when(this.catalogService.findAll()).thenReturn(Collections.emptyList());
+        when(this.catalogService.getAllCategories()).thenReturn(Collections.emptyList());
+    }
 
-  @Test
-  @DisplayName("GET /admin/dashboard - Should return dashboard view")
-  void getDashboardPage_ShouldReturnView() throws Exception {
+    @Test
+    @DisplayName("GET /admin/dashboard - Should return dashboard view")
+    void getDashboardPage_ShouldReturnView() throws Exception {
 
-    MockHttpServletRequestBuilder request = get("/admin/dashboard")
-        .with(user(principal))
-        .with(csrf());
+        MockHttpServletRequestBuilder request = get("/admin/dashboard")
+                .with(user(principal))
+                .with(csrf());
 
-    mockMvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(view().name("account/admin/admin-dashboard"))
-        .andExpect(model().attributeExists("allUsers"))
-        .andExpect(model().attribute("user", adminId));
-  }
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-dashboard"))
+                .andExpect(model().attributeExists("allUsers"))
+                .andExpect(model().attribute("user", adminId));
+    }
 
-  @Test
-  @DisplayName("GET /admin/users - Should return users view")
-  void getUsersPage_ShouldReturnView() throws Exception {
+    @Test
+    @DisplayName("GET /admin/users - Should return users view")
+    void getUsersPage_ShouldReturnView() throws Exception {
 
-    MockHttpServletRequestBuilder request = get("/admin/users")
-        .with(user(principal))
-        .with(csrf());
+        MockHttpServletRequestBuilder request = get("/admin/users")
+                .with(user(principal))
+                .with(csrf());
 
-    mockMvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(view().name("account/admin/admin-users"))
-        .andExpect(model().attributeExists("allUsers"))
-        .andExpect(model().attribute("user", adminId));
-  }
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-users"))
+                .andExpect(model().attributeExists("allUsers"))
+                .andExpect(model().attributeExists("registerNewUserRequest"))
+                .andExpect(model().attributeExists("updateUserRequest"))
+                .andExpect(model().attribute("user", adminId));
+    }
 
     @Test
     @DisplayName("GET /admin/services - Should return services view")
@@ -178,202 +185,235 @@ class AdminControllerTest {
                 .andExpect(model().attribute("user", mockUser));
     }
 
-    //    @Test
-    //    @DisplayName("GET /admin/users - Should return users management view")
-    //    void showUsers_ShouldReturnView() throws Exception {
-    //        mockMvc.perform(get("/admin/users").principal(adminAuth))
-    //                .andExpect(status().isOk())
-    //                .andExpect(view().name("account/admin/admin-users"))
-    //                .andExpect(model().attributeExists("registerNewUserRequest", "updateUserRequest"));
-    //    }
-    //
-    //    @Test
-    //    @DisplayName("GET /admin/services - Should return services management view")
-    //    void showServicePage_ShouldReturnView() throws Exception {
-    //        when(catalogService.findAll()).thenReturn(Collections.emptyList());
-    //        when(catalogService.getAllCategories()).thenReturn(Collections.emptyList());
-    //
-    //        mockMvc.perform(get("/admin/services").principal(adminAuth))
-    //                .andExpect(status().isOk())
-    //                .andExpect(view().name("account/admin/admin-services"))
-    //                .andExpect(model().attributeExists("allServices", "allCategories"));
-    //    }
-    //
-    //    @Test
-    //    @DisplayName("GET /admin/settings - Should return settings view with current user data")
-    //    void showSettingsPage_ShouldReturnView() throws Exception {
-    //        User adminUser = new User();
-    //        adminUser.setId(adminId);
-    //        when(userService.getById(adminId)).thenReturn(adminUser);
-    //
-    //        mockMvc.perform(get("/admin/settings").principal(adminAuth))
-    //                .andExpect(status().isOk())
-    //                .andExpect(view().name("account/admin/admin-settings"))
-    //                .andExpect(model().attribute("user", adminUser));
-    //    }
-    //
-    //    // ==========================================
-    //    // 2. USER MANAGEMENT TESTS
-    //    // ==========================================
-    //
-    //    @Nested
-    //    @DisplayName("User Management Operations")
-    //    class UserManagementTests {
-    //
-    //        @Test
-    //        @DisplayName("POST /admin/new-user - Valid Input - Should create user and redirect")
-    //        void createNewUser_Valid_ShouldRedirect() throws Exception {
-    //            mockMvc.perform(post("/admin/new-user")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("firstName", "Alice")
-    //                            .param("lastName", "Admin")
-    //                            .param("email", "alice@example.com")
-    //                            .param("password", "StrongPass1!")
-    //                            .param("confirmPassword", "StrongPass1!"))
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/users"));
-    //
-    //            verify(userService).registerNewUser(any(RegisterNewUserRequest.class));
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("POST /admin/new-user - Invalid Input - Should return to view with errors")
-    //        void createNewUser_Invalid_ShouldReturnView() throws Exception {
-    //            mockMvc.perform(post("/admin/new-user")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("email", "") // Invalid
-    //                            .param("password", "123")) // Invalid
-    //                    .andExpect(status().isOk())
-    //                    .andExpect(view().name("account/admin/admin-users"))
-    //                    .andExpect(model().hasErrors());
-    //
-    //            verify(userService, never()).registerNewUser(any());
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("PUT /admin/update-user - Valid Input - Should update and redirect")
-    //        void updateUser_Valid_ShouldRedirect() throws Exception {
-    //            mockMvc.perform(put("/admin/update-user")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("id", UUID.randomUUID().toString())
-    //                            .param("firstName", "Updated")
-    //                            .param("lastName", "Name")
-    //                            .param("email", "updated@test.com"))
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/users"));
-    //
-    //            verify(userService).updateUser(any(UpdateUserRequest.class));
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("DELETE /admin/delete-user/{id} - Should delete and redirect")
-    //        void deleteUser_ShouldRedirect() throws Exception {
-    //            UUID targetId = UUID.randomUUID();
-    //
-    //            mockMvc.perform(delete("/admin/delete-user/{userId}", targetId)
-    //                            .principal(adminAuth)
-    //                            .with(csrf()))
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/users"));
-    //
-    //            verify(userService).deleteUserById(targetId);
-    //        }
-    //    }
-    //
-    //    // ==========================================
-    //    // 3. SERVICE MANAGEMENT TESTS
-    //    // ==========================================
-    //
-    //    @Nested
-    //    @DisplayName("Service (Catalog) Operations")
-    //    class ServiceManagementTests {
-    //
-    //        @Test
-    //        @DisplayName("POST /admin/new-service - Valid Input - Should create and redirect")
-    //        void createService_Valid_ShouldRedirect() throws Exception {
-    //            mockMvc.perform(post("/admin/new-service")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("name", "Oil Change")
-    //                            .param("price", "50.00")
-    //                            .param("description", "Basic oil change")
-    //                            .param("categoryId", UUID.randomUUID().toString())) // Assuming DTO fields
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/services"));
-    //
-    //            verify(catalogService).createService(any(CreateServiceRequest.class));
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("POST /admin/new-service - Invalid Input - Should return view with errors")
-    //        void createService_Invalid_ShouldReturnView() throws Exception {
-    //            mockMvc.perform(post("/admin/new-service")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("name", "")) // Empty name
-    //                    .andExpect(status().isOk())
-    //                    .andExpect(view().name("account/admin/admin-services"))
-    //                    .andExpect(model().attributeHasFieldErrors("createServiceRequest", "name"));
-    //
-    //            verify(catalogService, never()).createService(any());
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("PUT /admin/update-service - Valid Input - Should update and redirect")
-    //        void updateService_Valid_ShouldRedirect() throws Exception {
-    //            mockMvc.perform(put("/admin/update-service")
-    //                            .principal(adminAuth)
-    //                            .with(csrf())
-    //                            .param("id", UUID.randomUUID().toString())
-    //                            .param("name", "New Name")
-    //                            .param("price", "100.00"))
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/services"));
-    //
-    //            verify(catalogService).updateService(any(UpdateServiceRequest.class));
-    //        }
-    //
-    //        @Test
-    //        @DisplayName("DELETE /admin/delete-service/{id} - Should delete and redirect")
-    //        void deleteService_ShouldRedirect() throws Exception {
-    //            UUID serviceId = UUID.randomUUID();
-    //
-    //            mockMvc.perform(delete("/admin/delete-service/{serviceId}", serviceId)
-    //                            .principal(adminAuth)
-    //                            .with(csrf()))
-    //                    .andExpect(status().is3xxRedirection())
-    //                    .andExpect(redirectedUrl("/admin/services"));
-    //
-    //            verify(catalogService).deleteService(serviceId);
-    //        }
-    //    }
-    //
-    //    // ==========================================
-    //    // 4. SECURITY & ACCESS CONTROL TESTS
-    //    // ==========================================
-    //
-    //    @Test
-    //    @DisplayName("GET /admin/dashboard - Unauthenticated - Should Redirect to Login")
-    //    void unauthenticatedAccess_ShouldRedirectToLogin() throws Exception {
-    //        mockMvc.perform(get("/admin/dashboard")) // No principal set
-    //                .andExpect(status().is3xxRedirection())
-    //                .andExpect(redirectedUrlPattern("**/login"));
-    //    }
-    //
-    //    @Test
-    //    @DisplayName("GET /admin/dashboard - Authenticated as USER (Not Admin) - Should Return 403 Forbidden")
-    //    void nonAdminAccess_ShouldReturnForbidden() throws Exception {
-    //        // Create a user with ROLE_USER only
-    //        AuthenticationMetaData metaData = mock(AuthenticationMetaData.class);
-    //        UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(
-    //                metaData, "pass", List.of(new SimpleGrantedAuthority("ROLE_USER"))
-    //        );
-    //
-    //        mockMvc.perform(get("/admin/dashboard").principal(userAuth))
-    //                .andExpect(status().isForbidden()); // 403
-    //    }
-}
+    @Test
+    @DisplayName("DELETE /admin/delete-user/{id} deletes user and redirects")
+    void deleteUser_Success() throws Exception {
+        UUID userId = UUID.randomUUID();
 
+        mockMvc.perform(delete("/admin/delete-user/{userId}", userId)
+                        .with(csrf())
+                        .with(user(principal))) // Fixed: Use correct principal
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/users"));
+
+        verify(userService).deleteUserById(userId);
+    }
+
+    // --- Settings Tests ---
+
+    @Test
+    @DisplayName("PUT /admin/settings/email updates email")
+    void changeAdminEmail_Success() throws Exception {
+        // Ensure getById returns the user for the current principal
+        User mockAdmin = User.builder().id(adminId).build();
+        when(userService.getById(adminId)).thenReturn(mockAdmin);
+
+        mockMvc.perform(put("/admin/settings/email")
+                        .with(csrf())
+                        .with(user(principal)) // Fixed: Use correct principal
+                        .param("newEmail", "admin@newdomain.com"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/settings"));
+
+        verify(userService).changeAdminEmail(any(User.class), any(AdminChangeEmailRequest.class));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/settings/password updates password")
+    void changeAdminPassword_Success() throws Exception {
+        User mockAdmin = User.builder().id(adminId).build();
+        when(userService.getById(adminId)).thenReturn(mockAdmin);
+
+        mockMvc.perform(put("/admin/settings/password")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("currentPassword", "Qwer4321!")
+                        .param("newPassword", "NewPass123!")
+                        .param("confirmNewPassword", "NewPass123!")
+                 )
+                 .andExpect(status().is3xxRedirection())
+                 .andExpect(redirectedUrl("/admin/settings"));
+
+        verify(userService).changeAdminPassword(any(User.class), any(AdminChangePasswordRequest.class));
+    }
+
+    @Test
+    @DisplayName("DELETE /admin/delete-service/{id} deletes service and redirects")
+    void deleteService_Success() throws Exception {
+        UUID serviceId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/admin/delete-service/{serviceId}", serviceId)
+                        .with(csrf())
+                        .with(user(principal))) // Fixed: Use correct principal
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/services"));
+
+        verify(catalogService).deleteService(serviceId);
+    }
+
+    // Additional tests for validation and success paths
+
+    @Test
+    @DisplayName("POST /admin/new-user with validation errors returns users view")
+    void createNewUser_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(post("/admin/new-user")
+                        .with(csrf())
+                        .with(user(principal))
+                        // missing required fields to trigger validation errors
+                        .param("firstName", "")
+                        .param("lastName", "L")
+                        .param("email", "invalid-email")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-users"))
+                .andExpect(model().attributeExists("registerNewUserRequest"))
+                .andExpect(model().attribute("user", adminId));
+    }
+
+    @Test
+    @DisplayName("POST /admin/new-user success redirects to users")
+    void createNewUser_Success_ShouldRedirect() throws Exception {
+        mockMvc.perform(post("/admin/new-user")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("firstName", "John")
+                        .param("lastName", "Doe")
+                        .param("email", "john.doe@example.com")
+                        .param("password", "Pass1234")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/users"));
+
+        verify(userService).registerNewUser(any(RegisterNewUserRequest.class));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/update-user with validation errors returns users view")
+    void updateUser_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(put("/admin/update-user")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("firstName", "A") // too short
+                        .param("lastName", "B")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-users"))
+                .andExpect(model().attributeExists("updateUserRequest"))
+                .andExpect(model().attribute("user", adminId));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/update-user success redirects to users")
+    void updateUser_Success_ShouldRedirect() throws Exception {
+        mockMvc.perform(put("/admin/update-user")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("firstName", "Jane")
+                        .param("lastName", "Doe")
+                        .param("email", "jane.doe@example.com")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/users"));
+
+        verify(userService).updateUser(any(UpdateUserRequest.class));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/settings/email with validation errors returns settings view")
+    void changeAdminEmail_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(put("/admin/settings/email")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("newEmail", "")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-settings"))
+                .andExpect(model().attributeExists("adminChangeEmailRequest"))
+                .andExpect(model().attribute("user", userService.getById(adminId)));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/settings/password with validation errors returns settings view")
+    void changeAdminPassword_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(put("/admin/settings/password")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("currentPassword", "")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-settings"))
+                .andExpect(model().attributeExists("adminChangePasswordRequest"))
+                .andExpect(model().attribute("user", userService.getById(adminId)));
+    }
+
+    @Test
+    @DisplayName("POST /admin/new-service with validation errors returns services view")
+    void createService_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(post("/admin/new-service")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("name", "A") // too short
+                        .param("description", "short")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-services"))
+                .andExpect(model().attributeExists("createServiceRequest"))
+                .andExpect(model().attribute("user", adminId));
+    }
+
+    @Test
+    @DisplayName("POST /admin/new-service success redirects to services")
+    void createService_Success_ShouldRedirect() throws Exception {
+        UUID categoryId = UUID.randomUUID();
+
+        mockMvc.perform(post("/admin/new-service")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("name", "Oil Change")
+                        .param("description", "Full oil change including filter replacement")
+                        .param("basePrice", "29.99")
+                        .param("estimatedDurationInMinutes", "30")
+                        .param("categoryId", categoryId.toString())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/services"));
+
+        verify(catalogService).createService(any(CreateServiceRequest.class));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/update-service with validation errors returns services view")
+    void updateService_WithValidationErrors_ShouldReturnView() throws Exception {
+        mockMvc.perform(put("/admin/update-service")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("name", "A")
+                        .param("description", "short")
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-services"))
+                .andExpect(model().attributeExists("updateServiceRequest"))
+                .andExpect(model().attribute("user", adminId));
+    }
+
+    @Test
+    @DisplayName("PUT /admin/update-service success redirects to services")
+    void updateService_Success_ShouldRedirect() throws Exception {
+        UUID serviceId = UUID.randomUUID();
+
+        mockMvc.perform(put("/admin/update-service")
+                        .with(csrf())
+                        .with(user(principal))
+                        .param("id", serviceId.toString())
+                        .param("name", "Tire Rotation")
+                        .param("description", "Rotate tires to extend tread life and improve wear")
+                        .param("basePrice", "19.99")
+                        .param("estimatedDurationInMinutes", "20")
+                        .param("categoryId", UUID.randomUUID().toString())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/services"));
+
+        verify(catalogService).updateService(any(UpdateServiceRequest.class));
+    }
+}

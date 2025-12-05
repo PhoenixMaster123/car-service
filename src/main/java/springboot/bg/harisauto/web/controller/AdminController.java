@@ -191,6 +191,8 @@ public class AdminController {
       modelAndView.setViewName("account/admin/admin-users");
       modelAndView.addObject("user", metaData.getUserId());
       modelAndView.addObject("registerNewUserRequest", request);
+      // template requires updateUserRequest as well
+      modelAndView.addObject("updateUserRequest", new UpdateUserRequest());
       modelAndView.addObject("allUsers", userService.getAllUsers());
 
       return modelAndView;
@@ -219,6 +221,8 @@ public class AdminController {
       modelAndView.setViewName("account/admin/admin-users");
       modelAndView.addObject("user", metaData.getUserId());
       modelAndView.addObject("updateUserRequest", request);
+      // template requires registerNewUserRequest as well
+      modelAndView.addObject("registerNewUserRequest", new RegisterNewUserRequest());
       modelAndView.addObject("allUsers", userService.getAllUsers());
 
       return modelAndView;
@@ -374,3 +378,4 @@ public class AdminController {
     return new ModelAndView("redirect:/admin/services");
   }
 }
+
