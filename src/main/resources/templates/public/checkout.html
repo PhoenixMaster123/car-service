@@ -7,11 +7,12 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
-    <link th:href="@{/css/public/checkout.css}" rel="stylesheet">
+    <link th:href="@{/common/base.css}" rel="stylesheet">
+    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/theme-toggle/theme-toggle.css}" rel="stylesheet">
+    <link th:href="@{/component/footer/footer.css}" rel="stylesheet">
+    <link th:href="@{/public/checkout/checkout.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -27,7 +28,7 @@
 
         <ul class="nav-links" id="nav-links">
             <li><a th:href="@{/home}">Home</a></li>
-            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
             <li class="dropdown">
                 <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
                 <div class="dropdown-content">
@@ -98,7 +99,31 @@
                     </div>
                 </div>
 
-                <form id="paymentForm" th:data-stripe-key="${stripePublicKey}">
+                <!-- Dev Mode: Simulated Payment -->
+                <div th:if="${devMode}" id="devModePayment">
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-flask" style="color: #f59e0b; font-size: 1.3rem;"></i>
+                            <strong style="color: #f59e0b;">Development Mode</strong>
+                        </div>
+                        <p style="color: var(--text-color-muted); font-size: 0.9rem; margin: 0;">
+                            Stripe is not configured. Click below to simulate a successful payment for testing purposes.
+                        </p>
+                    </div>
+
+                    <button type="button" class="btn-pay" id="devPayBtn" onclick="simulateDevPayment()">
+                        <span id="dev-button-text">
+                            <i class="fa-solid fa-flask"></i> Simulate Payment — €<span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}">0.00</span>
+                        </span>
+                    </button>
+
+                    <p class="terms-text">
+                        <i class="fa-solid fa-info-circle"></i> This simulated payment is for development only. No real charges will be made.
+                    </p>
+                </div>
+
+                <!-- Real Stripe Payment -->
+                <form th:unless="${devMode}" id="paymentForm" th:data-stripe-key="${stripePublicKey}">
                     <div id="payment-element"></div>
 
                     <div id="payment-message" class="hidden"></div>
@@ -166,7 +191,7 @@
 </body>
 
 <script src="https://js.stripe.com/v3/"></script>
-<script th:src="@{/js/public/checkout.js}"></script>
-<script th:src="@{/js/toggleSwitch.js}"></script>
+<script th:src="@{/public/checkout/checkout.js}"></script>
+<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
 
 </html>

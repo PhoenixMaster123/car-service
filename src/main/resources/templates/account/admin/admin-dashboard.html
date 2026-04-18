@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/admin-aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/admin/admin-dashboard.css}" rel="stylesheet">
+    <link th:href="@{/common/base.css}" rel="stylesheet">
+    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/component/admin-sidebar/admin-sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/admin/dashboard/admin-dashboard.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -111,9 +111,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
+<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
+<script th:src="@{/component/chatbot/chatbot.js}"></script>
 <script>
     // Chart.js configuration
     Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');

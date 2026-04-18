@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/bookings.css}" rel="stylesheet">
+    <link th:href="@{/common/base.css}" rel="stylesheet">
+    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/bookings/bookings.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -279,9 +279,9 @@
 </div>
 
 <script th:src="@{/js/invoiceMenu.js}"></script>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
+<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
+<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
+<script th:src="@{/component/chatbot/chatbot.js}"></script>
 
 </body>
 </html>

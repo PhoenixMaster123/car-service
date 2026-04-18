@@ -1,16 +1,31 @@
+// Simulated payment for dev mode (no Stripe key)
+function simulateDevPayment() {
+    const overlay = document.getElementById('processingOverlay');
+    const btn = document.getElementById('devPayBtn');
+
+    if (btn) btn.disabled = true;
+    if (overlay) overlay.classList.add('active');
+
+    // Simulate processing delay
+    setTimeout(function () {
+        window.location.href = '/process-payment?redirect_status=succeeded';
+    }, 1500);
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
 
     const paymentForm = document.getElementById('paymentForm');
-    const submitBtn = document.getElementById('payBtn'); // Using the ID from your HTML
+    const submitBtn = document.getElementById('payBtn');
     const processingOverlay = document.getElementById('processingOverlay');
     const messageContainer = document.getElementById('payment-message');
 
+    // If no payment form exists (dev mode), skip Stripe initialization
     if (!paymentForm) return;
 
     const publicKey = paymentForm.getAttribute('data-stripe-key');
-    if (!publicKey) {
-        console.error("Stripe Public Key is missing! Check your controller/HTML.");
-        showMessage("System Error: Payment configuration missing.");
+    if (!publicKey || publicKey.startsWith('dummy') || publicKey === '${STRIPE_PUBLIC_KEY}') {
+        console.warn("Stripe Public Key is missing or invalid. Dev mode active.");
+        showMessage("Stripe not configured. Development mode active.");
         return;
     }
 

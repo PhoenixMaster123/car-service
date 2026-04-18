@@ -9,12 +9,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/component/footer.css}" rel="stylesheet">
-    <link th:href="@{/css/public/booking.css}" rel="stylesheet">
+    <link th:href="@{/common/base.css}" rel="stylesheet">
+    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/theme-toggle/theme-toggle.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/component/footer/footer.css}" rel="stylesheet">
+    <link th:href="@{/public/booking/booking.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
 
         <ul class="nav-links" id="nav-links">
             <li><a th:href="@{/home}">Home</a></li>
-            <li><a th:href="@{/services}">Services & Pricing</a></li>
+            <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
             <li class="dropdown">
                 <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
                 <div class="dropdown-content">
@@ -85,7 +86,42 @@
 
 <main class="page-container">
     <div class="booking-container">
+
+        <!-- Step Progress Indicator -->
+        <div class="step-progress">
+            <div class="step completed">
+                <div class="step-circle">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <span class="step-label">Services</span>
+            </div>
+            <div class="step-line completed-line"></div>
+            <div class="step active">
+                <div class="step-circle">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <span class="step-label">Details</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+                <span class="step-label">Payment</span>
+            </div>
+        </div>
+
         <h1><i class="fa-solid fa-calendar-check"></i> Book Your Appointment</h1>
+
+        <!-- Flash Messages -->
+        <div th:if="${error}" class="alert alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${error}">Error message</span>
+        </div>
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i>
+            <span th:text="${success}">Success message</span>
+        </div>
 
         <div class="form-group">
             <label><i class="fa-solid fa-list-check"></i> Selected Services <span style="color:var(--primary)">*</span></label>
@@ -126,10 +162,11 @@
 
         <form id="bookingForm" th:action="@{/bookings}" th:method="POST" th:object="${bookingFormRequest}">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-row">
                 <div class="form-group">
-                    <label for="bookingDate"><i class="fa-solid fa-calendar-days"></i> Date & Time *</label>
+                    <label for="bookingDate"><i class="fa-solid fa-calendar-days"></i> Date &amp; Time *</label>
                     <input type="datetime-local" id="bookingDate" name="bookingDate" required th:field="*{bookingDate}">
+                    <span class="error-msg" th:if="${#fields.hasErrors('bookingDate')}" th:errors="*{bookingDate}"></span>
                 </div>
 
                 <div class="form-group">
@@ -142,23 +179,26 @@
                                 th:text="|${vehicle.make} ${vehicle.model} (${vehicle.licensePlate})|" th:field="*{vehicleId}">
                         </option>
                     </select>
+                    <span class="error-msg" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}"></span>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-row">
                 <div class="form-group" id="phoneGroup">
                     <label for="phoneNumber"><i class="fa-solid fa-phone"></i> Phone Number *</label>
                     <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+49 151 1234567" required th:field="*{phoneNumber}">
+                    <span class="error-msg" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="paymentMethod"><i class="fa-solid fa-credit-card"></i> Payment *</label>
-                    <select id="paymentMethod" name="paymentMethod" required onchange="updateSubmitButton()">
+                    <select id="paymentMethod" name="paymentMethod" required onchange="updateSubmitButton()" th:field="*{paymentMethod}">
                         <option value="" disabled selected>Method</option>
                         <option value="CASH">Cash on Arrival</option>
                         <option value="CARD">Credit / Debit Card</option>
                         <option value="PAYPAL">PayPal</option>
                     </select>
+                    <span class="error-msg" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}"></span>
                 </div>
             </div>
 
@@ -202,8 +242,8 @@
     </form>
 </div>
 </body>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
-<script th:src="@{/js/public/booking.js}"></script>
+<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
+<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
+<script th:src="@{/component/chatbot/chatbot.js}"></script>
+<script th:src="@{/public/booking/booking.js}"></script>
 </html>
