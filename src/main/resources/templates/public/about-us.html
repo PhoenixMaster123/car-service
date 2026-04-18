@@ -1,82 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <title>About Us - Haris Car Care</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/common/base.css}" rel="stylesheet">
-    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/footer/footer.css}" rel="stylesheet">
     <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
     <link th:href="@{/public/about-us/about-us.css}" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar" th:fragment="navbar">
-    <div class="navbar-container">
-        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
-
-        <div class="menu-toggle" id="mobile-menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </div>
-
-        <ul class="nav-links" id="nav-links">
-            <li><a th:href="@{/home}">Home</a></li>
-            <li><a th:href="@{/services}">Services & Pricing</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
-                <div class="dropdown-content">
-                    <a th:href="@{/about}">About Us</a>
-                    <a th:href="@{/careers}">Careers</a>
-                    <a th:href="@{/locations}">Locations</a>
-                    <a th:href="@{/news}">News</a>
-                </div>
-            </li>
-
-            <li class="user-actions" sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}">Sign In</a>
-                <a th:href="@{/register}" class="register-btn">Register</a>
-            </li>
-
-            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
-                <a href="#" class="dropbtn">
-                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
-                </a>
-                <div class="dropdown-content">
-                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
-                    <form th:action="@{/logout}" method="GET">
-                        <button type="submit" class="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </li>
-
-            <li class="theme-toggle-wrapper mobile-only">
-                <div class="theme-toggle" id="theme-toggle-mobile">
-                    <i class="fa-solid fa-sun"></i>
-                    <i class="fa-solid fa-moon"></i>
-                    <div class="toggle-circle"></div>
-                </div>
-            </li>
-            <li class="mobile-only">
-                <a th:href="@{bookings}" class="cta-button">Book Now</a>
-            </li>
-        </ul>
-
-        <div class="theme-toggle" id="theme-toggle-desktop">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-            <div class="toggle-circle"></div>
-        </div>
-
-        <a th:href="@{bookings}" class="cta-button desktop-only">Book Now</a>
-
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <header class="about-hero">
     <div class="hero-content">
@@ -107,7 +43,7 @@
                 </p>
                 <div class="signature">
                     <p>Haris P.</p>
-                    <span>Founder & CEO</span>
+                    <span>Founder &amp; CEO</span>
                 </div>
             </div>
         </div>
@@ -137,7 +73,7 @@
             </div>
             <div class="value-card">
                 <i class="fa-solid fa-clock"></i>
-                <h3>Fast & Reliable</h3>
+                <h3>Fast &amp; Reliable</h3>
                 <p>We respect your time. Book online, track progress, and get back on the road faster.</p>
             </div>
         </div>
@@ -178,7 +114,7 @@
                     <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member">
                 </div>
                 <h3>Haris P.</h3>
-                <span>Founder & Lead Detailer</span>
+                <span>Founder &amp; Lead Detailer</span>
                 <div class="socials">
                     <a href="#"><i class="fa-brands fa-linkedin"></i></a>
                     <a href="#"><i class="fa-brands fa-instagram"></i></a>
@@ -216,28 +152,8 @@
 
 </main>
 
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
-
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
-<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
-<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
-<script th:src="@{/component/chatbot/chatbot.js}"></script>
+<footer th:replace="~{fragments/footer :: site-footer}"></footer>
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 </body>
 </html>

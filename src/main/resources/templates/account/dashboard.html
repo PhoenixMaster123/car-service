@@ -1,46 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard - Haris Car Care</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/common/base.css}" rel="stylesheet">
-    <link th:href="@{/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
     <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
     <link th:href="@{/account/dashboard/dashboard.css}" rel="stylesheet">
 </head>
 <body>
 
-<aside class="sidebar" th:fragment="sidebar">
-    <div class="sidebar-brand">
-        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
-    </div>
-
-    <ul class="sidebar-links">
-        <li><a th:href="@{/users/dashboard}" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
-        <li><a th:href="@{/users/vehicles}"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
-        <li><a th:href="@{/users/my-bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
-        <li><a th:href="@{/users/invoices}"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
-        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i>Settings</a></li>
-        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-
-    <div class="sidebar-footer">
-        <div class="theme-toggle" id="theme-toggle-desktop">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-            <div class="toggle-circle"></div>
-        </div>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
 
 <main class="main-content">
 
@@ -106,7 +78,6 @@
         </div>
 
         <div class="content-card">
-
             <div class="card-header">
                 <i class="fas fa-car-side"></i>
                 <h3>My Vehicles</h3>
@@ -129,19 +100,20 @@
                             <span class="vehicle-sub" th:text="${vehicle.manufacturingYear} + ' • ' + (${vehicle.engineType} ?: 'N/A')">2023 • 2.0L Turbo</span>
                         </td>
                         <td th:text="${vehicle.licensePlate}">WUE-A123</td>
-                        <td>Oct 05, 2025</td> <td>
-                        <button class="btn btn-secondary btn-small"
-                                th:data-make="${vehicle.make}"
-                                th:data-model="${vehicle.model}"
-                                th:data-year="${vehicle.manufacturingYear}"
-                                th:data-engine="${vehicle.engineType}"
-                                th:data-body="${vehicle.bodyType}"
-                                th:data-plate="${vehicle.licensePlate}"
-                                th:data-color="${vehicle.color}"
-                                onclick="openVehicleDetailsModal(this)">
-                            Details
-                        </button>
-                    </td>
+                        <td>Oct 05, 2025</td>
+                        <td>
+                            <button class="btn btn-secondary btn-small"
+                                    th:data-make="${vehicle.make}"
+                                    th:data-model="${vehicle.model}"
+                                    th:data-year="${vehicle.manufacturingYear}"
+                                    th:data-engine="${vehicle.engineType}"
+                                    th:data-body="${vehicle.bodyType}"
+                                    th:data-plate="${vehicle.licensePlate}"
+                                    th:data-color="${vehicle.color}"
+                                    onclick="openVehicleDetailsModal(this)">
+                                Details
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -149,27 +121,6 @@
         </div>
     </div>
 </main>
-
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
-
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
 
 <!-- Vehicle Details Modal -->
 <div class="modal-overlay" id="vehicleModalOverlay" onclick="closeVehicleDetailsModal()">
@@ -200,7 +151,7 @@
                     <div class="info-section">
                         <h3><i class="fa-solid fa-info-circle"></i> Vehicle Information</h3>
                         <div class="info-item">
-                            <span class="info-label">Make & Model</span>
+                            <span class="info-label">Make &amp; Model</span>
                             <span class="info-value" id="modalMakeModel"></span>
                         </div>
                         <div class="info-item">
@@ -251,15 +202,14 @@
                 </div>
             </div>
         </div>
+
         <div class="modal-footer">
         </div>
     </div>
 </div>
 
 <script th:src="@{/js/invoiceVehicleMenu.js}"></script>
-<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
-<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
-<script th:src="@{/component/chatbot/chatbot.js}"></script>
-
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 </body>
 </html>

@@ -1,85 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <title>Secure Checkout - Haris Car Care</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/common/base.css}" rel="stylesheet">
-    <link th:href="@{/common/variables.css}" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
-    <link th:href="@{/component/theme-toggle/theme-toggle.css}" rel="stylesheet">
     <link th:href="@{/component/footer/footer.css}" rel="stylesheet">
     <link th:href="@{/public/checkout/checkout.css}" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar" th:fragment="navbar">
-    <div class="navbar-container">
-        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
-
-        <div class="menu-toggle" id="mobile-menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </div>
-
-        <ul class="nav-links" id="nav-links">
-            <li><a th:href="@{/home}">Home</a></li>
-            <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
-                <div class="dropdown-content">
-                    <a th:href="@{/about}">About Us</a>
-                    <a th:href="@{/careers}">Careers</a>
-                    <a th:href="@{/locations}">Locations</a>
-                    <a th:href="@{/news}">News</a>
-                </div>
-            </li>
-
-            <li class="user-actions" sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}">Sign In</a>
-                <a th:href="@{/register}" class="register-btn">Register</a>
-            </li>
-
-            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
-                <a href="#" class="dropbtn">
-                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
-                </a>
-                <div class="dropdown-content">
-                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
-                    <form th:action="@{/logout}" method="GET">
-                        <button type="submit" class="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </li>
-
-            <li class="theme-toggle-wrapper mobile-only">
-                <div class="theme-toggle" id="theme-toggle-mobile">
-                    <i class="fa-solid fa-sun"></i>
-                    <i class="fa-solid fa-moon"></i>
-                    <div class="toggle-circle"></div>
-                </div>
-            </li>
-            <li class="mobile-only">
-                <a th:href="@{/bookings}" class="cta-button">Book Now</a>
-            </li>
-        </ul>
-
-        <div class="theme-toggle" id="theme-toggle-desktop">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-            <div class="toggle-circle"></div>
-        </div>
-
-        <a th:href="@{/bookings}" class="cta-button desktop-only">Book Now</a>
-
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <main class="checkout-wrapper">
 
@@ -125,7 +59,6 @@
                 <!-- Real Stripe Payment -->
                 <form th:unless="${devMode}" id="paymentForm" th:data-stripe-key="${stripePublicKey}">
                     <div id="payment-element"></div>
-
                     <div id="payment-message" class="hidden"></div>
 
                     <button type="submit" class="btn-pay" id="payBtn">
@@ -178,7 +111,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </main>
 
@@ -188,10 +120,10 @@
     <p>Please do not close this window.</p>
 </div>
 
-</body>
-
+<footer th:replace="~{fragments/footer :: site-footer}"></footer>
 <script src="https://js.stripe.com/v3/"></script>
 <script th:src="@{/public/checkout/checkout.js}"></script>
 <script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
-
+<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
+</body>
 </html>

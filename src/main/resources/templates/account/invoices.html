@@ -1,45 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoices - Haris Car Care</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" crossorigin rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/common/base.css}" rel="stylesheet">
-    <link th:href="@{/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
     <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
     <link th:href="@{/account/invoices/invoices.css}" rel="stylesheet">
 </head>
 <body>
 
-<aside class="sidebar" th:fragment="sidebar">
-    <div class="sidebar-brand">
-        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
-    </div>
-
-    <ul class="sidebar-links">
-        <li><a th:href="@{/users/dashboard}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
-        <li><a th:href="@{/users/vehicles}"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
-        <li><a th:href="@{/users/my-bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
-        <li><a th:href="@{/users/invoices}" class="active"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
-        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i> Settings</a></li>
-        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-
-    <div class="sidebar-footer">
-        <div class="theme-toggle" id="theme-toggle-desktop">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-            <div class="toggle-circle"></div>
-        </div>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('invoices')}"></aside>
 
 <div class="main-content">
     <main class="page-container">
@@ -48,7 +19,6 @@
             <p>View and manage all your service invoices.</p>
         </header>
 
-        <!-- Invoice Summary Stats -->
         <div class="invoice-stats">
             <div class="stat-card stat-total">
                 <i class="fa-solid fa-receipt"></i>
@@ -80,7 +50,6 @@
             </div>
         </div>
 
-        <!-- Filters and Search -->
         <div class="content-card">
             <div class="card-header">
                 <i class="fa-solid fa-filter"></i>
@@ -117,7 +86,6 @@
             </div>
         </div>
 
-        <!-- Invoice List -->
         <div class="content-card">
             <div class="card-header">
                 <i class="fa-solid fa-list"></i>
@@ -192,7 +160,7 @@
                         <div class="invoice-details">
                             <div class="invoice-detail-item">
                                 <span class="detail-label">Service</span>
-                                <span class="detail-value">Oil Change & Inspection</span>
+                                <span class="detail-value">Oil Change &amp; Inspection</span>
                             </div>
                             <div class="invoice-detail-item">
                                 <span class="detail-label">Vehicle</span>
@@ -213,11 +181,11 @@
                         </div>
                     </div>
                     <div class="invoice-footer">
-                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change & Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
+                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change &amp; Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
                             <i class="fa-solid fa-eye"></i>
                             <span>View Details</span>
                         </button>
-                        <button class="btn btn-primary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change & Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
+                        <button class="btn btn-primary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change &amp; Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
                             <i class="fa-solid fa-credit-card"></i>
                             <span>Pay Now</span>
                         </button>
@@ -340,7 +308,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        
+
         <div class="modal-body">
             <div class="invoice-modal-content">
                 <div class="invoice-header-section">
@@ -435,32 +403,9 @@
     </div>
 </div>
 
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
-
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
-
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
 <script th:src="@{/js/invoiceMenu.js}"></script>
-<script th:src="@{/component/navbar/navbarMobileView.js}"></script>
-<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
-<script th:src="@{/component/chatbot/chatbot.js}"></script>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 
 </body>
 </html>
-
