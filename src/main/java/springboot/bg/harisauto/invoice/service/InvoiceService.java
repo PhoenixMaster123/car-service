@@ -1,6 +1,8 @@
 package springboot.bg.harisauto.invoice.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 import springboot.bg.harisauto.invoice.model.Invoice;
 import springboot.bg.harisauto.invoice.model.InvoiceLineItem;
 import springboot.bg.harisauto.invoice.model.InvoiceStatus;
@@ -20,7 +24,7 @@ import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.vehicle.model.Vehicle;
 
 /**
- * InvoiceService.java - Generation and retrieval of invoices.
+ * InvoiceService.java - Generation, retrieval, and PDF rendering of invoices.
  *
  * @author Kristian Popov
  */
@@ -33,12 +37,15 @@ public class InvoiceService {
 
   private final InvoiceRepository repository;
   private final InvoiceNumberGenerator numberGenerator;
+  private final TemplateEngine templateEngine;
 
   @Autowired
   public InvoiceService(InvoiceRepository repository,
-                        InvoiceNumberGenerator numberGenerator) {
+                        InvoiceNumberGenerator numberGenerator,
+                        TemplateEngine templateEngine) {
     this.repository = repository;
     this.numberGenerator = numberGenerator;
+    this.templateEngine = templateEngine;
   }
 
   /**
@@ -110,6 +117,25 @@ public class InvoiceService {
       throw new AccessDeniedException("Invoice does not belong to the current user");
     }
     return invoice;
+  }
+
+  /** Render the invoice as a PDF byte stream. */
+  public byte[] renderPdf(Invoice invoice) {
+    Context ctx = new Context();
+    ctx.setVariable("invoice", invoice);
+    String html = templateEngine.process("invoice/invoice-pdf", ctx);
+
+    try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      com.openhtmltopdf.pdfboxout.PdfRendererBuilder builder =
+          new com.openhtmltopdf.pdfboxout.PdfRendererBuilder();
+      builder.useFastMode();
+      builder.withHtmlContent(html, null);
+      builder.toStream(out);
+      builder.run();
+      return out.toByteArray();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to render invoice PDF", e);
+    }
   }
 
   private static String describeVehicle(Vehicle vehicle) {

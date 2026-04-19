@@ -19,6 +19,9 @@
             <a th:href="@{/users/invoices}" class="btn btn-ghost">
                 <i class="fa-solid fa-arrow-left"></i> Back to Invoices
             </a>
+            <a th:href="@{'/users/invoices/' + ${invoice.id} + '/pdf'}" class="btn btn-primary">
+                <i class="fa-solid fa-download"></i> Download PDF
+            </a>
         </div>
 
         <article class="invoice-document">

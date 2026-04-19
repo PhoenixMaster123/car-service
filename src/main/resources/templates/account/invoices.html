@@ -114,6 +114,10 @@
                             <i class="fa-solid fa-eye"></i>
                             <span>View Details</span>
                         </a>
+                        <a class="btn btn-primary" th:href="@{'/users/invoices/' + ${invoice.id} + '/pdf'}">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download PDF</span>
+                        </a>
                     </div>
                 </div>
             </div>
