@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import springboot.bg.harisauto.booking.dto.request.BookingRequest;
 import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.cart.ShoppingCart;
+import springboot.bg.harisauto.dev.DevModeProperties;
 import springboot.bg.harisauto.invoice.model.Invoice;
 import springboot.bg.harisauto.invoice.model.InvoiceStatus;
 import springboot.bg.harisauto.invoice.service.InvoiceService;
@@ -42,6 +43,7 @@ public class PaymentController {
   private final InvoiceService invoiceService;
   private final UserService userService;
   private final VehicleService vehicleService;
+  private final DevModeProperties devModeProperties;
 
   @Value("${stripe.public.key}")
   private String stripePublicKey;
@@ -52,13 +54,15 @@ public class PaymentController {
                            BookingService bookingService,
                            InvoiceService invoiceService,
                            UserService userService,
-                           VehicleService vehicleService) {
+                           VehicleService vehicleService,
+                           DevModeProperties devModeProperties) {
     this.client = client;
     this.shoppingCart = shoppingCart;
     this.bookingService = bookingService;
     this.invoiceService = invoiceService;
     this.userService = userService;
     this.vehicleService = vehicleService;
+    this.devModeProperties = devModeProperties;
   }
 
   /**
@@ -83,8 +87,35 @@ public class PaymentController {
     modelAndView.addObject("cart", shoppingCart);
     modelAndView.addObject("bookingRequest", new BookingRequest());
     modelAndView.addObject("stripePublicKey", stripePublicKey);
+    modelAndView.addObject("devMode", devModeProperties.isEnabled());
 
     return modelAndView;
+  }
+
+  /**
+   * DEV-mode short-circuit: simulate a successful card/PayPal payment without calling Stripe.
+   * Creates the booking, generates a PAID invoice, and redirects to the invoice detail page.
+   * Active only when app.dev-mode.enabled=true.
+   */
+  @PostMapping("/dev/simulate-payment-success")
+  public ModelAndView simulatePaymentSuccess(HttpSession session, RedirectAttributes redirectAttributes) {
+
+    if (!devModeProperties.isEnabled()) {
+      return new ModelAndView("redirect:/checkout");
+    }
+
+    PendingBookingSessionRequest pending = (PendingBookingSessionRequest) session.getAttribute("PENDING_BOOKING");
+    if (pending == null) {
+      return new ModelAndView("redirect:/bookings");
+    }
+
+    Invoice invoice = completePaidBooking(pending);
+    session.removeAttribute("PENDING_BOOKING");
+    shoppingCart.clear();
+
+    redirectAttributes.addFlashAttribute("success",
+        "[DEV] Simulated payment succeeded. Invoice " + invoice.getInvoiceNumber() + " generated.");
+    return new ModelAndView("redirect:/users/invoices/" + invoice.getId());
   }
 
   private Invoice completePaidBooking(PendingBookingSessionRequest pending) {
@@ -135,7 +166,7 @@ public class PaymentController {
 
         redirectAttributes.addFlashAttribute("success",
             "Booking confirmed. Invoice " + invoice.getInvoiceNumber() + " is ready.");
-        return new ModelAndView("redirect:/users/invoices");
+        return new ModelAndView("redirect:/users/invoices/" + invoice.getId());
 
       } else {
 

@@ -64,6 +64,10 @@ stripe:
   public:
     key: ${STRIPE_PUBLIC_KEY}
 
+app:
+  dev-mode:
+    enabled: false
+
 logging:
   level:
     org:

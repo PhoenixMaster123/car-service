@@ -29,3 +29,7 @@ spring:
 
 notification:
   email: "harisauto@gmail.com"
+
+app:
+  dev-mode:
+    enabled: true

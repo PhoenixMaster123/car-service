@@ -41,15 +41,16 @@
                             <strong style="color: #f59e0b;">Development Mode</strong>
                         </div>
                         <p style="color: var(--text-color-muted); font-size: 0.9rem; margin: 0;">
-                            Stripe is not configured. Click below to simulate a successful payment for testing purposes.
+                            Stripe is not configured. Click below to simulate a successful payment and auto-generate an invoice.
                         </p>
                     </div>
 
-                    <button type="button" class="btn-pay" id="devPayBtn" onclick="simulateDevPayment()">
-                        <span id="dev-button-text">
+                    <form th:action="@{/dev/simulate-payment-success}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn-pay" id="devPayBtn">
                             <i class="fa-solid fa-flask"></i> Simulate Payment — €<span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}">0.00</span>
-                        </span>
-                    </button>
+                        </button>
+                    </form>
 
                     <p class="terms-text">
                         <i class="fa-solid fa-info-circle"></i> This simulated payment is for development only. No real charges will be made.
