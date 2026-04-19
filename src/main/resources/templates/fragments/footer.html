@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- ======================================================
+     FRAGMENT: site-footer  (the <footer> element)
+====================================================== -->
+<footer class="footer" th:fragment="site-footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h4>Haris Car Care</h4>
+            <p>Your one-stop shop for premium car washing, detailing, and expert mechanical repairs. Drive clean, feel fresh.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a th:href="@{/home}">Home</a></li>
+                <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
+                <li><a th:href="@{/about}">About Us</a></li>
+                <li><a th:href="@{/bookings}">Book Now</a></li>
+                <li><a th:href="@{/careers}">Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Our Services</h4>
+            <ul>
+                <li><a th:href="@{/services}">Car Washing</a></li>
+                <li><a th:href="@{/services}">Carpet Cleaning</a></li>
+                <li><a th:href="@{/services}">Oil Change</a></li>
+                <li><a th:href="@{/services}">Tire Change</a></li>
+                <li><a th:href="@{/services}">A/C Refill</a></li>
+                <li><a th:href="@{/services}">DPF Filter Cleaning</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Contact Us</h4>
+            <ul>
+                <li><i class="fa-solid fa-location-dot"></i> Maria Luiza Blvd, Ruse, Bulgaria</li>
+                <li><i class="fa-solid fa-phone"></i> +359 00 000 000</li>
+                <li><i class="fa-solid fa-envelope"></i> hariscarcare@gmail.com</li>
+                <li><i class="fa-solid fa-clock"></i> Mon–Sat: 8:00 AM – 7:00 PM</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> Haris Car Care. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<!-- ======================================================
+     FRAGMENT: chatbot-widget
+====================================================== -->
+<th:block th:fragment="chatbot-widget">
+    <button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
+        <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
+        <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
+    </button>
+
+    <div class="chat-widget" id="chat-widget">
+        <div class="chat-header">
+            <h3>Haris AI Assistant</h3>
+            <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-message bot">
+                <p>Hello! How can I help you with your car care questions today?</p>
+            </div>
+        </div>
+        <form class="chat-footer" id="chat-form">
+            <label for="chat-input"></label>
+            <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+            <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+</th:block>
+
+<!-- ======================================================
+     FRAGMENT: common-scripts  (theme toggle, navbar mobile, chatbot JS)
+====================================================== -->
+<th:block th:fragment="common-scripts">
+    <script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
+    <script th:src="@{/component/navbar/navbarMobileView.js}"></script>
+    <script th:src="@{/component/chatbot/chatbot.js}"></script>
+</th:block>
+
+</body>
+</html>

@@ -27,7 +27,7 @@ public class PageControllerTest {
 
     this.mockMvc.perform(request)
         .andExpect(status().isOk())
-        .andExpect(view().name("/public/about-us"));
+        .andExpect(view().name("public/about-us"));
   }
 
   @Test
@@ -38,7 +38,7 @@ public class PageControllerTest {
 
     this.mockMvc.perform(request)
         .andExpect(status().isOk())
-        .andExpect(view().name("/public/careers"));
+        .andExpect(view().name("public/careers"));
   }
 
   @Test
@@ -49,7 +49,7 @@ public class PageControllerTest {
 
     this.mockMvc.perform(request)
         .andExpect(status().isOk())
-        .andExpect(view().name("/public/location"));
+        .andExpect(view().name("public/location"));
     }
 
     @Test
@@ -60,6 +60,6 @@ public class PageControllerTest {
 
       this.mockMvc.perform(request)
           .andExpect(status().isOk())
-          .andExpect(view().name("/public/news"));
+          .andExpect(view().name("public/news"));
     }
 }

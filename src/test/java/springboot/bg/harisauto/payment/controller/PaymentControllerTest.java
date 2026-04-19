@@ -59,7 +59,7 @@ class PaymentControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(session.getAttribute("PENDING_BOOKING")).thenReturn(new Object());
         ModelAndView mv = controller.showCheckoutPage(session);
-        assertThat(mv.getViewName()).isEqualTo("/public/checkout");
+        assertThat(mv.getViewName()).isEqualTo("public/checkout");
         assertThat(mv.getModel()).containsKeys("cart", "bookingRequest", "stripePublicKey");
     }
 

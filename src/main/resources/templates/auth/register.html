@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Haris Car Care</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/auth/auth-layout.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
+    <link th:href="@{/auth/auth-layout.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -22,7 +17,7 @@
 
 <main class="auth-wrapper">
     <div class="auth-container">
-        <a th:href="@{/}" class="brand-name" style="text-align: center; display: block; margin-bottom: 1rem; text-shadow: none;">Haris Car Care</a>
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
         <h2>Create Account</h2>
 
         <form th:action="@{/register}" th:method="POST" th:object="${registerRequest}" id="registerForm">
@@ -60,7 +55,7 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="terms" name="terms" required>
-                <label for="terms">I agree with the <a href="/terms-of-service">Terms & Conditions</a></label>
+                <label for="terms">I agree with the <a href="/terms-of-service">Terms &amp; Conditions</a></label>
             </div>
 
             <button type="submit" class="submit-btn">Register</button>
@@ -72,6 +67,7 @@
         </form>
     </div>
 </main>
-<script src="/js/toggleSwitch.js"></script>
+
+<script th:src="@{/component/theme-toggle/toggleSwitch.js}"></script>
 </body>
 </html>

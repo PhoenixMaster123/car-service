@@ -1,48 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings - Haris Car Care</title>
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Admin Settings - Haris Car Care</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/admin-aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/admin/admin-settings.css}" rel="stylesheet">
+    <link th:href="@{/component/admin-sidebar/admin-sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/admin/settings/admin-settings.css}" rel="stylesheet">
 </head>
 <body>
 
 <div class="dashboard">
-    <aside class="sidebar">
-        <a href="/" class="sidebar-brand">Haris Car Care</a>
-
-        <ul class="sidebar-nav">
-            <li><a href="/admin/dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
-            <li><a href="/admin/users"><i class="fa-solid fa-users"></i> Users</a></li>
-            <li><a href="/admin/services"><i class="fa-solid fa-car"></i> Services</a></li>
-            <li><a href="/admin/bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
-            <li><a href="/admin/repairs"><i class="fa-solid fa-screwdriver-wrench"></i> Repairs</a></li>
-            <li><a href="/admin/reports"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
-            <li><a href="/admin/settings" class="active"><i class="fa-solid fa-gear"></i> Settings</a></li>
-            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <div class="theme-toggle" id="theme-toggle">
-                <i class="fa-solid fa-sun"></i>
-                <i class="fa-solid fa-moon"></i>
-                <div class="toggle-circle"></div>
-            </div>
-        </div>
-    </aside>
+    <aside th:replace="~{fragments/admin-sidebar :: admin-sidebar('settings')}"></aside>
 
     <main class="dashboard-content">
         <h1>Admin Settings</h1>
@@ -57,11 +30,9 @@
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <!-- Account Settings -->
         <div class="settings-section">
             <h2><i class="fa-solid fa-user"></i> Account Settings</h2>
 
-            <!-- Change Email -->
             <div class="settings-card">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-envelope"></i> Change Email</h3>
@@ -86,7 +57,6 @@
                 </div>
             </div>
 
-            <!-- Change Password -->
             <div class="settings-card">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-key"></i> Change Password</h3>
@@ -135,50 +105,9 @@
     </main>
 </div>
 
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<script th:src="@{/account/settings/password.js}"></script>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
-
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
-<script th:src="@{/js/password.js}"></script>
-<script>
-    // Password toggle functionality
-    document.querySelectorAll('.password-toggle').forEach(button => {
-        button.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            const icon = this.querySelector('i');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-    });
-</script>
 </body>
 </html>

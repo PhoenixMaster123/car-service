@@ -1,46 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - Haris Car Care</title>
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Admin Users - Haris Car Care</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/admin-aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/admin/admin-users.css}" rel="stylesheet">
+    <link th:href="@{/component/admin-sidebar/admin-sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/admin/users/admin-users.css}" rel="stylesheet">
 </head>
 <body>
 
 <div class="dashboard">
-    <aside class="sidebar">
-        <a href="/" class="sidebar-brand">Haris Car Care</a>
-        <ul class="sidebar-nav">
-            <li><a href="/admin/dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
-            <li><a href="/admin/users" class="active"><i class="fa-solid fa-users"></i> Users</a></li>
-            <li><a href="/admin/services"><i class="fa-solid fa-car"></i> Services</a></li>
-            <li><a href="/admin/bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
-            <li><a href="/admin/repairs"><i class="fa-solid fa-screwdriver-wrench"></i> Repairs</a></li>
-            <li><a href="/admin/reports"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
-            <li><a href="/admin/settings"><i class="fa-solid fa-gear"></i> Settings</a></li>
-            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <div class="theme-toggle" id="theme-toggle">
-                <i class="fa-solid fa-sun"></i>
-                <i class="fa-solid fa-moon"></i>
-                <div class="toggle-circle"></div>
-            </div>
-        </div>
-    </aside>
+    <aside th:replace="~{fragments/admin-sidebar :: admin-sidebar('users')}"></aside>
 
     <main class="dashboard-content">
         <div class="page-header">
@@ -81,8 +56,8 @@
                     <td th:text="${customer.phoneNumber ?: 'N/A'}">+1234567890</td>
                     <td th:text="${customer.country?.name ?: 'N/A'}">United States</td>
                     <td>
-                            <span class="role-badge" th:classappend="${customer.role.name() == 'ADMIN' ? 'role-admin' : 'role-user'}"
-                                  th:text="${customer.role.name()}">USER</span>
+                        <span class="role-badge" th:classappend="${customer.role.name() == 'ADMIN' ? 'role-admin' : 'role-user'}"
+                              th:text="${customer.role.name()}">USER</span>
                     </td>
                     <td th:text="${#temporals.format(customer.createdOn, 'dd MMM yyyy')}">01 Jan 2024</td>
                     <td>
@@ -135,6 +110,7 @@
     </main>
 </div>
 
+<!-- View User Modal -->
 <div class="modal-overlay" id="viewUserModalOverlay" onclick="closeViewUserModal()">
     <div class="modal" id="viewUserModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -185,6 +161,7 @@
     </div>
 </div>
 
+<!-- Edit User Modal -->
 <div class="modal-overlay" id="editUserModalOverlay" onclick="closeEditUserModal()">
     <div class="modal" id="editUserModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -240,6 +217,7 @@
     </div>
 </div>
 
+<!-- Delete User Modal -->
 <div class="modal-overlay" id="deleteUserModalOverlay" onclick="closeDeleteUserModal()">
     <div class="modal modal-small" id="deleteUserModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -265,10 +243,10 @@
             <button type="button" class="btn btn-secondary" onclick="closeDeleteUserModal()">Cancel</button>
             <button type="submit" class="btn btn-danger">Delete User</button>
         </form>
-
     </div>
 </div>
 
+<!-- Add User Modal -->
 <div class="modal-overlay" id="addUserModalOverlay" onclick="closeAddUserModal()">
     <div class="modal" id="addUserModal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -280,7 +258,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <form id="addUserForm" th:action="@{/admin/new-user}" th:method="POST" th:object="${registerNewUserRequest}" >
+        <form id="addUserForm" th:action="@{/admin/new-user}" th:method="POST" th:object="${registerNewUserRequest}">
             <div class="modal-body">
                 <div class="form-group">
                     <label for="addFirstName">First Name <span class="required">*</span></label>
@@ -332,29 +310,9 @@
     </div>
 </div>
 
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<script th:src="@{/account/admin/users/admin-users.js}"></script>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
 </body>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
-<script th:src="@{/js/admin-users.js}"></script>
 </html>

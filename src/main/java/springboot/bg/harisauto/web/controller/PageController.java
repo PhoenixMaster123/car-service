@@ -19,7 +19,7 @@ public class PageController {
    */
   @GetMapping("/about")
   public ModelAndView showAboutUsPage() {
-    return new ModelAndView("/public/about-us");
+    return new ModelAndView("public/about-us");
   }
 
   /**
@@ -29,7 +29,7 @@ public class PageController {
    */
   @GetMapping("/careers")
   public ModelAndView showCareersPage() {
-    return new ModelAndView("/public/careers");
+    return new ModelAndView("public/careers");
   }
 
   /**
@@ -39,7 +39,7 @@ public class PageController {
    */
   @GetMapping("/locations")
   public ModelAndView showLocationsPage() {
-    return new ModelAndView("/public/location");
+    return new ModelAndView("public/location");
   }
 
   /**
@@ -49,6 +49,6 @@ public class PageController {
    */
   @GetMapping("/news")
   public ModelAndView showNewsPage() {
-    return new ModelAndView("/public/news");
+    return new ModelAndView("public/news");
   }
 }

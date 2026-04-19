@@ -55,7 +55,7 @@ class BookingControllerTest {
     @Test
     void showBookingPage_returnsBookingViewWithCartAndVehicles() {
         ModelAndView mv = controller.showBookingPage(auth);
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKeys("cart", "bookingFormRequest", "vehicles");
         assertThat(mv.getModel().get("cart")).isSameAs(shoppingCart);
     }
@@ -69,7 +69,7 @@ class BookingControllerTest {
 
         ModelAndView mv = controller.createBooking(auth, req, result, session);
 
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKeys("cart", "vehicles");
         verifyNoInteractions(bookingService);
     }
@@ -85,7 +85,7 @@ class BookingControllerTest {
         // cart empty by default
         ModelAndView mv = controller.createBooking(auth, req, result, session);
 
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKey("error");
         verifyNoInteractions(bookingService);
     }
