@@ -109,7 +109,6 @@
    ======================================== */
 .content-card {
     background: var(--card-bg);
-    backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: var(--shadow);
@@ -134,7 +133,6 @@
     margin: 0;
     font-size: 1.3rem;
     color: var(--accent);
-    text-shadow: 0 0 8px var(--accent);
 }
 
 .card-body {
@@ -369,7 +367,6 @@ input[type="text"].form-input {
     font-size: 2rem;
     font-weight: 700;
     color: var(--primary);
-    text-shadow: 0 0 8px var(--primary);
 }
 
 .invoice-footer {
@@ -718,7 +715,6 @@ body.light .btn-secondary:hover {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary);
-    text-shadow: 0 0 8px var(--primary);
 }
 
 .invoice-status-badge {
@@ -768,7 +764,6 @@ body.light .btn-secondary:hover {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
     color: var(--accent);
-    text-shadow: 0 0 8px var(--accent);
 }
 
 .info-section h3 i {
@@ -806,7 +801,6 @@ body.light .btn-secondary:hover {
     margin: 0 0 1rem 0;
     font-size: 1.1rem;
     color: var(--accent);
-    text-shadow: 0 0 8px var(--accent);
 }
 
 .invoice-items-list {
@@ -847,7 +841,6 @@ body.light .btn-secondary:hover {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary);
-    text-shadow: 0 0 8px var(--primary);
 }
 
 .invoice-total-section {
@@ -892,7 +885,6 @@ body.light .btn-secondary:hover {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--primary);
-    text-shadow: 0 0 8px var(--primary);
 }
 
 .modal-footer {

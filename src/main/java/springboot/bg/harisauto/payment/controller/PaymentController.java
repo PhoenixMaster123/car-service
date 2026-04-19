@@ -109,13 +109,20 @@ public class PaymentController {
       return new ModelAndView("redirect:/bookings");
     }
 
-    Invoice invoice = completePaidBooking(pending);
+    Invoice invoice;
+    try {
+      invoice = completePaidBooking(pending);
+    } catch (IllegalStateException ex) {
+      redirectAttributes.addFlashAttribute("error", ex.getMessage());
+      return new ModelAndView("redirect:/checkout");
+    }
+
     session.removeAttribute("PENDING_BOOKING");
     shoppingCart.clear();
 
     redirectAttributes.addFlashAttribute("success",
         "[DEV] Simulated payment succeeded. Invoice " + invoice.getInvoiceNumber() + " generated.");
-    return new ModelAndView("redirect:/users/invoices/" + invoice.getId());
+    return new ModelAndView("redirect:/users/invoices");
   }
 
   private Invoice completePaidBooking(PendingBookingSessionRequest pending) {
@@ -160,13 +167,20 @@ public class PaymentController {
 
       if (pending != null) {
 
-        Invoice invoice = completePaidBooking(pending);
+        Invoice invoice;
+        try {
+          invoice = completePaidBooking(pending);
+        } catch (IllegalStateException ex) {
+          redirectAttributes.addFlashAttribute("error", ex.getMessage());
+          return new ModelAndView("redirect:/checkout");
+        }
+
         session.removeAttribute("PENDING_BOOKING");
         shoppingCart.clear();
 
         redirectAttributes.addFlashAttribute("success",
             "Booking confirmed. Invoice " + invoice.getInvoiceNumber() + " is ready.");
-        return new ModelAndView("redirect:/users/invoices/" + invoice.getId());
+        return new ModelAndView("redirect:/users/invoices");
 
       } else {
 

@@ -108,17 +108,25 @@ public class BookingController {
 
       BigDecimal totalPrice = shoppingCart.getTotal();
 
-      bookingService.createBooking(
-          metaData.getUserId(),
-          request.getBookingDate(),
-          services,
-          request.getVehicleId(),
-          request.getAdditionalNotes(),
-          request.getPaymentMethod(),
-          request.getPhoneNumber(),
-          totalPrice,
-          "PENDING"
-      );
+      try {
+        bookingService.createBooking(
+            metaData.getUserId(),
+            request.getBookingDate(),
+            services,
+            request.getVehicleId(),
+            request.getAdditionalNotes(),
+            request.getPaymentMethod(),
+            request.getPhoneNumber(),
+            totalPrice,
+            "PENDING"
+        );
+      } catch (IllegalStateException ex) {
+        modelAndView.setViewName("public/booking");
+        modelAndView.addObject("cart", shoppingCart);
+        modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(userService.getById(metaData.getUserId())));
+        modelAndView.addObject("error", ex.getMessage());
+        return modelAndView;
+      }
 
       User user = userService.getById(metaData.getUserId());
       Vehicle vehicle = vehicleService.getById(request.getVehicleId());

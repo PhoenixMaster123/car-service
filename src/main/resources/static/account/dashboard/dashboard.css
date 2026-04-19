@@ -602,10 +602,33 @@ body.light .vehicle-table tbody tr:hover {
     text-transform: uppercase;
 }
 
-.service-history-status.status-completed {
+.service-history-status.status-completed,
+.service-history-status.status-paid {
     background: rgba(40, 167, 69, 0.1);
     color: var(--success-color);
     border: 1px solid var(--success-color);
+}
+
+.service-history-status.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
+}
+
+.service-history-status.status-cancelled {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.service-history-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-color-muted);
+    font-size: 0.95rem;
+    background: var(--inner-card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
 }
 
 .modal-footer {

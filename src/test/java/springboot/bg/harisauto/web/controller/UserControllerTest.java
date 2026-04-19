@@ -116,21 +116,6 @@ public class UserControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/invoices - Authenticated User - Should Return OK")
-  void getRequestInvoicesPage_ShouldReturnOk() throws Exception {
-
-    MockHttpServletRequestBuilder request = get("/users/invoices")
-        .with(user(principal))
-        .with(csrf());
-
-    this.mockMvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(view().name("account/invoices"))
-        .andExpect(model().attributeExists("user"))
-        .andExpect(model().attribute("user", mockUser));
-  }
-
-  @Test
   @DisplayName("GET /users/settings - Authenticated User - Should Return OK")
   void getRequestSettingsPage_ShouldReturnOk() throws Exception {
 

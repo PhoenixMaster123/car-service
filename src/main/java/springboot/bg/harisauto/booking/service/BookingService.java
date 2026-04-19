@@ -69,7 +69,9 @@ public class BookingService {
     try {
       client.createBooking(request);
     } catch (FeignException ex) {
-      log.error("[S2S Call]: Failed due to {}", ex.getMessage());
+      log.error("[S2S Call] booking-service createBooking failed: status={} msg={}", ex.status(), ex.getMessage());
+      throw new IllegalStateException(
+          "Booking service is unreachable. Start the booking-service (default port 8082) and try again.", ex);
     }
   }
 
@@ -120,6 +122,8 @@ public class BookingService {
       return bookings;
 
     } catch (FeignException ex) {
+      log.warn("[S2S Call] booking-service getBookings failed (returning empty list): status={} msg={}",
+          ex.status(), ex.getMessage());
       return List.of();
     }
   }

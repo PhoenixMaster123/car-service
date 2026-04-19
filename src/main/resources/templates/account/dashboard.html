@@ -94,15 +94,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="vehicle : ${vehicles}">
+                    <tr th:each="vehicle : ${vehicles}"
+                        th:with="vehicleHistory=${historyByVehicle.get(vehicle.id)}">
                         <td>
                             <span class="vehicle-name" th:text="${vehicle.make} + ' ' + ${vehicle.model}">Audi A4</span>
                             <span class="vehicle-sub" th:text="${vehicle.manufacturingYear} + ' • ' + (${vehicle.engineType} ?: 'N/A')">2023 • 2.0L Turbo</span>
                         </td>
                         <td th:text="${vehicle.licensePlate}">WUE-A123</td>
-                        <td>Oct 05, 2025</td>
+                        <td th:text="${vehicleHistory != null and !vehicleHistory.isEmpty() ? #temporals.format(vehicleHistory[0].bookingDate, 'MMM dd, yyyy') : '—'}">—</td>
                         <td>
                             <button class="btn btn-secondary btn-small"
+                                    th:data-vehicle-id="${vehicle.id}"
                                     th:data-make="${vehicle.make}"
                                     th:data-model="${vehicle.model}"
                                     th:data-year="${vehicle.manufacturingYear}"
@@ -110,9 +112,33 @@
                                     th:data-body="${vehicle.bodyType}"
                                     th:data-plate="${vehicle.licensePlate}"
                                     th:data-color="${vehicle.color}"
+                                    th:data-last-service="${vehicleHistory != null and !vehicleHistory.isEmpty() ? #temporals.format(vehicleHistory[0].bookingDate, 'MMM dd, yyyy') : '—'}"
                                     onclick="openVehicleDetailsModal(this)">
                                 Details
                             </button>
+
+                            <template th:id="'vehicle-history-' + ${vehicle.id}">
+                                <div th:if="${vehicleHistory == null or vehicleHistory.isEmpty()}"
+                                     class="service-history-empty">
+                                    No service history yet for this vehicle.
+                                </div>
+                                <div th:each="entry : ${vehicleHistory}" class="service-history-item">
+                                    <div class="service-history-icon"
+                                         th:classappend="${(entry.status == 'PAID' or entry.status == 'COMPLETED') ? ' status-completed-icon' : ''}">
+                                        <i class="fa-solid"
+                                           th:classappend="${(entry.status == 'PAID' or entry.status == 'COMPLETED') ? 'fa-check-circle' : (entry.status == 'CANCELLED' ? 'fa-times-circle' : 'fa-clock')}"></i>
+                                    </div>
+                                    <div class="service-history-details">
+                                        <span class="service-history-name"
+                                              th:text="${entry.serviceNames != null ? entry.serviceNames : 'Service'}">Service</span>
+                                        <span class="service-history-date"
+                                              th:text="${#temporals.format(entry.bookingDate, 'MMM dd, yyyy')}">Date</span>
+                                    </div>
+                                    <div class="service-history-status"
+                                         th:classappend="'status-' + #strings.toLowerCase(entry.status)"
+                                         th:text="${#strings.capitalize(#strings.toLowerCase(entry.status))}">Status</div>
+                                </div>
+                            </template>
                         </td>
                     </tr>
                     </tbody>
@@ -180,24 +206,14 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">Last Service</span>
-                            <span class="info-value" id="modalLastService">Oct 05, 2025</span>
+                            <span class="info-value" id="modalLastService">—</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="vehicle-service-history">
                     <h3><i class="fa-solid fa-history"></i> Recent Service History</h3>
-                    <div class="service-history-list">
-                        <div class="service-history-item">
-                            <div class="service-history-icon">
-                                <i class="fa-solid fa-check-circle"></i>
-                            </div>
-                            <div class="service-history-details">
-                                <span class="service-history-name">Premium Car Wash</span>
-                                <span class="service-history-date">Oct 05, 2025</span>
-                            </div>
-                            <div class="service-history-status status-completed">Completed</div>
-                        </div>
+                    <div class="service-history-list" id="modalServiceHistory">
                     </div>
                 </div>
             </div>
