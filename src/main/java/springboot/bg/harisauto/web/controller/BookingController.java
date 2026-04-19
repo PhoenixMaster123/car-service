@@ -56,7 +56,7 @@ public class BookingController {
     User user = userService.getById(metaData.getUserId());
 
     ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/public/booking");
+    modelAndView.setViewName("public/booking");
     modelAndView.addObject("cart", shoppingCart);
     modelAndView.addObject("bookingFormRequest", new BookingFormRequest());
     modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
@@ -79,7 +79,7 @@ public class BookingController {
     ModelAndView modelAndView = new ModelAndView();
 
     if (result.hasErrors()) {
-      modelAndView.setViewName("/public/booking");
+      modelAndView.setViewName("public/booking");
       modelAndView.addObject("cart", shoppingCart);
       modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(userService.getById(metaData.getUserId())));
 
@@ -91,7 +91,7 @@ public class BookingController {
         .toList();
 
     if (services.isEmpty()) {
-      modelAndView.setViewName("/public/booking");
+      modelAndView.setViewName("public/booking");
       modelAndView.addObject("error", "Your cart is empty.");
       return modelAndView;
     }

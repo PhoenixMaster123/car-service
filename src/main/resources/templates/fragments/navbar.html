@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<body>
+
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a th:href="@{/about}">About Us</a>
+                    <a th:href="@{/careers}">Careers</a>
+                    <a th:href="@{/locations}">Locations</a>
+                    <a th:href="@{/news}">News</a>
+                </div>
+            </li>
+
+            <li class="user-actions" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn">Register</a>
+            </li>
+
+            <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <form th:action="@{/logout}" method="GET">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </li>
+
+            <li class="theme-toggle-wrapper mobile-only">
+                <div class="theme-toggle" id="theme-toggle-mobile">
+                    <i class="fa-solid fa-sun"></i>
+                    <i class="fa-solid fa-moon"></i>
+                    <div class="toggle-circle"></div>
+                </div>
+            </li>
+            <li class="mobile-only">
+                <a th:href="@{/bookings}" class="cta-button">Book Now</a>
+            </li>
+        </ul>
+
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+
+        <a th:href="@{/bookings}" class="cta-button desktop-only">Book Now</a>
+    </div>
+</nav>
+
+</body>
+</html>

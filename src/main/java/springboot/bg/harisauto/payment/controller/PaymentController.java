@@ -63,7 +63,7 @@ public class PaymentController {
     }
 
     ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/public/checkout");
+    modelAndView.setViewName("public/checkout");
     modelAndView.addObject("cart", shoppingCart);
     modelAndView.addObject("bookingRequest", new BookingRequest());
     modelAndView.addObject("stripePublicKey", stripePublicKey);
