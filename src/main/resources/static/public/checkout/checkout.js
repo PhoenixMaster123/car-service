@@ -1,3 +1,17 @@
+// Simulated payment for dev mode (no Stripe key)
+function simulateDevPayment() {
+    const overlay = document.getElementById('processingOverlay');
+    const btn = document.getElementById('devPayBtn');
+
+    if (btn) btn.disabled = true;
+    if (overlay) overlay.classList.add('active');
+
+    // Simulate processing delay
+    setTimeout(function () {
+        window.location.href = '/process-payment?redirect_status=succeeded';
+    }, 1500);
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
 
     const paymentForm = document.getElementById('paymentForm');
