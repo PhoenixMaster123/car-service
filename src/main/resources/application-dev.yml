@@ -20,6 +20,23 @@ spring:
     properties:
       "mail.smtp.auth": false
       "mail.smtp.starttls.enable": false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: dummy-google-client-id
+            clientSecret: dummy-google-client-secret
+          github:
+            clientId: dummy-github-client-id
+            clientSecret: dummy-github-client-secret
+
+  gemini:
+    api-key: dummy-gemini-key
+
+  stripe:
+    public:
+      key: dummy-stripe-key
   data:
     redis:
       host: localhost
@@ -29,3 +46,7 @@ spring:
 
 notification:
   email: "harisauto@gmail.com"
+
+app:
+  dev-mode:
+    enabled: true

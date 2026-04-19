@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -61,10 +63,18 @@ public class UserController {
     User user = userService.getById(metaData.getUserId());
     List<Vehicle> vehicles = vehicleService.getVehiclesByUser(user);
 
+    List<BookingResponse> bookings = bookingService.getBookingsByUser(user.getId());
+    Map<UUID, List<BookingResponse>> historyByVehicle = bookings.stream()
+        .filter(b -> b.getVehicleId() != null)
+        .sorted(Comparator.comparing(BookingResponse::getBookingDate,
+            Comparator.nullsLast(Comparator.reverseOrder())))
+        .collect(Collectors.groupingBy(BookingResponse::getVehicleId));
+
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("account/dashboard");
     modelAndView.addObject("user", user);
     modelAndView.addObject("vehicles", vehicles);
+    modelAndView.addObject("historyByVehicle", historyByVehicle);
 
     return modelAndView;
   }
@@ -117,25 +127,6 @@ public class UserController {
 
     modelAndView.addObject("upcomingBookings", upcoming);
     modelAndView.addObject("pastBookings", past);
-
-    return modelAndView;
-  }
-
-  /**
-   * Shows the invoices page for the authenticated user.
-   *
-   * @param metaData The authentication metadata.
-   * @return The invoices page.
-   */
-  @GetMapping("/invoices")
-  public ModelAndView showInvoices(@AuthenticationPrincipal AuthenticationMetaData metaData) {
-
-    User user = userService.getById(metaData.getUserId());
-    List<BookingResponse> allBookings = bookingService.getBookingsByUser(user.getId());
-
-    ModelAndView modelAndView = new ModelAndView("account/invoices");
-    modelAndView.addObject("user", user);
-    modelAndView.addObject("bookings", allBookings);
 
     return modelAndView;
   }

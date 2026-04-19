@@ -1,45 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoices - Haris Car Care</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" crossorigin rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/invoices.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/invoices/invoices.css}" rel="stylesheet">
 </head>
 <body>
 
-<aside class="sidebar" th:fragment="sidebar">
-    <div class="sidebar-brand">
-        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
-    </div>
-
-    <ul class="sidebar-links">
-        <li><a th:href="@{/users/dashboard}"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
-        <li><a th:href="@{/users/vehicles}"><i class="fa-solid fa-car-side"></i> My Vehicles</a></li>
-        <li><a th:href="@{/users/my-bookings}"><i class="fa-solid fa-calendar-check"></i> My Bookings</a></li>
-        <li><a th:href="@{/users/invoices}" class="active"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a></li>
-        <li><a th:href="@{/users/settings}"><i class="fa-solid fa-gear"></i> Settings</a></li>
-        <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-        <li><a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-
-    <div class="sidebar-footer">
-        <div class="theme-toggle" id="theme-toggle-desktop">
-            <i class="fa-solid fa-sun"></i>
-            <i class="fa-solid fa-moon"></i>
-            <div class="toggle-circle"></div>
-        </div>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('invoices')}"></aside>
 
 <div class="main-content">
     <main class="page-container">
@@ -48,279 +19,105 @@
             <p>View and manage all your service invoices.</p>
         </header>
 
-        <!-- Invoice Summary Stats -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
         <div class="invoice-stats">
             <div class="stat-card stat-total">
                 <i class="fa-solid fa-receipt"></i>
                 <div>
-                    <h3>12</h3>
+                    <h3 th:text="${totalCount}">0</h3>
                     <p>Total Invoices</p>
                 </div>
             </div>
             <div class="stat-card stat-paid">
                 <i class="fa-solid fa-check-circle"></i>
                 <div>
-                    <h3>10</h3>
+                    <h3 th:text="${paidCount}">0</h3>
                     <p>Paid</p>
                 </div>
             </div>
             <div class="stat-card stat-pending">
                 <i class="fa-solid fa-clock"></i>
                 <div>
-                    <h3>1</h3>
+                    <h3 th:text="${pendingCount}">0</h3>
                     <p>Pending</p>
                 </div>
             </div>
             <div class="stat-card stat-overdue">
                 <i class="fa-solid fa-exclamation-triangle"></i>
                 <div>
-                    <h3>1</h3>
+                    <h3 th:text="${overdueCount}">0</h3>
                     <p>Overdue</p>
                 </div>
             </div>
         </div>
 
-        <!-- Filters and Search -->
-        <div class="content-card">
-            <div class="card-header">
-                <i class="fa-solid fa-filter"></i>
-                <h3>Filter Invoices</h3>
-            </div>
-            <div class="card-body">
-                <div class="filter-controls">
-                    <div class="filter-group">
-                        <label for="statusFilter">Status</label>
-                        <select id="statusFilter" class="form-input form-input-small">
-                            <option value="all">All Status</option>
-                            <option value="paid">Paid</option>
-                            <option value="pending">Pending</option>
-                            <option value="overdue">Overdue</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="dateFilter">Date Range</label>
-                        <select id="dateFilter" class="form-input form-input-small">
-                            <option value="all">All Time</option>
-                            <option value="month">This Month</option>
-                            <option value="quarter">This Quarter</option>
-                            <option value="year">This Year</option>
-                        </select>
-                    </div>
-                    <div class="filter-group filter-search">
-                        <label for="searchInput">Search</label>
-                        <div class="search-wrapper">
-                            <input type="text" id="searchInput" class="form-input" placeholder="Search by invoice number or service...">
-                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Invoice List -->
         <div class="content-card">
             <div class="card-header">
                 <i class="fa-solid fa-list"></i>
                 <h3>All Invoices</h3>
             </div>
-            <div class="invoice-list">
-                <div class="invoice-card">
+
+            <div th:if="${invoices.isEmpty()}" class="empty-state">
+                <i class="fa-solid fa-file-circle-xmark"></i>
+                <p>No invoices yet. Invoices appear here after you book a service.</p>
+                <a th:href="@{/bookings}" class="btn btn-primary">Book a service</a>
+            </div>
+
+            <div class="invoice-list" th:unless="${invoices.isEmpty()}">
+                <div class="invoice-card" th:each="invoice : ${invoices}"
+                     th:data-search-text="${invoice.invoiceNumber + ' ' + invoice.vehicleDescription}">
                     <div class="invoice-header">
                         <div class="invoice-number">
                             <i class="fa-solid fa-file-invoice"></i>
                             <div>
                                 <span class="invoice-label">Invoice #</span>
-                                <span class="invoice-id">INV-2025-001</span>
+                                <span class="invoice-id" th:text="${invoice.invoiceNumber}">INV-2026-000001</span>
                             </div>
                         </div>
-                        <div class="invoice-status status-paid">
-                            <i class="fa-solid fa-check-circle"></i>
-                            <span>Paid</span>
+                        <div class="invoice-status"
+                             th:classappend="${'status-' + #strings.toLowerCase(invoice.status)}">
+                            <i class="fa-solid"
+                               th:classappend="${invoice.status.name() == 'PAID' ? 'fa-check-circle' :
+                                                  (invoice.status.name() == 'PENDING' ? 'fa-clock' : 'fa-exclamation-triangle')}"></i>
+                            <span th:text="${#strings.capitalize(#strings.toLowerCase(invoice.status))}">Paid</span>
                         </div>
                     </div>
                     <div class="invoice-body">
                         <div class="invoice-details">
                             <div class="invoice-detail-item">
-                                <span class="detail-label">Service</span>
-                                <span class="detail-value">Premium Car Wash</span>
-                            </div>
-                            <div class="invoice-detail-item">
                                 <span class="detail-label">Vehicle</span>
-                                <span class="detail-value">Audi A4 (WUE-A123)</span>
+                                <span class="detail-value" th:text="${invoice.vehicleDescription}">Audi A4 (WUE-A123)</span>
                             </div>
                             <div class="invoice-detail-item">
-                                <span class="detail-label">Date</span>
-                                <span class="detail-value">Oct 05, 2025</span>
+                                <span class="detail-label">Service Date</span>
+                                <span class="detail-value"
+                                      th:text="${#temporals.format(invoice.serviceDate, 'MMM dd, yyyy')}">Oct 05, 2026</span>
                             </div>
                             <div class="invoice-detail-item">
-                                <span class="detail-label">Due Date</span>
-                                <span class="detail-value">Oct 15, 2025</span>
+                                <span class="detail-label">Issued</span>
+                                <span class="detail-value"
+                                      th:text="${#temporals.format(invoice.issuedAt, 'MMM dd, yyyy')}">Oct 05, 2026</span>
+                            </div>
+                            <div class="invoice-detail-item">
+                                <span class="detail-label">Payment</span>
+                                <span class="detail-value" th:text="${invoice.paymentMethod}">CARD</span>
                             </div>
                         </div>
                         <div class="invoice-amount">
                             <span class="amount-label">Total Amount</span>
-                            <span class="amount-value">€89.99</span>
+                            <span class="amount-value">€<span th:text="${invoice.total}">0.00</span></span>
                         </div>
                     </div>
                     <div class="invoice-footer">
-                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-001', 'Premium Car Wash', 'Audi A4 (WUE-A123)', 'Oct 05, 2025', 'Oct 15, 2025', 'Paid', '89.99')">
+                        <a class="btn btn-secondary" th:href="@{'/users/invoices/' + ${invoice.id}}">
                             <i class="fa-solid fa-eye"></i>
                             <span>View Details</span>
-                        </button>
-                        <button class="btn btn-primary" onclick="openInvoiceModal('INV-2025-001', 'Premium Car Wash', 'Audi A4 (WUE-A123)', 'Oct 05, 2025', 'Oct 15, 2025', 'Paid', '89.99')">
+                        </a>
+                        <a class="btn btn-primary" th:href="@{'/users/invoices/' + ${invoice.id} + '/pdf'}">
                             <i class="fa-solid fa-download"></i>
                             <span>Download PDF</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="invoice-card">
-                    <div class="invoice-header">
-                        <div class="invoice-number">
-                            <i class="fa-solid fa-file-invoice"></i>
-                            <div>
-                                <span class="invoice-label">Invoice #</span>
-                                <span class="invoice-id">INV-2025-002</span>
-                            </div>
-                        </div>
-                        <div class="invoice-status status-pending">
-                            <i class="fa-solid fa-clock"></i>
-                            <span>Pending</span>
-                        </div>
-                    </div>
-                    <div class="invoice-body">
-                        <div class="invoice-details">
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Service</span>
-                                <span class="detail-value">Oil Change & Inspection</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Vehicle</span>
-                                <span class="detail-value">BMW X3 (WUE-B456)</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Date</span>
-                                <span class="detail-value">Nov 12, 2025</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Due Date</span>
-                                <span class="detail-value">Nov 22, 2025</span>
-                            </div>
-                        </div>
-                        <div class="invoice-amount">
-                            <span class="amount-label">Total Amount</span>
-                            <span class="amount-value">€149.99</span>
-                        </div>
-                    </div>
-                    <div class="invoice-footer">
-                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change & Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>View Details</span>
-                        </button>
-                        <button class="btn btn-primary" onclick="openInvoiceModal('INV-2025-002', 'Oil Change & Inspection', 'BMW X3 (WUE-B456)', 'Nov 12, 2025', 'Nov 22, 2025', 'Pending', '149.99')">
-                            <i class="fa-solid fa-credit-card"></i>
-                            <span>Pay Now</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="invoice-card">
-                    <div class="invoice-header">
-                        <div class="invoice-number">
-                            <i class="fa-solid fa-file-invoice"></i>
-                            <div>
-                                <span class="invoice-label">Invoice #</span>
-                                <span class="invoice-id">INV-2025-003</span>
-                            </div>
-                        </div>
-                        <div class="invoice-status status-overdue">
-                            <i class="fa-solid fa-exclamation-triangle"></i>
-                            <span>Overdue</span>
-                        </div>
-                    </div>
-                    <div class="invoice-body">
-                        <div class="invoice-details">
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Service</span>
-                                <span class="detail-value">Tire Rotation</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Vehicle</span>
-                                <span class="detail-value">VW Golf GTI (WEN-C789)</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Date</span>
-                                <span class="detail-value">Aug 15, 2025</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Due Date</span>
-                                <span class="detail-value overdue-date">Aug 25, 2025</span>
-                            </div>
-                        </div>
-                        <div class="invoice-amount">
-                            <span class="amount-label">Total Amount</span>
-                            <span class="amount-value">€79.99</span>
-                        </div>
-                    </div>
-                    <div class="invoice-footer">
-                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-003', 'Tire Rotation', 'VW Golf GTI (WEN-C789)', 'Aug 15, 2025', 'Aug 25, 2025', 'Overdue', '79.99')">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>View Details</span>
-                        </button>
-                        <button class="btn btn-danger" onclick="openInvoiceModal('INV-2025-003', 'Tire Rotation', 'VW Golf GTI (WEN-C789)', 'Aug 15, 2025', 'Aug 25, 2025', 'Overdue', '79.99')">
-                            <i class="fa-solid fa-credit-card"></i>
-                            <span>Pay Now</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="invoice-card">
-                    <div class="invoice-header">
-                        <div class="invoice-number">
-                            <i class="fa-solid fa-file-invoice"></i>
-                            <div>
-                                <span class="invoice-label">Invoice #</span>
-                                <span class="invoice-id">INV-2025-004</span>
-                            </div>
-                        </div>
-                        <div class="invoice-status status-paid">
-                            <i class="fa-solid fa-check-circle"></i>
-                            <span>Paid</span>
-                        </div>
-                    </div>
-                    <div class="invoice-body">
-                        <div class="invoice-details">
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Service</span>
-                                <span class="detail-value">Full Service Package</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Vehicle</span>
-                                <span class="detail-value">Audi A4 (WUE-A123)</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Date</span>
-                                <span class="detail-value">Sep 20, 2025</span>
-                            </div>
-                            <div class="invoice-detail-item">
-                                <span class="detail-label">Due Date</span>
-                                <span class="detail-value">Sep 30, 2025</span>
-                            </div>
-                        </div>
-                        <div class="invoice-amount">
-                            <span class="amount-label">Total Amount</span>
-                            <span class="amount-value">€299.99</span>
-                        </div>
-                    </div>
-                    <div class="invoice-footer">
-                        <button class="btn btn-secondary" onclick="openInvoiceModal('INV-2025-004', 'Full Service Package', 'Audi A4 (WUE-A123)', 'Sep 20, 2025', 'Sep 30, 2025', 'Paid', '299.99')">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>View Details</span>
-                        </button>
-                        <button class="btn btn-primary" onclick="openInvoiceModal('INV-2025-004', 'Full Service Package', 'Audi A4 (WUE-A123)', 'Sep 20, 2025', 'Sep 30, 2025', 'Paid', '299.99')">
-                            <i class="fa-solid fa-download"></i>
-                            <span>Download PDF</span>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -328,139 +125,8 @@
     </main>
 </div>
 
-<!-- Invoice Modal -->
-<div class="modal-overlay" id="invoiceModalOverlay" onclick="closeInvoiceModal()">
-    <div class="invoice-modal" id="invoiceModal" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <div class="modal-title">
-                <i class="fa-solid fa-file-invoice-dollar"></i>
-                <h2>Invoice Details</h2>
-            </div>
-            <button class="modal-close" onclick="closeInvoiceModal()" aria-label="Close">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        
-        <div class="modal-body">
-            <div class="invoice-modal-content">
-                <div class="invoice-header-section">
-                    <div class="invoice-number-section">
-                        <span class="invoice-label-small">Invoice Number</span>
-                        <span class="invoice-number-large" id="modalInvoiceNumber">INV-2025-001</span>
-                    </div>
-                    <div class="invoice-status-badge" id="modalInvoiceStatus">
-                        <i class="fa-solid fa-check-circle"></i>
-                        <span>Paid</span>
-                    </div>
-                </div>
-
-                <div class="invoice-info-grid">
-                    <div class="info-section">
-                        <h3><i class="fa-solid fa-info-circle"></i> Service Information</h3>
-                        <div class="info-item">
-                            <span class="info-label">Service</span>
-                            <span class="info-value" id="modalService">Premium Car Wash</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Vehicle</span>
-                            <span class="info-value" id="modalVehicle">Audi A4 (WUE-A123)</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Service Date</span>
-                            <span class="info-value" id="modalServiceDate">Oct 05, 2025</span>
-                        </div>
-                    </div>
-
-                    <div class="info-section">
-                        <h3><i class="fa-solid fa-calendar"></i> Payment Information</h3>
-                        <div class="info-item">
-                            <span class="info-label">Invoice Date</span>
-                            <span class="info-value" id="modalInvoiceDate">Oct 05, 2025</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Due Date</span>
-                            <span class="info-value" id="modalDueDate">Oct 15, 2025</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Payment Status</span>
-                            <span class="info-value" id="modalPaymentStatus">Paid</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="invoice-items-section">
-                    <h3><i class="fa-solid fa-list"></i> Service Items</h3>
-                    <div class="invoice-items-list">
-                        <div class="invoice-item">
-                            <div class="item-details">
-                                <span class="item-name" id="modalItemName">Premium Car Wash</span>
-                                <span class="item-description">Exterior wash, interior vacuum, tire shine, wax treatment</span>
-                            </div>
-                            <div class="item-price">€<span id="modalItemPrice">89.99</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="invoice-total-section">
-                    <div class="total-row">
-                        <span class="total-label">Subtotal</span>
-                        <span class="total-value">€<span id="modalSubtotal">89.99</span></span>
-                    </div>
-                    <div class="total-row">
-                        <span class="total-label">Tax (VAT 20%)</span>
-                        <span class="total-value">€<span id="modalTax">18.00</span></span>
-                    </div>
-                    <div class="total-row total-final">
-                        <span class="total-label">Total Amount</span>
-                        <span class="total-value-large">€<span id="modalTotal">107.99</span></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-secondary modal-btn-close" onclick="closeInvoiceModal()">
-                <i class="fa-solid fa-times"></i>
-                <span>Close</span>
-            </button>
-            <button class="btn btn-primary modal-btn-download" id="modalDownloadBtn">
-                <i class="fa-solid fa-download"></i>
-                <span>Download PDF</span>
-            </button>
-            <button class="btn btn-primary modal-btn-pay" id="modalPayBtn" style="display: none;">
-                <i class="fa-solid fa-credit-card"></i>
-                <span>Pay Now</span>
-            </button>
-        </div>
-    </div>
-</div>
-
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
-
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
-
-<script th:src="@{/js/invoiceMenu.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 
 </body>
 </html>
-

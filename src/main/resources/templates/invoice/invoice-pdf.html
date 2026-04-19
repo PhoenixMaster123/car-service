@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        /* ===== Paged Media (Header/Footer repeat + page numbers) ===== */
+        @page {
+            margin: 80px 40px 60px 40px;
+            @top-center { content: element(pageHeader); }
+            @bottom-right { content: "Page " counter(page) " of " counter(pages); font-size: 10px; color: #6b7280; }
+        }
+
+        /* Running header element */
+        .page-header {
+            position: running(pageHeader);
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .header-table {
+            width: 100%;
+        }
+
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .logo {
+            height: 36px;
+            margin-bottom: 6px;
+        }
+
+        .company {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .accent-line {
+            height: 3px;
+            background: #6366f1;
+            margin-top: 8px;
+        }
+
+        .section {
+            margin-top: 20px;
+        }
+
+        .box {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .meta td {
+            padding: 3px 0;
+        }
+
+        .items th {
+            text-align: left;
+            font-size: 11px;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 8px 5px;
+        }
+
+        .items td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .num {
+            text-align: right;
+        }
+
+        .totals {
+            width: 300px;
+            margin-left: auto;
+            margin-top: 20px;
+        }
+
+        .totals td {
+            padding: 5px;
+        }
+
+        .totals .label {
+            color: #6b7280;
+        }
+
+        .totals .total {
+            font-weight: bold;
+            border-top: 2px solid #111827;
+            padding-top: 6px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-paid {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- RUNNING HEADER (repeats on every page) -->
+    <div class="page-header">
+        <table class="header-table">
+            <tr>
+                <td>
+                    <img th:if="${logoBase64}" th:src="${logoBase64}" class="logo" />
+                    <div class="company">Haris Car Care</div>
+                </td>
+                <td style="text-align:right;">
+                    <div class="invoice-title">Invoice</div>
+                    <div th:text="${invoice.invoiceNumber}"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="accent-line"></div>
+    </div>
+
+    <!-- CLIENT + META -->
+    <table class="section">
+        <tr>
+            <td style="width:50%; padding-right:10px;">
+                <div class="box">
+                    <div class="muted">Billed To</div>
+                    <strong th:text="${invoice.customerName}"></strong><br />
+                    <span class="muted" th:text="${invoice.customerEmail}"></span>
+                </div>
+            </td>
+            <td style="width:50%; padding-left:10px;">
+                <div class="box">
+                    <table class="meta">
+                        <tr>
+                            <td class="muted">Issued</td>
+                            <td th:text="${#temporals.format(invoice.issuedAt, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                        <tr>
+                            <td class="muted">Service</td>
+                            <td th:text="${#temporals.format(invoice.serviceDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                        <tr>
+                            <td class="muted">Payment</td>
+                            <td th:text="${invoice.paymentMethod}"></td>
+                        </tr>
+                        <tr>
+                            <td class="muted">Vehicle</td>
+                            <td th:text="${invoice.vehicleDescription}"></td>
+                        </tr>
+                        <tr>
+                            <td class="muted">Status</td>
+                            <td>
+                                <span class="status" th:classappend="${invoice.status == 'PAID'} ? ' status-paid' : ' status-pending'" th:text="${invoice.status}"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ITEMS -->
+    <table class="items">
+        <thead>
+        <tr>
+            <th>Description</th>
+            <th>Details</th>
+            <th class="num">Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${invoice.lineItems}">
+            <td><strong th:text="${item.name}"></strong></td>
+            <td class="muted" th:text="${item.description}"></td>
+            <td class="num">€<span th:text="${#numbers.formatDecimal(item.price,1,2)}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <table class="totals">
+        <tr>
+            <td class="label">Subtotal</td>
+            <td class="num">€<span th:text="${#numbers.formatDecimal(invoice.subtotal,1,2)}"></span></td>
+        </tr>
+        <tr>
+            <td class="label">VAT</td>
+            <td class="num">€<span th:text="${#numbers.formatDecimal(invoice.taxAmount,1,2)}"></span></td>
+        </tr>
+        <tr class="total">
+            <td>Total</td>
+            <td class="num">€<span th:text="${#numbers.formatDecimal(invoice.total,1,2)}"></span></td>
+        </tr>
+    </table>
+
+    <!-- FOOTER NOTE -->
+    <div class="footer-note">
+        Thank you for your business.
+    </div>
+
+</div>
+
+</body>
+</html>

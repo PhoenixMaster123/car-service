@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  User account sidebar.
+  Parameters:
+    activeLink — one of: 'dashboard', 'vehicles', 'bookings', 'invoices', 'settings'
+-->
+<aside class="sidebar" th:fragment="sidebar(activeLink)">
+    <div class="sidebar-brand">
+        <a th:href="@{/}" class="brand-name">Haris Car Care</a>
+    </div>
+
+    <ul class="sidebar-links">
+        <li>
+            <a th:href="@{/users/dashboard}"
+               th:class="${activeLink == 'dashboard'} ? 'active' : ''">
+                <i class="fa-solid fa-table-columns"></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/users/vehicles}"
+               th:class="${activeLink == 'vehicles'} ? 'active' : ''">
+                <i class="fa-solid fa-car-side"></i> My Vehicles
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/users/my-bookings}"
+               th:class="${activeLink == 'bookings'} ? 'active' : ''">
+                <i class="fa-solid fa-calendar-check"></i> My Bookings
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/users/invoices}"
+               th:class="${activeLink == 'invoices'} ? 'active' : ''">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Invoices
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/users/settings}"
+               th:class="${activeLink == 'settings'} ? 'active' : ''">
+                <i class="fa-solid fa-gear"></i> Settings
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/}">
+                <i class="fa-solid fa-house"></i> Back to Site
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/logout}">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="theme-toggle" id="theme-toggle-desktop">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+    </div>
+</aside>
+
+</body>
+</html>

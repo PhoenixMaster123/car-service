@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Admin sidebar.
+  Parameters:
+    activeLink — one of: 'dashboard', 'users', 'services', 'bookings', 'repairs', 'reports', 'settings'
+-->
+<aside class="sidebar" th:fragment="admin-sidebar(activeLink)">
+    <a th:href="@{/}" class="sidebar-brand">Haris Car Care</a>
+
+    <ul class="sidebar-nav">
+        <li>
+            <a th:href="@{/admin/dashboard}"
+               th:class="${activeLink == 'dashboard'} ? 'active' : ''">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/users}"
+               th:class="${activeLink == 'users'} ? 'active' : ''">
+                <i class="fa-solid fa-users"></i> Users
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/services}"
+               th:class="${activeLink == 'services'} ? 'active' : ''">
+                <i class="fa-solid fa-car"></i> Services
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/bookings}"
+               th:class="${activeLink == 'bookings'} ? 'active' : ''">
+                <i class="fa-solid fa-calendar-check"></i> Bookings
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/repairs}"
+               th:class="${activeLink == 'repairs'} ? 'active' : ''">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Repairs
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/reports}"
+               th:class="${activeLink == 'reports'} ? 'active' : ''">
+                <i class="fa-solid fa-chart-line"></i> Reports
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/settings}"
+               th:class="${activeLink == 'settings'} ? 'active' : ''">
+                <i class="fa-solid fa-gear"></i> Settings
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/}">
+                <i class="fa-solid fa-house"></i> Back to Site
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/logout}">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <div class="theme-toggle" id="theme-toggle">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <div class="toggle-circle"></div>
+        </div>
+    </div>
+</aside>
+
+</body>
+</html>

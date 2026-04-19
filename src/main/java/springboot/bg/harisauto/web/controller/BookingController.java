@@ -15,9 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.cart.ShoppingCart;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.invoice.model.InvoiceStatus;
+import springboot.bg.harisauto.invoice.service.InvoiceService;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.model.Vehicle;
 import springboot.bg.harisauto.vehicle.service.VehicleService;
 import springboot.bg.harisauto.web.dto.BookingFormRequest;
 import springboot.bg.harisauto.web.dto.PendingBookingSessionRequest;
@@ -35,14 +38,19 @@ public class BookingController {
   private final VehicleService vehicleService;
   private final ShoppingCart shoppingCart;
   private final BookingService bookingService;
+  private final InvoiceService invoiceService;
 
   /** Constructor. */
   public BookingController(UserService userService,
-                           VehicleService vehicleService, ShoppingCart shoppingCart, BookingService bookingService) {
+                           VehicleService vehicleService,
+                           ShoppingCart shoppingCart,
+                           BookingService bookingService,
+                           InvoiceService invoiceService) {
     this.userService = userService;
     this.vehicleService = vehicleService;
     this.shoppingCart = shoppingCart;
     this.bookingService = bookingService;
+    this.invoiceService = invoiceService;
   }
 
   /**
@@ -56,7 +64,7 @@ public class BookingController {
     User user = userService.getById(metaData.getUserId());
 
     ModelAndView modelAndView = new ModelAndView();
-    modelAndView.setViewName("/public/booking");
+    modelAndView.setViewName("public/booking");
     modelAndView.addObject("cart", shoppingCart);
     modelAndView.addObject("bookingFormRequest", new BookingFormRequest());
     modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(user));
@@ -79,7 +87,7 @@ public class BookingController {
     ModelAndView modelAndView = new ModelAndView();
 
     if (result.hasErrors()) {
-      modelAndView.setViewName("/public/booking");
+      modelAndView.setViewName("public/booking");
       modelAndView.addObject("cart", shoppingCart);
       modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(userService.getById(metaData.getUserId())));
 
@@ -91,7 +99,7 @@ public class BookingController {
         .toList();
 
     if (services.isEmpty()) {
-      modelAndView.setViewName("/public/booking");
+      modelAndView.setViewName("public/booking");
       modelAndView.addObject("error", "Your cart is empty.");
       return modelAndView;
     }
@@ -100,20 +108,42 @@ public class BookingController {
 
       BigDecimal totalPrice = shoppingCart.getTotal();
 
-      bookingService.createBooking(
-          metaData.getUserId(),
+      try {
+        bookingService.createBooking(
+            metaData.getUserId(),
+            request.getBookingDate(),
+            services,
+            request.getVehicleId(),
+            request.getAdditionalNotes(),
+            request.getPaymentMethod(),
+            request.getPhoneNumber(),
+            totalPrice,
+            "PENDING"
+        );
+      } catch (IllegalStateException ex) {
+        modelAndView.setViewName("public/booking");
+        modelAndView.addObject("cart", shoppingCart);
+        modelAndView.addObject("vehicles", vehicleService.getVehiclesByUser(userService.getById(metaData.getUserId())));
+        modelAndView.addObject("error", ex.getMessage());
+        return modelAndView;
+      }
+
+      User user = userService.getById(metaData.getUserId());
+      Vehicle vehicle = vehicleService.getById(request.getVehicleId());
+      List<CarService> cartItems = List.copyOf(shoppingCart.getItems());
+
+      invoiceService.generate(
+          user,
+          vehicle,
+          cartItems,
           request.getBookingDate(),
-          services,
-          request.getVehicleId(),
-          request.getAdditionalNotes(),
           request.getPaymentMethod(),
-          request.getPhoneNumber(),
-          totalPrice,
-          "PENDING"
+          InvoiceStatus.PENDING,
+          null
       );
 
       shoppingCart.clear();
-      return new ModelAndView("redirect:/users/my-bookings");
+      return new ModelAndView("redirect:/users/invoices");
 
     } else {
 

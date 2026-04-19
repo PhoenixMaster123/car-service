@@ -1,46 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Haris Car Care</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link th:href="@{/css/common/base.css}" rel="stylesheet">
-    <link th:href="@{/css/common/variables.css}" rel="stylesheet">
-    <link th:href="@{/css/component/admin-aside.css}" rel="stylesheet">
-    <link th:href="@{/css/component/navbar.css}" rel="stylesheet">
-    <link th:href="@{/css/component/chatbot.css}" rel="stylesheet">
-    <link th:href="@{/css/account/admin/admin-dashboard.css}" rel="stylesheet">
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
+    <link th:href="@{/component/admin-sidebar/admin-sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/admin/dashboard/admin-dashboard.css}" rel="stylesheet">
 </head>
 <body>
 
 <div class="dashboard">
-    <aside class="sidebar">
-        <a href="/" class="sidebar-brand">Haris Car Care</a>
-
-        <ul class="sidebar-nav">
-            <li><a href="/admin/dashboard" class="active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
-            <li><a href="/admin/users"><i class="fa-solid fa-users"></i> Users</a></li>
-            <li><a href="/admin/services"><i class="fa-solid fa-car"></i> Services</a></li>
-            <li><a href="/admin/bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
-            <li><a href="/admin/repairs"><i class="fa-solid fa-screwdriver-wrench"></i> Repairs</a></li>
-            <li><a href="/admin/reports"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
-            <li><a href="/admin/settings"><i class="fa-solid fa-gear"></i> Settings</a></li>
-            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Back to Site</a></li>
-            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <div class="theme-toggle" id="theme-toggle">
-                <i class="fa-solid fa-sun"></i>
-                <i class="fa-solid fa-moon"></i>
-                <div class="toggle-circle"></div>
-            </div>
-        </div>
-    </aside>
+    <aside th:replace="~{fragments/admin-sidebar :: admin-sidebar('dashboard')}"></aside>
 
     <main class="dashboard-content">
         <h1>Dashboard Overview</h1>
@@ -89,37 +62,13 @@
     </main>
 </div>
 
-<button class="chat-toggle" id="chat-toggle" aria-label="Toggle Chat">
-    <i class="fa-solid fa-comment-dots" id="chat-icon-open"></i>
-    <i class="fa-solid fa-xmark" id="chat-icon-close"></i>
-</button>
-
-<div class="chat-widget" id="chat-widget">
-    <div class="chat-header">
-        <h3>Haris AI Assistant</h3>
-        <button class="chat-close-btn" id="chat-close-btn" aria-label="Close Chat">&times;</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-        <div class="chat-message bot">
-            <p>Hello! How can I help you with your car care questions today?</p>
-        </div>
-    </div>
-    <form class="chat-footer" id="chat-form">
-        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
-        <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-    </form>
-</div>
-
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script th:src="@{/js/toggleSwitch.js}"></script>
-<script th:src="@{/js/navbarMobileView.js}"></script>
-<script th:src="@{/js/chatbot.js}"></script>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 <script>
-    // Chart.js configuration
     Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
     Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
-    
-    // Revenue Over Time - Line Chart
+
     const revenueCtx = document.getElementById('revenueChart');
     const revenueChart = new Chart(revenueCtx, {
         type: 'line',
@@ -149,10 +98,7 @@
                     position: 'top',
                     labels: {
                         color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
-                        font: {
-                            family: 'Poppins',
-                            size: 12
-                        }
+                        font: { family: 'Poppins', size: 12 }
                     }
                 },
                 tooltip: {
@@ -170,27 +116,18 @@
                     beginAtZero: true,
                     ticks: {
                         color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-muted'),
-                        callback: function(value) {
-                            return '€' + value.toLocaleString();
-                        }
+                        callback: function(value) { return '€' + value.toLocaleString(); }
                     },
-                    grid: {
-                        color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
-                    }
+                    grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') }
                 },
                 x: {
-                    ticks: {
-                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-muted')
-                    },
-                    grid: {
-                        color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
-                    }
+                    ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-muted') },
+                    grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') }
                 }
             }
         }
     });
 
-    // Service Popularity - Doughnut Chart
     const serviceCtx = document.getElementById('serviceChart');
     const serviceChart = new Chart(serviceCtx, {
         type: 'doughnut',
@@ -202,9 +139,7 @@
                     getComputedStyle(document.documentElement).getPropertyValue('--primary'),
                     getComputedStyle(document.documentElement).getPropertyValue('--secondary'),
                     getComputedStyle(document.documentElement).getPropertyValue('--accent'),
-                    '#ff6b6b',
-                    '#4ecdc4',
-                    '#95a5a6'
+                    '#ff6b6b', '#4ecdc4', '#95a5a6'
                 ],
                 borderWidth: 2,
                 borderColor: getComputedStyle(document.documentElement).getPropertyValue('--inner-card-bg')
@@ -219,10 +154,7 @@
                     position: 'bottom',
                     labels: {
                         color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
-                        font: {
-                            family: 'Poppins',
-                            size: 11
-                        },
+                        font: { family: 'Poppins', size: 11 },
                         padding: 15,
                         usePointStyle: true
                     }
@@ -235,23 +167,17 @@
                     borderWidth: 1,
                     padding: 12,
                     callbacks: {
-                        label: function(context) {
-                            return context.label + ': ' + context.parsed + '%';
-                        }
+                        label: function(context) { return context.label + ': ' + context.parsed + '%'; }
                     }
                 }
             }
         }
     });
 
-    // Update chart colors when theme changes
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', function() {
-            setTimeout(() => {
-                revenueChart.update();
-                serviceChart.update();
-            }, 300);
+            setTimeout(() => { revenueChart.update(); serviceChart.update(); }, 300);
         });
     }
 </script>

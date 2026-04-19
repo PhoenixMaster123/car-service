@@ -2,14 +2,15 @@ package springboot.bg.harisauto.web.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.validation.BindingResult;
 import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.cart.ShoppingCart;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.invoice.service.InvoiceService;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.model.Vehicle;
 import springboot.bg.harisauto.vehicle.service.VehicleService;
 import springboot.bg.harisauto.web.dto.BookingFormRequest;
 
@@ -30,6 +31,7 @@ class BookingControllerTest {
     private VehicleService vehicleService;
     private ShoppingCart shoppingCart;
     private BookingService bookingService;
+    private InvoiceService invoiceService;
     private BookingController controller;
 
     private AuthenticationMetaData auth;
@@ -41,10 +43,12 @@ class BookingControllerTest {
         vehicleService = mock(VehicleService.class);
         shoppingCart = spy(new ShoppingCart());
         bookingService = mock(BookingService.class);
-        controller = new BookingController(userService, vehicleService, shoppingCart, bookingService);
+        invoiceService = mock(InvoiceService.class);
+        controller = new BookingController(userService, vehicleService, shoppingCart, bookingService, invoiceService);
 
         user = new User();
         UUID userId = UUID.randomUUID();
+        user.setId(userId);
         // The AuthenticationMetaData has a constructor taking (UUID, email, password, role, etc.)
         // For testing, we will mock and stub getUserId.
         auth = mock(AuthenticationMetaData.class);
@@ -55,7 +59,7 @@ class BookingControllerTest {
     @Test
     void showBookingPage_returnsBookingViewWithCartAndVehicles() {
         ModelAndView mv = controller.showBookingPage(auth);
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKeys("cart", "bookingFormRequest", "vehicles");
         assertThat(mv.getModel().get("cart")).isSameAs(shoppingCart);
     }
@@ -69,7 +73,7 @@ class BookingControllerTest {
 
         ModelAndView mv = controller.createBooking(auth, req, result, session);
 
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKeys("cart", "vehicles");
         verifyNoInteractions(bookingService);
     }
@@ -85,7 +89,7 @@ class BookingControllerTest {
         // cart empty by default
         ModelAndView mv = controller.createBooking(auth, req, result, session);
 
-        assertThat(mv.getViewName()).isEqualTo("/public/booking");
+        assertThat(mv.getViewName()).isEqualTo("public/booking");
         assertThat(mv.getModel()).containsKey("error");
         verifyNoInteractions(bookingService);
     }
@@ -110,9 +114,12 @@ class BookingControllerTest {
         when(result.hasErrors()).thenReturn(false);
         HttpSession session = mock(HttpSession.class);
 
+        Vehicle vehicle = Vehicle.builder().id(req.getVehicleId()).make("Audi").model("A4").licensePlate("AB-123").build();
+        when(vehicleService.getById(req.getVehicleId())).thenReturn(vehicle);
+
         ModelAndView mv = controller.createBooking(auth, req, result, session);
 
-        assertThat(mv.getViewName()).isEqualTo("redirect:/users/my-bookings");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/users/invoices");
         // Ensure booking created with total 30.00 and status PENDING
         verify(bookingService, times(1)).createBooking(
                 eq(auth.getUserId()),

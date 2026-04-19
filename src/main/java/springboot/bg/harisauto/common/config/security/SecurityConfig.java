@@ -26,6 +26,15 @@ public class SecurityConfig {
       CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
     http.authorizeHttpRequests(matcher -> matcher
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+        .requestMatchers(
+            "/common/**",
+            "/component/**",
+            "/auth/**",
+            "/public/**",
+            "/account/**",
+            "/fonts/**",
+            "/favicon.ico"
+        ).permitAll()
         .requestMatchers("/register", "/").permitAll()
         .requestMatchers(
             "/services",
