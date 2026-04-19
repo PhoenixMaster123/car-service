@@ -2,7 +2,7 @@
 
 A Spring Boot application for managing car service operations. It exposes a web UI with Thymeleaf and REST endpoints, integrates with external microservices for booking and payment, and supports OAuth2 login.
 
-> Last Update date: 2025-12-04
+> Last Update date: 2026-19-04
 
 ## Stack
 - Language: Java 17
