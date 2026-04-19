@@ -109,6 +109,12 @@
                             <span class="amount-value">€<span th:text="${invoice.total}">0.00</span></span>
                         </div>
                     </div>
+                    <div class="invoice-footer">
+                        <a class="btn btn-secondary" th:href="@{'/users/invoices/' + ${invoice.id}}">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>View Details</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

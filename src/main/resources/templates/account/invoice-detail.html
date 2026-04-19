@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="|Invoice ${invoice.invoiceNumber} - Haris Car Care|">Invoice</title>
+    <th:block th:replace="~{fragments/head :: common-meta}"></th:block>
+    <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
+    <link th:href="@{/component/sidebar/sidebar.css}" rel="stylesheet">
+    <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/invoices/invoice-detail.css}" rel="stylesheet">
+</head>
+<body>
+
+<aside th:replace="~{fragments/sidebar :: sidebar('invoices')}"></aside>
+
+<div class="main-content">
+    <main class="page-container">
+
+        <div class="invoice-detail-toolbar">
+            <a th:href="@{/users/invoices}" class="btn btn-ghost">
+                <i class="fa-solid fa-arrow-left"></i> Back to Invoices
+            </a>
+        </div>
+
+        <article class="invoice-document">
+
+            <header class="invoice-document-header">
+                <div class="brand">
+                    <h1>Haris Car Care</h1>
+                    <p>Maria Luiza Blvd, Ruse, Bulgaria</p>
+                    <p>hariscarcare@gmail.com</p>
+                </div>
+                <div class="meta">
+                    <span class="invoice-tag">Invoice</span>
+                    <h2 th:text="${invoice.invoiceNumber}">INV-2026-000001</h2>
+                    <span class="status-pill"
+                          th:classappend="${'status-' + #strings.toLowerCase(invoice.status)}"
+                          th:text="${invoice.status}">PAID</span>
+                </div>
+            </header>
+
+            <section class="invoice-parties">
+                <div>
+                    <h3>Billed To</h3>
+                    <p class="strong" th:text="${invoice.customerName}">Customer Name</p>
+                    <p th:text="${invoice.customerEmail}">customer@example.com</p>
+                    <p th:if="${invoice.customerPhone}" th:text="${invoice.customerPhone}">+359...</p>
+                </div>
+                <div>
+                    <h3>Invoice Details</h3>
+                    <p><span>Issued:</span>
+                        <strong th:text="${#temporals.format(invoice.issuedAt, 'MMM dd, yyyy')}">Date</strong></p>
+                    <p><span>Service Date:</span>
+                        <strong th:text="${#temporals.format(invoice.serviceDate, 'MMM dd, yyyy HH:mm')}">Date</strong></p>
+                    <p th:if="${invoice.dueDate}"><span>Due:</span>
+                        <strong th:text="${#temporals.format(invoice.dueDate, 'MMM dd, yyyy')}">Date</strong></p>
+                    <p><span>Payment:</span>
+                        <strong th:text="${invoice.paymentMethod}">CARD</strong></p>
+                    <p th:if="${invoice.vehicleDescription}"><span>Vehicle:</span>
+                        <strong th:text="${invoice.vehicleDescription}">—</strong></p>
+                </div>
+            </section>
+
+            <section class="invoice-items">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Description</th>
+                        <th class="num">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${invoice.lineItems}">
+                        <td th:text="${item.name}">Service name</td>
+                        <td th:text="${item.description}">Description</td>
+                        <td class="num">€<span th:text="${item.price}">0.00</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="invoice-totals">
+                <div class="row">
+                    <span>Subtotal</span>
+                    <span>€<span th:text="${invoice.subtotal}">0.00</span></span>
+                </div>
+                <div class="row">
+                    <span>VAT (<span th:text="${#numbers.formatPercent(invoice.taxRate, 1, 0)}">20%</span>)</span>
+                    <span>€<span th:text="${invoice.taxAmount}">0.00</span></span>
+                </div>
+                <div class="row total">
+                    <span>Total</span>
+                    <span>€<span th:text="${invoice.total}">0.00</span></span>
+                </div>
+            </section>
+        </article>
+    </main>
+</div>
+
+<th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
+<th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
+
+</body>
+</html>

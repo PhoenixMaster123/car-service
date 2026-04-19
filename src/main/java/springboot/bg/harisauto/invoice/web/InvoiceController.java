@@ -1,9 +1,11 @@
 package springboot.bg.harisauto.invoice.web;
 
 import java.util.List;
+import java.util.UUID;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
@@ -41,6 +43,18 @@ public class InvoiceController {
     mv.addObject("paidCount", paid);
     mv.addObject("pendingCount", pending);
     mv.addObject("overdueCount", overdue);
+    return mv;
+  }
+
+  /** Show invoice detail page. */
+  @GetMapping("/{id}")
+  public ModelAndView detail(@PathVariable("id") UUID id,
+                             @AuthenticationPrincipal AuthenticationMetaData metaData) {
+
+    Invoice invoice = invoiceService.getForUser(id, metaData.getUserId());
+
+    ModelAndView mv = new ModelAndView("account/invoice-detail");
+    mv.addObject("invoice", invoice);
     return mv;
   }
 }
