@@ -122,25 +122,6 @@ public class UserController {
   }
 
   /**
-   * Shows the invoices page for the authenticated user.
-   *
-   * @param metaData The authentication metadata.
-   * @return The invoices page.
-   */
-  @GetMapping("/invoices")
-  public ModelAndView showInvoices(@AuthenticationPrincipal AuthenticationMetaData metaData) {
-
-    User user = userService.getById(metaData.getUserId());
-    List<BookingResponse> allBookings = bookingService.getBookingsByUser(user.getId());
-
-    ModelAndView modelAndView = new ModelAndView("account/invoices");
-    modelAndView.addObject("user", user);
-    modelAndView.addObject("bookings", allBookings);
-
-    return modelAndView;
-  }
-
-  /**
    * Shows the settings page for the authenticated user.
    *
    * @param metaData The authentication metadata.

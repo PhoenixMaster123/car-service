@@ -15,9 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.cart.ShoppingCart;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.invoice.model.InvoiceStatus;
+import springboot.bg.harisauto.invoice.service.InvoiceService;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
+import springboot.bg.harisauto.vehicle.model.Vehicle;
 import springboot.bg.harisauto.vehicle.service.VehicleService;
 import springboot.bg.harisauto.web.dto.BookingFormRequest;
 import springboot.bg.harisauto.web.dto.PendingBookingSessionRequest;
@@ -35,14 +38,19 @@ public class BookingController {
   private final VehicleService vehicleService;
   private final ShoppingCart shoppingCart;
   private final BookingService bookingService;
+  private final InvoiceService invoiceService;
 
   /** Constructor. */
   public BookingController(UserService userService,
-                           VehicleService vehicleService, ShoppingCart shoppingCart, BookingService bookingService) {
+                           VehicleService vehicleService,
+                           ShoppingCart shoppingCart,
+                           BookingService bookingService,
+                           InvoiceService invoiceService) {
     this.userService = userService;
     this.vehicleService = vehicleService;
     this.shoppingCart = shoppingCart;
     this.bookingService = bookingService;
+    this.invoiceService = invoiceService;
   }
 
   /**
@@ -112,8 +120,22 @@ public class BookingController {
           "PENDING"
       );
 
+      User user = userService.getById(metaData.getUserId());
+      Vehicle vehicle = vehicleService.getById(request.getVehicleId());
+      List<CarService> cartItems = List.copyOf(shoppingCart.getItems());
+
+      invoiceService.generate(
+          user,
+          vehicle,
+          cartItems,
+          request.getBookingDate(),
+          request.getPaymentMethod(),
+          InvoiceStatus.PENDING,
+          null
+      );
+
       shoppingCart.clear();
-      return new ModelAndView("redirect:/users/my-bookings");
+      return new ModelAndView("redirect:/users/invoices");
 
     } else {
 

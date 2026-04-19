@@ -54,17 +54,9 @@
                     </div>
 
                     <div class="booking-card-actions">
-                        <button class="booking-action-btn btn-secondary"
-                                type="button"
-                                th:data-id="'INV-' + ${booking.id}"
-                                th:data-service="${booking.serviceNames}"
-                                th:data-vehicle="${booking.vehicleDescription}"
-                                th:data-date="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}"
-                                th:data-status="${booking.status}"
-                                th:data-price="${booking.totalPrice}"
-                                onclick="openInvoiceModal(this.getAttribute('data-id'), this.getAttribute('data-service'), this.getAttribute('data-vehicle'), this.getAttribute('data-date'), this.getAttribute('data-date'), this.getAttribute('data-status'), this.getAttribute('data-price'))">
-                            <i class="fa-solid fa-file-invoice"></i> Invoice
-                        </button>
+                        <a class="booking-action-btn btn-secondary" th:href="@{/users/invoices}">
+                            <i class="fa-solid fa-file-invoice"></i> Invoices
+                        </a>
                     </div>
                 </div>
             </div>
@@ -97,20 +89,12 @@
                     <div class="booking-card-status status-completed" th:text="${booking.status}">Completed</div>
 
                     <div class="booking-card-actions">
-                        <button class="booking-action-btn btn-primary">
+                        <a class="booking-action-btn btn-primary" th:href="@{/bookings}">
                             <i class="fa-solid fa-rotate-right"></i> Book Again
-                        </button>
-                        <button class="booking-action-btn btn-secondary"
-                                type="button"
-                                th:data-id="'INV-' + ${booking.id}"
-                                th:data-service="${booking.serviceNames}"
-                                th:data-vehicle="${booking.vehicleDescription}"
-                                th:data-date="${#temporals.format(booking.bookingDate, 'MMM dd, yyyy')}"
-                                th:data-status="${#strings.toString(booking.status)}"
-                                th:data-price="${booking.totalPrice}"
-                                onclick="openInvoiceModal(this.getAttribute('data-id'), this.getAttribute('data-service'), this.getAttribute('data-vehicle'), this.getAttribute('data-date'), this.getAttribute('data-date'), this.getAttribute('data-status'), this.getAttribute('data-price'))">
-                            <i class="fa-solid fa-file-invoice"></i> Invoice
-                        </button>
+                        </a>
+                        <a class="booking-action-btn btn-secondary" th:href="@{/users/invoices}">
+                            <i class="fa-solid fa-file-invoice"></i> Invoices
+                        </a>
                     </div>
                 </div>
             </div>
@@ -118,10 +102,7 @@
     </main>
 </div>
 
-<div th:replace="~{fragments/invoice-modal :: invoice-modal}"></div>
-
 <th:block th:replace="~{fragments/footer :: chatbot-widget}"></th:block>
-<script th:src="@{/account/invoices/invoiceMenu.js}"></script>
 <th:block th:replace="~{fragments/footer :: common-scripts}"></th:block>
 
 </body>
