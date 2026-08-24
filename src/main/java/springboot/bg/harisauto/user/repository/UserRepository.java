@@ -1,5 +1,6 @@
 package springboot.bg.harisauto.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
    * @return user
    */
   Optional<User> findByEmail(String email);
+
+  /**
+   * Count users registered after the given moment in time.
+   *
+   * @param createdOn - exclusive lower bound for the registration timestamp
+   * @return the number of matching users
+   */
+  long countByCreatedOnAfter(LocalDateTime createdOn);
 }

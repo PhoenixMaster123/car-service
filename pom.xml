@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2024.0.2</spring-cloud.version>
+        <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
     </properties>
     <dependencies>
 
@@ -70,6 +71,19 @@
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>thymeleaf-extras-springsecurity6</artifactId>
       </dependency>
+      <!-- PDF Generation Dependency -->
+      <dependency>
+        <groupId>com.openhtmltopdf</groupId>
+        <artifactId>openhtmltopdf-core</artifactId>
+        <version>${openhtmltopdf.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.openhtmltopdf</groupId>
+        <artifactId>openhtmltopdf-pdfbox</artifactId>
+        <version>${openhtmltopdf.version}</version>
+      </dependency>
+
 
       <!-- Validation and Utility Dependencies -->
       <dependency>

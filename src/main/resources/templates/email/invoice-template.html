@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Invoice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .header {
+      width: 100%;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 5px 0 0 0;
+      color: #777;
+    }
+    .info-section {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    .info-left {
+      float: left;
+      width: 50%;
+    }
+    .info-right {
+      float: right;
+      width: 50%;
+      text-align: right;
+    }
+    .clear {
+      clear: both;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    table th {
+      background-color: #f8f8f8;
+    }
+    table td.money {
+      text-align: right;
+    }
+    .total-section {
+      width: 100%;
+      text-align: right;
+    }
+    .total-section p {
+      margin: 5px 0;
+      font-weight: bold;
+    }
+    .total-amount {
+      font-size: 20px;
+      color: #0ea5e9;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      color: #aaa;
+      font-size: 12px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Haris Car Care</h1>
+  <p>123 Service Road, Auto City, AC 12345 | Contact: +1 234 567 890</p>
+</div>
+
+<div class="info-section">
+  <div class="info-left">
+    <strong>Billed To:</strong><br/>
+    <span th:text="${customerName}">Customer Name</span><br/>
+    <span th:text="${customerEmail}">customer@example.com</span><br/>
+    Phone: <span th:text="${customerPhone}">+1 000 000 000</span>
+  </div>
+  <div class="info-right">
+    <strong>Invoice Number:</strong> <span th:text="${invoiceNumber}">INV-001</span><br/>
+    <strong>Date of Issue:</strong> <span th:text="${issueDate}">2026-03-26</span><br/>
+    <strong>Status:</strong> <span th:text="${status}" style="font-weight: bold; color: green;">PAID</span>
+  </div>
+  <div class="clear"></div>
+</div>
+
+<div style="margin-bottom: 20px;">
+  <strong>Vehicle:</strong> <span th:text="${vehicleDescription}">Audi A4</span><br/>
+  <strong>Service Date:</strong> <span th:text="${bookingDate}">2026-03-27 14:00</span>
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th>Service Description</th>
+    <th style="text-align: right">Price</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="service : ${services}">
+    <td th:text="${service.name}">Premium Wash</td>
+    <td class="money" th:text="'€' + ${#numbers.formatDecimal(service.basePrice, 1, 2)}">€25.00</td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="total-section">
+  <p>Subtotal: <span th:text="'€' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">€0.00</span></p>
+  <p>Tax (Included): <span>€0.00</span></p>
+  <p class="total-amount">Total Paid: <span th:text="'€' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">€0.00</span></p>
+</div>
+
+<div class="footer">
+  Thank you for choosing Haris Car Care! We hope to see you again.
+</div>
+
+</body>
+</html>
