@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Invoice</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+<div style="max-width: 600px; background: white; padding: 30px; border-radius: 8px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <h2 style="color: #0ea5e9; text-align: center;">Haris Car Care</h2>
+    <p>Dear Customer,</p>
+    <p>Thank you for choosing Haris Car Care. We have successfully processed your payment.</p>
+    <p>Attached to this email, you will find your official invoice (<strong th:text="${invoiceNumber}">INV-001</strong>) for the booked services.</p>
+    <p>If you have any questions or require modifications to your booking, please don't hesitate to reach out to our team.</p>
+    <div style="margin-top: 30px; text-align: center; color: #888; font-size: 12px;">
+        &copy; 2026 Haris Car Care. All rights reserved.<br>
+        123 Service Road, Auto City, AC 12345
+    </div>
+</div>
+</body>
+</html>

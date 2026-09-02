@@ -2,10 +2,12 @@ package springboot.bg.harisauto.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -72,5 +74,87 @@ public class EmailService {
 
     log.info("Sending email to: {} (From: {})", recipient, from);
     javaMailSender.send(message);
+  }
+
+  /**
+   * Sends the generated invoice to the customer with the PDF attached.
+   *
+   * <p>Delivery failures are logged rather than propagated, so that a failing mail
+   * server never rolls back an invoice that was already persisted.</p>
+   *
+   * @param to            The customer's email address.
+   * @param pdfBytes      The rendered invoice PDF.
+   * @param invoiceNumber The invoice number, used for the subject and attachment name.
+   */
+  @Async
+  public void sendInvoiceEmail(String to, byte[] pdfBytes, String invoiceNumber) {
+    try {
+      Context context = new Context();
+      context.setVariable("invoiceNumber", invoiceNumber);
+      String htmlBody = templateEngine.process("email/invoice-email.html", context);
+
+      MimeMessage message = javaMailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+      String from = realFromUser.isEmpty() ? defaultFromAddress : realFromUser;
+      helper.setFrom(from);
+      helper.setSubject("Your invoice " + invoiceNumber);
+      helper.setText(htmlBody, true);
+      helper.addAttachment(invoiceNumber + ".pdf", new ByteArrayResource(pdfBytes),
+          "application/pdf");
+
+      String recipient;
+      if (notificationEmail != null && !notificationEmail.isEmpty()) {
+        recipient = notificationEmail;
+        log.warn("DEV MODE: Redirecting invoice email for {} to {}", to, recipient);
+      } else {
+        recipient = to;
+      }
+      helper.setTo(recipient);
+
+      log.info("Sending invoice {} to: {} (From: {})", invoiceNumber, recipient, from);
+      javaMailSender.send(message);
+    } catch (MessagingException e) {
+      log.error("Failed to send invoice email {} to {}: {}", invoiceNumber, to, e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Sends the daily summary report to the configured administrator address.
+   *
+   * <p>Delivery failures are logged rather than propagated, so that a failing mail
+   * server never aborts the scheduled job.</p>
+   *
+   * @param totalUsers    Total number of registered users.
+   * @param newUsers      Users registered in the last 24 hours.
+   * @param totalInvoices Total number of invoices issued.
+   */
+  @Async
+  public void sendDailyReport(long totalUsers, long newUsers, long totalInvoices) {
+    try {
+      Context context = new Context();
+      context.setVariable("reportDate", LocalDate.now().toString());
+      context.setVariable("totalUsers", totalUsers);
+      context.setVariable("newUsers", newUsers);
+      context.setVariable("totalInvoices", totalInvoices);
+      String htmlBody = templateEngine.process("email/daily-report-email.html", context);
+
+      MimeMessage message = javaMailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+      String from = realFromUser.isEmpty() ? defaultFromAddress : realFromUser;
+      String recipient = (notificationEmail != null && !notificationEmail.isEmpty())
+          ? notificationEmail : defaultFromAddress;
+
+      helper.setFrom(from);
+      helper.setTo(recipient);
+      helper.setSubject("Daily report - " + LocalDate.now());
+      helper.setText(htmlBody, true);
+
+      log.info("Sending daily report to: {} (From: {})", recipient, from);
+      javaMailSender.send(message);
+    } catch (MessagingException e) {
+      log.error("Failed to send daily report: {}", e.getMessage(), e);
+    }
   }
 }

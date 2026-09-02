@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Report</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0f172a; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a; padding:40px 20px;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#1e293b; border-radius:16px; overflow:hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <!-- Header -->
+                <tr>
+                    <td style="background: linear-gradient(135deg, #0ea5e9, #06b6d4); padding:30px 40px; text-align:center;">
+                        <h1 style="color:#ffffff; margin:0; font-size:24px; font-weight:700;">📊 Daily Admin Report</h1>
+                        <p style="color:rgba(255,255,255,0.85); margin:8px 0 0; font-size:14px;" th:text="|Report for ${reportDate}|">Report for today</p>
+                    </td>
+                </tr>
+
+                <!-- Stats Grid -->
+                <tr>
+                    <td style="padding:30px 40px;">
+                        <p style="color:#94a3b8; font-size:14px; margin:0 0 20px;">Here's your daily summary of Haris Car Care system activity.</p>
+
+                        <!-- Total Users -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                            <tr>
+                                <td style="background-color:#0f172a; border-radius:12px; padding:20px; border-left:4px solid #0ea5e9;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <p style="color:#94a3b8; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin:0;">Total Users</p>
+                                                <p style="color:#ffffff; font-size:28px; font-weight:700; margin:4px 0 0;" th:text="${totalUsers}">0</p>
+                                            </td>
+                                            <td style="text-align:right; font-size:32px;">👥</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- New Users -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                            <tr>
+                                <td style="background-color:#0f172a; border-radius:12px; padding:20px; border-left:4px solid #22c55e;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <p style="color:#94a3b8; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin:0;">New Registrations (24h)</p>
+                                                <p style="color:#22c55e; font-size:28px; font-weight:700; margin:4px 0 0;" th:text="${newUsers}">0</p>
+                                            </td>
+                                            <td style="text-align:right; font-size:32px;">🆕</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Invoices -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                            <tr>
+                                <td style="background-color:#0f172a; border-radius:12px; padding:20px; border-left:4px solid #f59e0b;">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <p style="color:#94a3b8; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin:0;">Total Invoices</p>
+                                                <p style="color:#ffffff; font-size:28px; font-weight:700; margin:4px 0 0;" th:text="${totalInvoices}">0</p>
+                                            </td>
+                                            <td style="text-align:right; font-size:32px;">🧾</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background-color:#0f172a; padding:20px 40px; text-align:center; border-top:1px solid #334155;">
+                        <p style="color:#64748b; font-size:12px; margin:0;">This is an automated daily report from Haris Car Care.</p>
+                        <p style="color:#64748b; font-size:12px; margin:4px 0 0;">© 2025 Haris Car Care. All rights reserved.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
