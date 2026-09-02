@@ -14,7 +14,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 /**
- * RestConfig.java - Configuration class for RestTemplate setup.
+ * AopLogger.java - Aspect that logs method entry, exit and thrown exceptions.
  *
  * @author Kristian Popov
  */

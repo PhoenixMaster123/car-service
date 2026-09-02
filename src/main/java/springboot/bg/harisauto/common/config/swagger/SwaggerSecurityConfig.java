@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * SwaggerSecurityConfig.java - Security configuration for Swagger UI access.
@@ -71,7 +70,7 @@ public class SwaggerSecurityConfig {
     .authenticationProvider(provider)
     .sessionManagement((sessionManagement) ->
       sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    ).addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
+    );
 
     return http.build();
   }
