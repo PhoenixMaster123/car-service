@@ -3,9 +3,11 @@ package springboot.bg.harisauto.common.config.ai;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -27,8 +29,16 @@ public class AiSecurityConfig {
           .ignoringRequestMatchers("/api/**")
         )
         .authorizeHttpRequests(auth -> auth
-          .requestMatchers("/api/gemini/**").permitAll()
+          // /error must be reachable, otherwise a failure inside the API is dispatched
+          // to /error, falls through to the form-login chain and returns a 302 to the
+          // login page instead of an error response.
+          .requestMatchers("/error").permitAll()
+          // The chatbot spends the server's Gemini quota on every call, so it is not
+          // open to anonymous callers.
           .anyRequest().authenticated()
+        )
+        .exceptionHandling(exception -> exception
+          .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         );
     return http.build();
   }
