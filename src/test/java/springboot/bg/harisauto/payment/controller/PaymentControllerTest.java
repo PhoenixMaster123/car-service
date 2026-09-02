@@ -14,6 +14,7 @@ import springboot.bg.harisauto.invoice.service.InvoiceService;
 import springboot.bg.harisauto.payment.client.PaymentClient;
 import springboot.bg.harisauto.payment.dto.request.PaymentRequest;
 import springboot.bg.harisauto.payment.dto.response.PaymentResponse;
+import springboot.bg.harisauto.payment.service.CheckoutService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
 import springboot.bg.harisauto.vehicle.model.Vehicle;
@@ -45,6 +46,7 @@ class PaymentControllerTest {
     private UserService userService;
     private VehicleService vehicleService;
     private DevModeProperties devModeProperties;
+    private CheckoutService checkoutService;
     private PaymentController controller;
 
     @BeforeEach
@@ -56,8 +58,12 @@ class PaymentControllerTest {
         userService = mock(UserService.class);
         vehicleService = mock(VehicleService.class);
         devModeProperties = new DevModeProperties();
-        controller = new PaymentController(paymentClient, shoppingCart, bookingService,
-                invoiceService, userService, vehicleService, devModeProperties);
+        // Real CheckoutService over the same mocks, so the booking/invoice assertions
+        // below still exercise the logic that moved out of the controller.
+        checkoutService = new CheckoutService(shoppingCart, bookingService,
+                invoiceService, userService, vehicleService);
+        controller = new PaymentController(paymentClient, shoppingCart,
+                checkoutService, devModeProperties);
     }
 
     @Test
@@ -158,15 +164,6 @@ class PaymentControllerTest {
         HttpSession session = mock(HttpSession.class);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
         ModelAndView mv = controller.processPayment("failed", redirectAttributes, session);
-        assertThat(mv.getViewName()).isEqualTo("redirect:/checkout");
-        verifyNoInteractions(bookingService);
-    }
-
-    @Test
-    void simulatePaymentSuccess_whenDevModeDisabled_redirectsToCheckout() {
-        HttpSession session = mock(HttpSession.class);
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-        ModelAndView mv = controller.simulatePaymentSuccess(session, redirectAttributes);
         assertThat(mv.getViewName()).isEqualTo("redirect:/checkout");
         verifyNoInteractions(bookingService);
     }
