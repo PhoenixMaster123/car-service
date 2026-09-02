@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
+import springboot.bg.harisauto.common.exception.ResourceNotFoundException;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.service.model.ServiceCategory;
 import springboot.bg.harisauto.service.repository.ServiceCategoryRepository;
@@ -50,7 +50,7 @@ public class CatalogService {
    */
   public CarService getById(UUID id) {
     return serviceRepository.findById(id)
-        .orElseThrow(() -> new UserDoesNotExistException("Service not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + id));
   }
 
   /**
@@ -76,7 +76,7 @@ public class CatalogService {
     }
 
     ServiceCategory category = categoryRepository.findById(request.getCategoryId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Category not found with id: " + request.getCategoryId()));
 
     CarService service = CarService.builder()
@@ -100,7 +100,7 @@ public class CatalogService {
   @Transactional
   public void updateService(UpdateServiceRequest request) {
     CarService service = serviceRepository.findById(request.getId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Service not found with id: " + request.getId()));
 
     // Check if name is being changed and if new name already exists
@@ -111,7 +111,7 @@ public class CatalogService {
     }
 
     ServiceCategory category = categoryRepository.findById(request.getCategoryId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Category not found with id: " + request.getCategoryId()));
 
     service.setName(request.getName());
@@ -133,7 +133,7 @@ public class CatalogService {
   @Transactional
   public void deleteService(UUID id) {
     if (!serviceRepository.existsById(id)) {
-      throw new UserDoesNotExistException("Service not found with id: " + id);
+      throw new ResourceNotFoundException("Service not found with id: " + id);
     }
 
     serviceRepository.deleteById(id);
