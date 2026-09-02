@@ -67,17 +67,19 @@ public class UserService implements UserDetailsService {
         .role(UserRole.USER)
         .build();
 
+    User savedUser = userRepository.save(newUser);
+
+    // Published after the save so the event carries the generated id; the listener is
+    // asynchronous, so a failing mail server cannot roll the registration back.
     UserRegisteredEvent event = UserRegisteredEvent.builder()
-        .userId(newUser.getId())
-        .firstName(newUser.getFirstName())
-        .lastName(newUser.getLastName())
-        .email(newUser.getEmail())
+        .userId(savedUser.getId())
+        .firstName(savedUser.getFirstName())
+        .lastName(savedUser.getLastName())
+        .email(savedUser.getEmail())
         .build();
     eventPublisher.publishEvent(event);
 
-    userRepository.save(newUser);
-
-    log.info("New user registered: {}", newUser.getEmail());
+    log.info("New user registered: {}", savedUser.getEmail());
   }
 
 
