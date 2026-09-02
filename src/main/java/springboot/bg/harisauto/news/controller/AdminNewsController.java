@@ -18,7 +18,7 @@ import springboot.bg.harisauto.news.service.NewsService;
 /**
  * AdminNewsController.java - Handles admin interactions for News management.
  *
- * @author AI Engine
+ * @author Kristian Popov
  */
 @Controller
 @RequestMapping("/admin/news")
