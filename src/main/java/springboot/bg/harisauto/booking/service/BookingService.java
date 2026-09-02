@@ -16,7 +16,6 @@ import springboot.bg.harisauto.booking.dto.response.BookingResponse;
 import springboot.bg.harisauto.booking.dto.response.GetBookingResponse;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.service.service.CatalogService;
-import springboot.bg.harisauto.vehicle.model.Vehicle;
 import springboot.bg.harisauto.vehicle.service.VehicleService;
 
 /**
@@ -122,12 +121,14 @@ public class BookingService {
     if (vehicleId == null) {
       return null;
     }
-    Vehicle vehicle = vehicleService.getById(vehicleId);
-    if (vehicle == null) {
-      log.warn("Booking references vehicle {} which no longer exists", vehicleId);
-      return "Unknown Vehicle";
-    }
-    return vehicle.getMake() + " " + vehicle.getModel() + " (" + vehicle.getLicensePlate() + ")";
+    // findById rather than getById: a booking can outlive the vehicle it refers to, and
+    // that is a placeholder on the page, not a failure of the whole bookings list.
+    return vehicleService.findById(vehicleId)
+        .map(v -> v.getMake() + " " + v.getModel() + " (" + v.getLicensePlate() + ")")
+        .orElseGet(() -> {
+          log.warn("Booking references vehicle {} which no longer exists", vehicleId);
+          return "Unknown Vehicle";
+        });
   }
 
   /**

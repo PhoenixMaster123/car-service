@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,7 +96,7 @@ class BookingServiceTest {
         v.setMake("BMW");
         v.setModel("X5");
         v.setLicensePlate("CB1234AB");
-        when(vehicleService.getById(vehicleId)).thenReturn(v);
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(v));
 
         CarService s1 = new CarService();
         s1.setId(service1);
@@ -128,8 +129,8 @@ class BookingServiceTest {
         GetBookingResponse response = new GetBookingResponse(new ArrayList<>(List.of(b1)));
         when(bookingClient.getBookings(userId)).thenReturn(response);
 
-        // A missing vehicle is reported as null by VehicleService, not as an exception.
-        when(vehicleService.getById(vehicleId)).thenReturn(null);
+        // A missing vehicle comes back as an empty Optional, not as an exception.
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.empty());
 
         List<BookingResponse> result = bookingService.getBookingsByUser(userId);
 
@@ -157,7 +158,7 @@ class BookingServiceTest {
         v.setMake("VW");
         v.setModel("Golf");
         v.setLicensePlate("X1234YY");
-        when(vehicleService.getById(vehicleId)).thenReturn(v);
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(v));
 
         // The service is no longer in the catalogue, so it cannot be named.
         when(catalogService.findAll()).thenReturn(List.of());

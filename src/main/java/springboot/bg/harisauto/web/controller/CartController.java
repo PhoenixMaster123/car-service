@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import springboot.bg.harisauto.cart.ShoppingCart;
-import springboot.bg.harisauto.service.repository.ServiceRepository;
+import springboot.bg.harisauto.service.service.CatalogService;
 
 /**
  * CartController.java - Controller for handling shopping cart-related web requests.
@@ -21,7 +21,7 @@ import springboot.bg.harisauto.service.repository.ServiceRepository;
 public class CartController {
 
   private final ShoppingCart shoppingCart;
-  private final ServiceRepository serviceRepository;
+  private final CatalogService catalogService;
 
   /**
    * Add item to the cart.
@@ -31,7 +31,7 @@ public class CartController {
    */
   @PostMapping("/add/{id}")
   public String addToCart(@PathVariable UUID id) {
-    serviceRepository.findById(id).ifPresent(shoppingCart::addItem);
+    shoppingCart.addItem(catalogService.getById(id));
     return "redirect:/services";
   }
 

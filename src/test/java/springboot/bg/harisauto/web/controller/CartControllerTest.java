@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import springboot.bg.harisauto.cart.ShoppingCart;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.service.model.ServiceCategory;
-import springboot.bg.harisauto.service.repository.ServiceRepository;
+import springboot.bg.harisauto.service.service.CatalogService;
 
 @WebMvcTest(CartController.class)
 class CartControllerTest {
@@ -34,7 +33,7 @@ class CartControllerTest {
   private ShoppingCart shoppingCart;
 
   @MockitoBean
-  private ServiceRepository serviceRepository;
+  private CatalogService catalogService;
 
   private CarService sampleService;
 
@@ -56,7 +55,7 @@ class CartControllerTest {
   @Test
   @DisplayName("POST /cart/add/{id} should add item and redirect to /services")
   void addToCart_shouldRedirect() throws Exception {
-    when(serviceRepository.findById(sampleService.getId())).thenReturn(Optional.of(sampleService));
+    when(catalogService.getById(sampleService.getId())).thenReturn(sampleService);
 
     mockMvc.perform(post("/cart/add/" + sampleService.getId()).with(csrf()).with(user("user")))
         .andExpect(status().is3xxRedirection())
