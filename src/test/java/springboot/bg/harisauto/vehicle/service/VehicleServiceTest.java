@@ -80,10 +80,19 @@ class VehicleServiceTest {
     }
 
     @Test
-    void getById_returnsNullWhenMissing() {
+    void getById_throwsWhenMissing() {
         UUID id = UUID.randomUUID();
         when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
-        assertThat(vehicleService.getById(id)).isNull();
+        assertThatThrownBy(() -> vehicleService.getById(id))
+                .isInstanceOf(VehicleBusinessException.class)
+                .hasMessageContaining("Vehicle not found");
+    }
+
+    @Test
+    void findById_returnsEmptyWhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
+        assertThat(vehicleService.findById(id)).isEmpty();
     }
 
     @Test
