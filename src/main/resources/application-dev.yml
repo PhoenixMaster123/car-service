@@ -5,10 +5,11 @@ spring:
     username: sa
     password: ""
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        ddl-auto: update
     show-sql: true
   h2:
     console:
@@ -17,6 +18,8 @@ spring:
   mail:
     host: localhost
     port: 1025
+    username: ""
+    password: ""
     properties:
       "mail.smtp.auth": false
       "mail.smtp.starttls.enable": false
@@ -31,18 +34,22 @@ spring:
             clientId: dummy-github-client-id
             clientSecret: dummy-github-client-secret
 
-  gemini:
-    api-key: dummy-gemini-key
-
-  stripe:
-    public:
-      key: dummy-stripe-key
   data:
     redis:
       host: localhost
       port: 6379
   cache:
     type: redis
+
+# Placeholder credentials so the dev profile boots without real secrets.
+# These are top-level keys: GeminiConfig reads ${gemini.api-key} and
+# PaymentController reads ${stripe.public.key} - neither lives under "spring".
+gemini:
+  api-key: dummy-gemini-key
+
+stripe:
+  public:
+    key: dummy-stripe-key
 
 notification:
   email: "harisauto@gmail.com"
