@@ -13,7 +13,7 @@ import springboot.bg.harisauto.news.repository.NewsRepository;
 /**
  * NewsService.java - Handles business logic for News articles.
  *
- * @author AI Engine
+ * @author Kristian Popov
  */
 @Service
 @RequiredArgsConstructor

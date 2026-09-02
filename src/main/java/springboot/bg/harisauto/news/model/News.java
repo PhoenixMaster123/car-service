@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 /**
  * News.java - Entity class for News items.
  *
- * @author AI Engine
+ * @author Kristian Popov
  */
 @Entity
 @Table(name = "news")
