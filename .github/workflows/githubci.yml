@@ -33,8 +33,11 @@ jobs:
           # Cache Maven packages for faster builds
           cache: 'maven'
 
+      # "clean" must come first, otherwise Checkstyle runs against stale classes
+      # and is then wiped before the tests. The test profile is selected by
+      # @ActiveProfiles("test") on the test classes, not by a command-line flag.
       - name: Run Lint and Tests
-        run: mvn -Dspring.profiles.active=ci checkstyle:check clean test
+        run: mvn clean checkstyle:check test
 
       # 4. Upload JUnit test reports
       - name: Upload Test Reports
