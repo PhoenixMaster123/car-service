@@ -1,6 +1,7 @@
 package springboot.bg.harisauto.common.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +26,9 @@ public class FileStorageService {
   private static final long MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
   private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
-      "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"
+      // SVG is deliberately excluded: it is an XML document that can carry script,
+      // and /uploads/** is served from this application's own origin.
+      "image/jpeg", "image/png", "image/gif", "image/webp"
   );
   private static final Set<String> ALLOWED_VIDEO_TYPES = Set.of(
       "video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo"
@@ -68,6 +71,10 @@ public class FileStorageService {
         log.warn("Unsupported image type: {}", contentType);
         return null;
       }
+      if (!hasKnownImageSignature(file)) {
+        log.warn("Rejected upload: content does not match the declared type {}", contentType);
+        return null;
+      }
       if (file.getSize() > MAX_IMAGE_SIZE) {
         log.warn("Image too large: {} bytes (max {} bytes)", file.getSize(), MAX_IMAGE_SIZE);
         return null;
@@ -89,7 +96,8 @@ public class FileStorageService {
     String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
     try {
       if (originalFileName.contains("..")) {
-        throw new RuntimeException("Sorry! Filename contains invalid path sequence " + originalFileName);
+        log.warn("Rejected upload: file name contains a path sequence");
+        return null;
       }
 
       String fileExtension = "";
@@ -101,6 +109,10 @@ public class FileStorageService {
       String generatedFileName = UUID.randomUUID().toString() + fileExtension;
       
       Path targetLocation = this.fileStorageLocation.resolve(subDir).normalize();
+      if (!targetLocation.startsWith(this.fileStorageLocation)) {
+        log.warn("Rejected upload: subdirectory {} escapes the storage root", subDir);
+        return null;
+      }
       Files.createDirectories(targetLocation);
       
       Path filePath = targetLocation.resolve(generatedFileName);
@@ -112,5 +124,47 @@ public class FileStorageService {
       log.error("Could not store file " + originalFileName + ". Please try again!", ex);
       return null;
     }
+  }
+
+  /**
+   * Checks the leading bytes of an upload against the signatures of the image formats
+   * we accept. The declared {@code Content-Type} comes from the client and can be set to
+   * anything, so it is not trusted on its own.
+   *
+   * @param file The uploaded file.
+   * @return true if the content looks like a JPEG, PNG, GIF or WebP.
+   */
+  private boolean hasKnownImageSignature(MultipartFile file) {
+    byte[] header = new byte[12];
+    try (InputStream in = file.getInputStream()) {
+      if (in.readNBytes(header, 0, header.length) < header.length) {
+        return false;
+      }
+    } catch (IOException ex) {
+      log.warn("Could not read upload header", ex);
+      return false;
+    }
+    return matches(header, 0, 0xFF, 0xD8, 0xFF)                                  // JPEG
+        || matches(header, 0, 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A)    // PNG
+        || matches(header, 0, 0x47, 0x49, 0x46, 0x38)                            // GIF87a/89a
+        || (matches(header, 0, 0x52, 0x49, 0x46, 0x46)
+            && matches(header, 8, 0x57, 0x45, 0x42, 0x50));                      // RIFF....WEBP
+  }
+
+  /**
+   * Compares a byte sequence at the given offset.
+   *
+   * @param data The bytes to inspect.
+   * @param offset Where the signature should start.
+   * @param signature The expected unsigned byte values.
+   * @return true if every byte matches.
+   */
+  private boolean matches(byte[] data, int offset, int... signature) {
+    for (int i = 0; i < signature.length; i++) {
+      if ((data[offset + i] & 0xFF) != signature[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 }
