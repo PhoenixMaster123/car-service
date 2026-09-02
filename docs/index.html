@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Car Service — Project Documentation</title>
+<style>
+  :root {
+    --bg: #fbfaf8; --panel: #ffffff; --ink: #171c22; --muted: #5b6672;
+    --line: #e4e2dd; --accent: #b23a2e; --accent-soft: #f6ece9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171a; --panel: #1c2024; --ink: #e9edf1; --muted: #98a3ae;
+      --line: #2a3037; --accent: #e8705f; --accent-soft: #2a1f1d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 36px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 0 0 10px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 42px); line-height: 1.15; margin: 0 0 12px; letter-spacing: -.02em; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0; max-width: 62ch; }
+  h2 { font-size: 20px; margin: 40px 0 14px; letter-spacing: -.01em; }
+  .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  a.card {
+    display: block; padding: 20px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s;
+  }
+  a.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  a.card strong { display: block; font-size: 16px; margin-bottom: 4px; }
+  a.card span { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13.5px;
+    background: var(--accent-soft); padding: 1px 6px; border-radius: 4px;
+  }
+  .note {
+    background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 18px; border-radius: 6px; color: var(--muted); font-size: 15px; margin: 22px 0 0;
+  }
+  .note strong { color: var(--ink); }
+  footer { margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer a { color: var(--accent); }
+  .scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Documentation</p>
+    <h1>Car Service</h1>
+    <p class="lede">
+      A Spring Boot application for car service operations — a Thymeleaf web UI, OAuth2 login,
+      invoicing with PDF export, and OpenFeign calls to a booking and a payment service.
+    </p>
+  </header>
+
+  <h2>Generated reports</h2>
+  <div class="cards">
+    <a class="card" href="javadoc/index.html">
+      <strong>Javadoc →</strong>
+      <span>API documentation for every package under <code>springboot.bg.harisauto</code>.</span>
+    </a>
+    <a class="card" href="checkstyle.html">
+      <strong>Checkstyle report →</strong>
+      <span>Google style rules, enforced on every pull request.</span>
+    </a>
+    <a class="card" href="https://github.com/PhoenixMaster123/car-service-3">
+      <strong>Source on GitHub →</strong>
+      <span>Repository, issues and pull requests.</span>
+    </a>
+  </div>
+
+  <h2>Stack</h2>
+  <div class="scroll">
+    <table>
+      <tr><th>Concern</th><th>Choice</th></tr>
+      <tr><td>Language</td><td>Java 17</td></tr>
+      <tr><td>Framework</td><td>Spring Boot 3.4.0, Spring Cloud 2024.0.2</td></tr>
+      <tr><td>Views</td><td>Thymeleaf</td></tr>
+      <tr><td>Persistence</td><td>Spring Data JPA — MySQL by default, H2 in <code>dev</code></td></tr>
+      <tr><td>Security</td><td>Spring Security, form login plus Google and GitHub OAuth2</td></tr>
+      <tr><td>Service calls</td><td>OpenFeign to <code>payment-service</code> and <code>booking-service</code></td></tr>
+      <tr><td>AI</td><td>Google GenAI (<code>gemini-2.5-flash</code>) for the chatbot</td></tr>
+      <tr><td>Invoices</td><td>openhtmltopdf, rendered from a Thymeleaf template</td></tr>
+      <tr><td>Build</td><td>Maven, Checkstyle (Google rules)</td></tr>
+    </table>
+  </div>
+
+  <h2>Running it</h2>
+  <p style="color:var(--muted);margin:0 0 12px">
+    The <code>dev</code> profile needs no credentials — it uses a local H2 file database,
+    MailHog for email, and placeholder keys.
+  </p>
+  <div class="scroll">
+    <table>
+      <tr><th>Command</th><th>What it does</th></tr>
+      <tr><td><code>./mvnw spring-boot:run -Dspring-boot.run.profiles=dev</code></td><td>Runs on <code>:8080</code> against H2</td></tr>
+      <tr><td><code>./mvnw spring-boot:run</code></td><td>Default profile — needs MySQL and the environment variables in <code>.env.example</code></td></tr>
+      <tr><td><code>./mvnw test</code></td><td>Test suite, on an in-memory database</td></tr>
+    </table>
+  </div>
+
+  <p class="note">
+    <strong>This site is documentation only.</strong> GitHub Pages serves static files, so it cannot
+    host the application itself — that needs a JVM, a database, and the two backing services.
+    Everything here is generated from the repository on each push to <code>main</code>.
+  </p>
+
+  <footer>
+    Built from <a href="https://github.com/PhoenixMaster123/car-service-3">PhoenixMaster123/car-service-3</a>.
+  </footer>
+</div>
+</body>
+</html>
