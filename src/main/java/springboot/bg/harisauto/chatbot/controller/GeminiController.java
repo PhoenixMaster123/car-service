@@ -1,5 +1,6 @@
 package springboot.bg.harisauto.chatbot.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,7 @@ public class GeminiController {
    * @return The response from Gemini.
    */
   @PostMapping("/ask")
-  public ChatbotResponse askGeminiApi(@RequestBody ChatbotRequest request) {
+  public ChatbotResponse askGeminiApi(@Valid @RequestBody ChatbotRequest request) {
     String responseText = geminiService.getGeminiResponse(request.getPrompt());
     return new ChatbotResponse(responseText);
   }
