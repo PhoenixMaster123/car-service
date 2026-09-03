@@ -1,6 +1,7 @@
 package springboot.bg.harisauto.web.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.service.service.CatalogService;
 import springboot.bg.harisauto.user.model.User;
@@ -39,12 +42,15 @@ public class AdminController {
 
   private final UserService userService;
   private final CatalogService catalogService;
+  private final BookingService bookingService;
 
   /** Constructor. */
   @Autowired
-  public AdminController(UserService userService, CatalogService catalogService) {
+  public AdminController(UserService userService, CatalogService catalogService,
+      BookingService bookingService) {
     this.userService = userService;
     this.catalogService = catalogService;
+    this.bookingService = bookingService;
   }
 
   /**
@@ -118,7 +124,55 @@ public class AdminController {
     modelAndView.setViewName("account/admin/admin-bookings");
     modelAndView.addObject("user", metaData.getUserId());
 
+    try {
+      modelAndView.addObject("bookings", bookingService.getAllBookings());
+    } catch (IllegalStateException ex) {
+      // The page is still useful with the error shown, rather than failing outright.
+      modelAndView.addObject("bookings", List.of());
+      modelAndView.addObject("errorMessage", ex.getMessage());
+    }
+
     return modelAndView;
+  }
+
+  /**
+   * Cancels a booking.
+   *
+   * @param id The booking id.
+   * @param attributes Flash attributes for the redirect.
+   * @return Redirect back to the bookings page.
+   */
+  @PostMapping("/bookings/{id}/cancel")
+  public String cancelBooking(@PathVariable("id") UUID id, RedirectAttributes attributes) {
+
+    try {
+      bookingService.cancelBooking(id);
+      attributes.addFlashAttribute("successMessage", "Booking cancelled.");
+    } catch (IllegalStateException ex) {
+      attributes.addFlashAttribute("errorMessage", ex.getMessage());
+    }
+
+    return "redirect:/admin/bookings";
+  }
+
+  /**
+   * Archives a booking.
+   *
+   * @param id The booking id.
+   * @param attributes Flash attributes for the redirect.
+   * @return Redirect back to the bookings page.
+   */
+  @PostMapping("/bookings/{id}/archive")
+  public String archiveBooking(@PathVariable("id") UUID id, RedirectAttributes attributes) {
+
+    try {
+      bookingService.archiveBooking(id);
+      attributes.addFlashAttribute("successMessage", "Booking archived.");
+    } catch (IllegalStateException ex) {
+      attributes.addFlashAttribute("errorMessage", ex.getMessage());
+    }
+
+    return "redirect:/admin/bookings";
   }
 
   /**
