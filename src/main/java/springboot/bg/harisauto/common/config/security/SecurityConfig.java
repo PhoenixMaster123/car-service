@@ -50,7 +50,10 @@ public class SecurityConfig {
             "/favicon.ico",
             "/error"
         ).permitAll()
-        .requestMatchers("/register", "/").permitAll()
+        // "/login" is listed explicitly: formLogin().permitAll() only covers the bare
+        // path and its error/logout variants, so /login?lang=de was redirected away and
+        // the language switcher did not work on the sign-in page.
+        .requestMatchers("/register", "/", "/login").permitAll()
         .requestMatchers(
             "/services",
             "/about",

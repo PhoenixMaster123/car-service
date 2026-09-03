@@ -14,32 +14,42 @@
         </div>
 
         <ul class="nav-links" id="nav-links">
-            <li><a th:href="@{/home}">Home</a></li>
-            <li><a th:href="@{/services}">Services &amp; Pricing</a></li>
+            <li><a th:href="@{/home}" th:text="#{nav.home}">Home</a></li>
+            <li><a th:href="@{/services}" th:text="#{nav.services}">Services &amp; Pricing</a></li>
             <li class="dropdown">
-                <a href="#" class="dropbtn">More <i class="fa-solid fa-caret-down"></i></a>
+                <a href="#" class="dropbtn"><span th:text="#{nav.more}">More</span> <i class="fa-solid fa-caret-down"></i></a>
                 <div class="dropdown-content">
-                    <a th:href="@{/about}">About Us</a>
-                    <a th:href="@{/careers}">Careers</a>
-                    <a th:href="@{/locations}">Locations</a>
-                    <a th:href="@{/news}">News</a>
+                    <a th:href="@{/about}" th:text="#{nav.about}">About Us</a>
+                    <a th:href="@{/careers}" th:text="#{nav.careers}">Careers</a>
+                    <a th:href="@{/locations}" th:text="#{nav.locations}">Locations</a>
+                    <a th:href="@{/news}" th:text="#{nav.news}">News</a>
                 </div>
             </li>
 
+            <li class="dropdown language-switcher">
+                <a href="#" class="dropbtn">
+                    <i class="fa-solid fa-globe"></i> <span th:text="#{nav.language}">Language</span>
+                </a>
+                <div class="dropdown-content">
+                    <a th:href="@{${currentUri}(lang='en')}">English</a>
+                    <a th:href="@{${currentUri}(lang='de')}">Deutsch</a>
+                    <a th:href="@{${currentUri}(lang='bg')}">Български</a>
+                </div>
+            </li>
             <li class="user-actions" sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}">Sign In</a>
-                <a th:href="@{/register}" class="register-btn">Register</a>
+                <a th:href="@{/login}" th:text="#{nav.signIn}">Sign In</a>
+                <a th:href="@{/register}" class="register-btn" th:text="#{nav.register}">Register</a>
             </li>
 
             <li sec:authorize="isAuthenticated()" class="dropdown user-dropdown">
                 <a href="#" class="dropbtn">
-                    <i class="fa-solid fa-user-circle"></i> My Account <i class="fa-solid fa-caret-down"></i>
+                    <i class="fa-solid fa-user-circle"></i> <span th:text="#{nav.myAccount}">My Account</span> <i class="fa-solid fa-caret-down"></i>
                 </a>
                 <div class="dropdown-content">
-                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}">Profile</a>
+                    <a th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/admin/dashboard' : '/users/dashboard'}}" th:text="#{nav.profile}">Profile</a>
                     <form th:action="@{/logout}" method="GET">
                         <button type="submit" class="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            <i class="fa-solid fa-right-from-bracket"></i> <span th:text="#{nav.logout}">Logout</span>
                         </button>
                     </form>
                 </div>
