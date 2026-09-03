@@ -1,0 +1,15 @@
+# Provisioned so Grafana comes up already pointed at Prometheus and Jaeger,
+# with no manual setup after "docker compose up".
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
