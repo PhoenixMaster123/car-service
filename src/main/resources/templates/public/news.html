@@ -24,32 +24,31 @@
         <h2><i class="fa-solid fa-newspaper"></i> What's New</h2>
         <p class="section-description">Updates on our equipment, products, and services.</p>
 
-        <div class="articles-grid">
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1532339142463-fd0a8979791a?q=80&w=1200&auto=format&fit=crop" alt="New washing tunnel">
+        <div class="articles-grid" th:if="${newsList != null and !newsList.isEmpty()}">
+            <article class="article-card" th:each="item : ${newsList}">
+                <img th:if="${item.imageUrl != null}" th:src="@{${item.imageUrl}}"
+                     th:alt="${item.title}">
+                <video th:if="${item.imageUrl == null and item.videoUrl != null}"
+                       th:src="@{${item.videoUrl}}" controls preload="metadata"
+                       style="width:100%;display:block;"></video>
                 <div class="content">
-                    <h3>New High-Pressure Wash Tunnel</h3>
-                    <div class="meta">Sep 2025 • Equipment</div>
-                    <p>We installed a new tunnel with safer bristles and better drying to get you out faster.</p>
-                </div>
-            </article>
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=1200&auto=format&fit=crop" alt="Carpet machine">
-                <div class="content">
-                    <h3>How Our Carpet Machine Works</h3>
-                    <div class="meta">Aug 2025 • Behind the Scenes</div>
-                    <p>Deep extraction pulls dirt and moisture from carpets and seats while protecting fabrics.</p>
-                </div>
-            </article>
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1520975922215-230f2f6194a9?q=80&w=1200&auto=format&fit=crop" alt="Eco products">
-                <div class="content">
-                    <h3>Eco-friendly Products</h3>
-                    <div class="meta">Jul 2025 • Sustainability</div>
-                    <p>We switched to biodegradable soaps and reduced water usage by 30%.</p>
+                    <h3 th:text="${item.title}">Title</h3>
+                    <div class="meta">
+                        <span th:text="${#temporals.format(item.dateCreated, 'd MMM yyyy')}">Date</span>
+                        <span th:if="${item.author != null}" th:text="' • ' + ${item.author}"></span>
+                    </div>
+                    <p th:text="${item.content}">Content</p>
+                    <video th:if="${item.imageUrl != null and item.videoUrl != null}"
+                           th:src="@{${item.videoUrl}}" controls preload="metadata"
+                           style="width:100%;margin-top:12px;"></video>
                 </div>
             </article>
         </div>
+
+        <p class="section-description" th:if="${newsList == null or newsList.isEmpty()}">
+            There are no news articles yet. Check back soon.
+        </p>
+
     </section>
 
     <section class="content-card">
