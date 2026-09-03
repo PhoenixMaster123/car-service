@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.8</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>spring-boot</groupId>
@@ -14,8 +14,8 @@
     <name>car-service</name>
     <description>car-service</description>
     <properties>
-        <java.version>17</java.version>
-        <spring-cloud.version>2024.0.2</spring-cloud.version>
+        <java.version>21</java.version>
+        <spring-cloud.version>2025.0.3</spring-cloud.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
     </properties>
     <dependencies>
