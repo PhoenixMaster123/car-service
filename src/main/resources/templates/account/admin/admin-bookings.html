@@ -8,6 +8,7 @@
     <link th:href="@{/component/admin-sidebar/admin-sidebar.css}" rel="stylesheet">
     <link th:href="@{/component/navbar/navbar.css}" rel="stylesheet">
     <link th:href="@{/component/chatbot/chatbot.css}" rel="stylesheet">
+    <link th:href="@{/account/admin/users/admin-users.css}" rel="stylesheet">
     <link th:href="@{/account/admin/bookings/admin-bookings.css}" rel="stylesheet">
 </head>
 <body>
@@ -17,6 +18,60 @@
 
     <main class="dashboard-content">
         <h1>Bookings Management</h1>
+
+        <div class="status-message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+        <div class="status-message success" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+        <div class="users-table-container" th:if="${bookings != null and !bookings.isEmpty()}">
+            <table class="users-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Services</th>
+                    <th>Phone</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="booking : ${bookings}" th:data-booking-id="${booking.id}">
+                    <td th:text="${booking.bookingDate != null
+                            ? #temporals.format(booking.bookingDate, 'd MMM yyyy, HH:mm') : 'N/A'}">
+                        1 Jan 2026, 09:00
+                    </td>
+                    <td th:text="${booking.vehicleDescription ?: 'N/A'}">Audi A4</td>
+                    <td th:text="${booking.serviceNames ?: 'N/A'}">Oil change</td>
+                    <td th:text="${booking.phoneNumber ?: 'N/A'}">+49 000</td>
+                    <td th:text="${booking.paymentMethod ?: 'N/A'}">CARD</td>
+                    <td th:text="${booking.totalPrice != null
+                            ? '€' + #numbers.formatDecimal(booking.totalPrice, 1, 2) : 'N/A'}">€0.00</td>
+                    <td>
+                        <span class="role-badge" th:text="${booking.status ?: 'UNKNOWN'}">PENDING</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}" method="post"
+                              style="display:inline">
+                            <button type="submit" class="btn-action btn-delete"
+                                    th:disabled="${booking.status == 'CANCELLED'}"
+                                    title="Cancel this booking">Cancel</button>
+                        </form>
+                        <form th:action="@{/admin/bookings/{id}/archive(id=${booking.id})}" method="post"
+                              style="display:inline">
+                            <button type="submit" class="btn-action btn-edit"
+                                    title="Archive this booking">Archive</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p th:if="${bookings == null or bookings.isEmpty()}">
+            There are no bookings to show.
+        </p>
     </main>
 </div>
 

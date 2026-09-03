@@ -3,6 +3,8 @@ package springboot.bg.harisauto.booking.service;
 import feign.FeignException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -108,6 +110,70 @@ public class BookingService {
       log.warn("[S2S Call] booking-service getBookings failed (returning empty list): status={} msg={}",
           ex.status(), ex.getMessage());
       return List.of();
+    }
+  }
+
+  /**
+   * Lists every booking, newest first, enriched with vehicle and service names.
+   *
+   * @return All bookings the booking service knows about.
+   */
+  public List<BookingResponse> getAllBookings() {
+
+    try {
+      GetBookingResponse response = client.getBookingsByStatus(null);
+      if (response == null || response.getBookings() == null) {
+        return List.of();
+      }
+
+      Map<UUID, String> serviceNamesById = catalogService.findAll().stream()
+          .collect(Collectors.toMap(CarService::getId, CarService::getName));
+
+      List<BookingResponse> bookings = new ArrayList<>(response.getBookings());
+      for (BookingResponse booking : bookings) {
+        booking.setVehicleDescription(describeVehicle(booking.getVehicleId()));
+        booking.setServiceNames(describeServices(booking.getServiceIds(), serviceNamesById));
+      }
+      bookings.sort(Comparator.comparing(BookingResponse::getBookingDate,
+          Comparator.nullsLast(Comparator.reverseOrder())));
+      return bookings;
+
+    } catch (FeignException ex) {
+      log.error("[S2S Call] booking-service getBookings failed: status={} msg={}",
+          ex.status(), ex.getMessage());
+      throw new IllegalStateException(
+          "Booking service is unreachable. Start the booking-service (default port 8082) "
+          + "and try again.", ex);
+    }
+  }
+
+  /**
+   * Cancels a booking.
+   *
+   * @param bookingId The booking to cancel.
+   */
+  public void cancelBooking(UUID bookingId) {
+    try {
+      client.cancelBooking(bookingId);
+      log.info("Booking {} cancelled", bookingId);
+    } catch (FeignException ex) {
+      log.error("[S2S Call] cancel of booking {} failed: status={}", bookingId, ex.status());
+      throw new IllegalStateException("The booking could not be cancelled. Please try again.", ex);
+    }
+  }
+
+  /**
+   * Archives a booking.
+   *
+   * @param bookingId The booking to archive.
+   */
+  public void archiveBooking(UUID bookingId) {
+    try {
+      client.archiveBooking(bookingId);
+      log.info("Booking {} archived", bookingId);
+    } catch (FeignException ex) {
+      log.error("[S2S Call] archive of booking {} failed: status={}", bookingId, ex.status());
+      throw new IllegalStateException("The booking could not be archived. Please try again.", ex);
     }
   }
 
