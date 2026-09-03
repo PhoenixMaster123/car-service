@@ -139,6 +139,7 @@ public class BookingController {
           request.getBookingDate(),
           request.getPaymentMethod(),
           InvoiceStatus.PENDING,
+          null,
           null
       );
 
