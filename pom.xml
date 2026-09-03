@@ -124,6 +124,12 @@
         <scope>test</scope>
       </dependency>
 
+      <!-- Caching Dependency -->
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+      </dependency>
+
       <!-- AOP Dependency -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
