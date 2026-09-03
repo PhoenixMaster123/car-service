@@ -58,6 +58,7 @@ public class InvoiceService {
                           LocalDateTime serviceDate,
                           String paymentMethod,
                           InvoiceStatus status,
+                          String paymentReference,
                           UUID bookingId) {
 
     BigDecimal subtotal = services.stream()
@@ -91,6 +92,7 @@ public class InvoiceService {
         .taxAmount(taxAmount)
         .total(total)
         .status(status)
+        .paymentReference(paymentReference)
         .dueDate(serviceDate.plusDays(DUE_DAYS))
         .lineItems(lineItems)
         .build();

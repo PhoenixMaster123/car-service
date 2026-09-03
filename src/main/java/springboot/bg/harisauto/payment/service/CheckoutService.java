@@ -47,12 +47,26 @@ public class CheckoutService {
   }
 
   /**
-   * Creates the booking and its paid invoice for a pending checkout.
+   * Creates the booking and a PAID invoice. Used by the dev simulation only.
    *
    * @param pending The booking held in the session.
    * @return The generated invoice.
    */
   public Invoice completePaidBooking(PendingBookingSessionRequest pending) {
+    return completeBooking(pending, InvoiceStatus.PAID, null);
+  }
+
+  /**
+   * Creates the booking and its invoice for a pending checkout.
+   *
+   * @param pending The booking held in the session.
+   * @param status The invoice status the caller has established.
+   * @param paymentReference The payment intent id, when one is known.
+   * @return The generated invoice.
+   */
+  public Invoice completeBooking(PendingBookingSessionRequest pending,
+                                 InvoiceStatus status,
+                                 String paymentReference) {
 
     BigDecimal totalPrice = shoppingCart.getTotal();
     List<CarService> cartItems = List.copyOf(shoppingCart.getItems());
@@ -66,7 +80,7 @@ public class CheckoutService {
         pending.getFormRequest().getPaymentMethod(),
         pending.getFormRequest().getPhoneNumber(),
         totalPrice,
-        "PAID"
+        status.name()
     );
 
     User user = userService.getById(pending.getUserId());
@@ -78,7 +92,8 @@ public class CheckoutService {
         cartItems,
         pending.getFormRequest().getBookingDate(),
         pending.getFormRequest().getPaymentMethod(),
-        InvoiceStatus.PAID,
+        status,
+        paymentReference,
         null
     );
   }
