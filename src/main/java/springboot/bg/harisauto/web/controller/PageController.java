@@ -3,6 +3,7 @@ package springboot.bg.harisauto.web.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import springboot.bg.harisauto.news.service.NewsService;
 
 /**
  * PagesController.java - Controller for handling static pages web requests.
@@ -11,6 +12,13 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PageController {
+
+  private final NewsService newsService;
+
+  /** Constructor. */
+  public PageController(NewsService newsService) {
+    this.newsService = newsService;
+  }
 
   /**
    * Shows the About Us page.
@@ -49,6 +57,8 @@ public class PageController {
    */
   @GetMapping("/news")
   public ModelAndView showNewsPage() {
-    return new ModelAndView("public/news");
+    ModelAndView modelAndView = new ModelAndView("public/news");
+    modelAndView.addObject("newsList", newsService.getAllNews());
+    return modelAndView;
   }
 }
