@@ -1,0 +1,47 @@
+# Local monitoring stack: Prometheus scrapes the app's metrics, Grafana graphs them,
+# Jaeger receives traces over OTLP.
+#
+#   docker compose -f docker-compose-monitoring.yml up -d
+#
+# Then run the application with the tracing endpoint pointed at Jaeger:
+#   OTLP_TRACING_ENDPOINT=http://localhost:4318/v1/traces ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+#
+# The app itself is NOT containerised here - it runs on the host, and these containers
+# reach it via host.docker.internal on the management port (9090).
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: car-service-prometheus
+    ports:
+      - "127.0.0.1:9091:9090"   # 9090 on the host is the app's management port
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:11.5.1
+    container_name: car-service-grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      # Local-only stack; sign-in is disabled so there is no default password to leak.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./monitoring/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+    depends_on:
+      - prometheus
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.65.0
+    container_name: car-service-jaeger
+    ports:
+      - "127.0.0.1:16686:16686"   # Jaeger UI
+      - "127.0.0.1:4318:4318"     # OTLP over HTTP, where the app ships spans
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"

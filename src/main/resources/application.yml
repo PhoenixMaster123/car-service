@@ -68,6 +68,45 @@ app:
   dev-mode:
     enabled: false
 
+# Monitoring. Only the endpoints needed by Prometheus and a health check are exposed;
+# actuator is deliberately not opened up wholesale.
+management:
+  server:
+    # Metrics live on their own port so they are never served next to the public site.
+    # Treat 9090 as internal: firewall it, do not publish it.
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  health:
+    mail:
+      # Excluded deliberately. Outbound mail is asynchronous and its failures are logged,
+      # so an unreachable SMTP server does not make this application unserviceable - but it
+      # would otherwise drag /actuator/health to DOWN and have an orchestrator restart or
+      # depool a perfectly healthy instance.
+      enabled: false
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      # Trace everything in a low-traffic service; lower this if volume grows.
+      probability: 1.0
+  # Spans are exported over OTLP to Boot's default endpoint, http://localhost:4318/v1/traces,
+  # which is where the Jaeger container in docker-compose-monitoring.yml listens. Override with
+  # management.otlp.tracing.endpoint when Jaeger runs elsewhere. Do not set it to an empty
+  # value - the exporter rejects that and startup fails.
+
 logging:
   level:
     org:
