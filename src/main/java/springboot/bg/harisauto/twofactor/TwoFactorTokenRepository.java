@@ -1,5 +1,6 @@
 package springboot.bg.harisauto.twofactor;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,12 @@ public interface TwoFactorTokenRepository extends JpaRepository<TwoFactorToken, 
 
   /** Removes every code for a user, so issuing a new one invalidates the old. */
   void deleteByUserId(UUID userId);
+
+  /**
+   * Removes codes that expired before the given moment.
+   *
+   * @param cutoff Codes expiring before this are deleted.
+   * @return How many rows were removed.
+   */
+  long deleteByExpiresAtBefore(LocalDateTime cutoff);
 }
