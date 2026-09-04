@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
+import springboot.bg.harisauto.booking.dto.response.BookingResponse;
+import springboot.bg.harisauto.booking.service.BookingService;
 import springboot.bg.harisauto.service.service.CatalogService;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.model.UserRole;
@@ -19,6 +21,7 @@ import springboot.bg.harisauto.web.dto.*;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -37,6 +40,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private CatalogService catalogService;
+
+    @MockitoBean
+    private BookingService bookingService;
 
     private AuthenticationMetaData principal;
     private UUID adminId;
@@ -415,5 +421,55 @@ class AdminControllerTest {
                 .andExpect(redirectedUrl("/admin/services"));
 
         verify(catalogService).updateService(any(UpdateServiceRequest.class));
+    }
+
+    @Test
+    @DisplayName("GET /admin/bookings - renders the bookings table")
+    void showBookingPage_rendersBookings() throws Exception {
+
+        BookingResponse booking = BookingResponse.builder()
+                .id(java.util.UUID.randomUUID())
+                .status("PENDING")
+                .bookingDate(java.time.LocalDateTime.now().plusDays(1))
+                .vehicleDescription("Audi A4 (AB-123)")
+                .serviceNames("Oil change")
+                .phoneNumber("+49111")
+                .paymentMethod("CARD")
+                .totalPrice(new java.math.BigDecimal("40.00"))
+                .build();
+        when(bookingService.getAllBookings()).thenReturn(java.util.List.of(booking));
+
+        mockMvc.perform(get("/admin/bookings").with(user(principal)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/admin/admin-bookings"))
+                .andExpect(content().string(containsString("Audi A4 (AB-123)")))
+                .andExpect(content().string(containsString("Oil change")))
+                .andExpect(content().string(containsString("PENDING")));
+    }
+
+    @Test
+    @DisplayName("GET /admin/bookings - shows the error when booking-service is unreachable")
+    void showBookingPage_whenBookingServiceDown_showsError() throws Exception {
+
+        when(bookingService.getAllBookings())
+                .thenThrow(new IllegalStateException("Booking service is unreachable."));
+
+        mockMvc.perform(get("/admin/bookings").with(user(principal)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Booking service is unreachable.")));
+    }
+
+    @Test
+    @DisplayName("POST /admin/bookings/{id}/cancel - cancels and redirects")
+    void cancelBooking_redirects() throws Exception {
+
+        java.util.UUID id = java.util.UUID.randomUUID();
+
+        mockMvc.perform(post("/admin/bookings/" + id + "/cancel")
+                        .with(user(principal)).with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/bookings"));
+
+        verify(bookingService).cancelBooking(id);
     }
 }

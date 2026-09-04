@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
+import springboot.bg.harisauto.common.config.cache.CacheConfig;
+import springboot.bg.harisauto.common.exception.ResourceNotFoundException;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.service.model.ServiceCategory;
 import springboot.bg.harisauto.service.repository.ServiceCategoryRepository;
@@ -38,8 +41,10 @@ public class CatalogService {
    *
    * @return The list of services.
    */
+  @Cacheable(CacheConfig.SERVICES)
   public List<CarService> findAll() {
-    return serviceRepository.findAll();
+    // Copied so the cached value cannot be mutated by a caller holding the list.
+    return List.copyOf(serviceRepository.findAll());
   }
 
   /**
@@ -50,7 +55,7 @@ public class CatalogService {
    */
   public CarService getById(UUID id) {
     return serviceRepository.findById(id)
-        .orElseThrow(() -> new UserDoesNotExistException("Service not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + id));
   }
 
   /**
@@ -58,8 +63,9 @@ public class CatalogService {
    *
    * @return The list of categories.
    */
+  @Cacheable(CacheConfig.SERVICE_CATEGORIES)
   public List<ServiceCategory> getAllCategories() {
-    return categoryRepository.findAll();
+    return List.copyOf(categoryRepository.findAll());
   }
 
   /**
@@ -68,6 +74,7 @@ public class CatalogService {
    * @param request The create service request.
    */
   @Transactional
+  @CacheEvict(value = CacheConfig.SERVICES, allEntries = true)
   public void createService(CreateServiceRequest request) {
 
     if (serviceRepository.existsByName(request.getName())) {
@@ -76,7 +83,7 @@ public class CatalogService {
     }
 
     ServiceCategory category = categoryRepository.findById(request.getCategoryId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Category not found with id: " + request.getCategoryId()));
 
     CarService service = CarService.builder()
@@ -98,9 +105,10 @@ public class CatalogService {
    * @param request The update service request.
    */
   @Transactional
+  @CacheEvict(value = CacheConfig.SERVICES, allEntries = true)
   public void updateService(UpdateServiceRequest request) {
     CarService service = serviceRepository.findById(request.getId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Service not found with id: " + request.getId()));
 
     // Check if name is being changed and if new name already exists
@@ -111,7 +119,7 @@ public class CatalogService {
     }
 
     ServiceCategory category = categoryRepository.findById(request.getCategoryId())
-        .orElseThrow(() -> new UserDoesNotExistException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Category not found with id: " + request.getCategoryId()));
 
     service.setName(request.getName());
@@ -131,9 +139,10 @@ public class CatalogService {
    * @param id The service id.
    */
   @Transactional
+  @CacheEvict(value = CacheConfig.SERVICES, allEntries = true)
   public void deleteService(UUID id) {
     if (!serviceRepository.existsById(id)) {
-      throw new UserDoesNotExistException("Service not found with id: " + id);
+      throw new ResourceNotFoundException("Service not found with id: " + id);
     }
 
     serviceRepository.deleteById(id);

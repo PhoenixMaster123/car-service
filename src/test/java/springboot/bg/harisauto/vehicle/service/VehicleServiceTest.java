@@ -2,6 +2,7 @@ package springboot.bg.harisauto.vehicle.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import springboot.bg.harisauto.common.exception.VehicleBusinessException;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.vehicle.model.Vehicle;
@@ -44,46 +45,58 @@ class VehicleServiceTest {
     void createVehicle_whenMoreThan3Vehicles_throws() {
         User user = new User();
         user.setEmail("u@x.com");
-        user.setVehicles(new ArrayList<>(List.of(new Vehicle(), new Vehicle(), new Vehicle())));
+        when(vehicleRepository.findByOwner(user))
+                .thenReturn(List.of(new Vehicle(), new Vehicle(), new Vehicle()));
 
         assertThatThrownBy(() -> vehicleService.createVehicle(user, req("VINVINVINVINVINV1")))
                 .isInstanceOf(VehicleBusinessException.class)
                 .hasMessageContaining("cannot add more than 3 vehicles");
-        verifyNoInteractions(vehicleRepository);
+        verify(vehicleRepository, never()).save(any(Vehicle.class));
     }
 
     @Test
     void createVehicle_whenDuplicateVin_throws() {
         User user = new User();
         user.setEmail("u@x.com");
-        ArrayList<Vehicle> vs = new ArrayList<>();
         Vehicle v = Vehicle.builder().vin("DUPLICATEVIN123456").build();
-        vs.add(v);
-        user.setVehicles(vs);
+        when(vehicleRepository.findByOwner(user)).thenReturn(List.of(v));
 
         assertThatThrownBy(() -> vehicleService.createVehicle(user, req("DUPLICATEVIN123456")))
                 .isInstanceOf(VehicleBusinessException.class)
                 .hasMessageContaining("already registered");
-        verifyNoInteractions(vehicleRepository);
+        verify(vehicleRepository, never()).save(any(Vehicle.class));
     }
 
     @Test
     void createVehicle_happyPath_savesToRepository() {
         User user = new User();
         user.setEmail("u@x.com");
-        user.setVehicles(new ArrayList<>());
+        when(vehicleRepository.findByOwner(user)).thenReturn(List.of());
 
         vehicleService.createVehicle(user, req("UNIQUEVIN12345678"));
 
-        verify(vehicleRepository, times(1)).save(any(Vehicle.class));
-        assertThat(user.getVehicles()).hasSize(1);
+        // The saved row is the contract now; the entity collection is no longer
+        // mutated, since the User reaching this method is detached.
+        ArgumentCaptor<Vehicle> saved = ArgumentCaptor.forClass(Vehicle.class);
+        verify(vehicleRepository, times(1)).save(saved.capture());
+        assertThat(saved.getValue().getVin()).isEqualTo("UNIQUEVIN12345678");
+        assertThat(saved.getValue().getOwner()).isSameAs(user);
     }
 
     @Test
-    void getById_returnsNullWhenMissing() {
+    void getById_throwsWhenMissing() {
         UUID id = UUID.randomUUID();
         when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
-        assertThat(vehicleService.getById(id)).isNull();
+        assertThatThrownBy(() -> vehicleService.getById(id))
+                .isInstanceOf(VehicleBusinessException.class)
+                .hasMessageContaining("Vehicle not found");
+    }
+
+    @Test
+    void findById_returnsEmptyWhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(vehicleRepository.findById(id)).thenReturn(Optional.empty());
+        assertThat(vehicleService.findById(id)).isEmpty();
     }
 
     @Test
@@ -91,17 +104,13 @@ class VehicleServiceTest {
         UUID id = UUID.randomUUID();
         User owner = new User();
         owner.setId(UUID.randomUUID());
-        owner.setVehicles(new ArrayList<>());
-
         Vehicle v = new Vehicle();
         v.setOwner(owner);
-        owner.getVehicles().add(v);
 
         when(vehicleRepository.findById(id)).thenReturn(Optional.of(v));
 
         vehicleService.deleteVehicle(owner, id);
         verify(vehicleRepository, times(1)).delete(v);
-        assertThat(owner.getVehicles()).isEmpty();
     }
 
     @Test

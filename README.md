@@ -2,7 +2,82 @@
 
 A Spring Boot application for managing car service operations. It exposes a web UI with Thymeleaf and REST endpoints, integrates with external microservices for booking and payment, and supports OAuth2 login.
 
-> Last Update date: 2026-19-04
+> Last updated: 2026-09-03
+
+## Architecture
+
+`car-service` is the web application: it renders every page, owns the users, vehicles, service
+catalogue and invoices, and calls out to two sibling services for bookings and payments. Those two
+are separate deployments with their own repositories.
+
+| Component | Repository | Port | Store | Required? |
+| --- | --- | --- | --- | --- |
+| **car-service** (this repo) | — | 8080 | MySQL, or H2 file in `dev` | yes |
+| **payment-service** | [payment-service](https://github.com/PhoenixMaster123/payment-service) | 8081 | own | for checkout |
+| **booking-service** | [booking-service](https://github.com/PhoenixMaster123/booking-service) | 8082 | own | for bookings |
+| **MailHog** | — | 1025 / 8025 | — | dev only |
+
+Neither service degrades gracefully today: with `booking-service` unreachable, creating a booking
+throws and checkout fails rather than falling back.
+
+```mermaid
+flowchart LR
+    B["Browser<br/>Thymeleaf pages"]
+    S["Stripe.js"]
+    A["car-service<br/>Spring Boot :8080"]
+    DB[("MySQL :3306<br/>H2 file in dev")]
+    UP[("uploads/ on disk")]
+    P["payment-service<br/>:8081"]
+    K["booking-service<br/>:8082"]
+    G["Google GenAI<br/>gemini-2.5-flash"]
+    M["SMTP<br/>MailHog :1025 in dev"]
+
+    B -->|form login, OAuth2 Google and GitHub| A
+    B -->|card entry, publishable key| S
+    A -->|JPA| DB
+    A -->|news images and video| UP
+    A -->|OpenFeign, payment intents| P
+    A -->|OpenFeign, bookings| K
+    A -->|chatbot prompts| G
+    A -->|welcome, invoice, daily report| M
+```
+
+### Ports
+
+| Port | What |
+| --- | --- |
+| 8080 | car-service (HTTP) |
+| 8081 | payment-service |
+| 8082 | booking-service |
+| 3306 | MySQL, default profile |
+| 1025 | MailHog SMTP, dev profile |
+| 8025 | MailHog web UI, dev profile |
+
+### Modules
+
+Sources are organised by feature under `springboot.bg.harisauto`:
+
+| Package | Responsibility |
+| --- | --- |
+| `user`, `vehicle` | Accounts, roles, and the vehicles a user owns |
+| `service` | The service catalogue and its categories |
+| `cart` | Session-scoped shopping cart |
+| `booking`, `payment` | OpenFeign clients and DTOs for the two sibling services |
+| `invoice` | Invoice model, numbering, and PDF rendering via openhtmltopdf |
+| `news` | Admin-managed news articles with image and video upload |
+| `chatbot` | Google GenAI client and the `/api/gemini` endpoint |
+| `email` | Welcome, invoice and daily-report mail |
+| `job` | Scheduled cleanup and reporting tasks |
+| `web` | Thymeleaf controllers, DTOs and mappers |
+| `common` | Security, AOP logging, exception handling, configuration |
+
+### Scheduled work
+
+| When | Job | What |
+| --- | --- | --- |
+| 02:00 daily | `BookingCleanupJob` | Cancels bookings whose date has passed |
+| 03:00 Sundays | `BookingCleanupJob` | Archives old bookings |
+| 08:00 daily | `DailyReportJob` | Emails user and invoice totals to the admin address |
 
 ## Stack
 - Language: Java 17
@@ -18,6 +93,7 @@ A Spring Boot application for managing car service operations. It exposes a web 
   - Thymeleaf
 - Spring AI:
   -  Google GenAI
+- PDF: openhtmltopdf (invoice rendering)
 - Other: Lombok, Apache Commons Lang, Checkstyle
 
 ## Entry Point
@@ -44,7 +120,7 @@ A Spring Boot application for managing car service operations. It exposes a web 
   ```
 
 ## API Docs
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
 ## Scripts and Tooling
 - `check.sh` — runs Checkstyle and opens the HTML report (note: has convenience for WSL + Windows Explorer).

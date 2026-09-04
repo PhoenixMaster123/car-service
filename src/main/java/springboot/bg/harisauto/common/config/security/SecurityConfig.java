@@ -1,29 +1,45 @@
 package springboot.bg.harisauto.common.config.security;
 
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import springboot.bg.harisauto.twofactor.TwoFactorAuthenticationSuccessHandler;
 
 /**
  * SecurityConfig.java - Security configuration for the application.
  *
  * @author Kristian Popov
  */
+@Slf4j
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+
+  /**
+   * Signs remember-me tokens. Set {@code app.remember-me.key} (env {@code REMEMBER_ME_KEY})
+   * in every real deployment. When left blank a random key is generated at startup, which
+   * is safe but invalidates existing remember-me cookies on each restart.
+   */
+  @Value("${app.remember-me.key:}")
+  private String rememberMeKey;
 
   /** Security filter chain for all requests. **/
   @Bean
   @Order(4)
   public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOAuth2UserService oauth2Service,
-      CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
+      CustomAccessDeniedHandler accessDeniedHandler,
+      TwoFactorAuthenticationSuccessHandler twoFactorSuccessHandler) throws Exception {
     http.authorizeHttpRequests(matcher -> matcher
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         .requestMatchers(
@@ -31,11 +47,15 @@ public class SecurityConfig {
             "/component/**",
             "/auth/**",
             "/public/**",
-            "/account/**",
+            "/uploads/**",
             "/fonts/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/error"
         ).permitAll()
-        .requestMatchers("/register", "/").permitAll()
+        // "/login" is listed explicitly: formLogin().permitAll() only covers the bare
+        // path and its error/logout variants, so /login?lang=de was redirected away and
+        // the language switcher did not work on the sign-in page.
+        .requestMatchers("/register", "/", "/login", "/login/verify").permitAll()
         .requestMatchers(
             "/services",
             "/about",
@@ -51,7 +71,9 @@ public class SecurityConfig {
         .formLogin(form -> form
             .loginPage("/login")
             .usernameParameter("email")
-            .defaultSuccessUrl("/home", true)
+            // No defaultSuccessUrl: the handler decides whether the sign-in is
+            // complete or still needs a second factor.
+            .successHandler(twoFactorSuccessHandler)
             .failureUrl("/login?error")
             .permitAll()
     )
@@ -71,10 +93,24 @@ public class SecurityConfig {
         )
         .rememberMe(rememberMe -> rememberMe
             .rememberMeParameter("remember")
-            .key("Tp2bb7csFj1C1gyA8CHbQStyLtqlKgP5")
+            .key(resolveRememberMeKey())
             .tokenValiditySeconds(1209600) // 14 days
         );
     return http.build();
+  }
+
+  /**
+   * Returns the configured remember-me key, or a freshly generated one if none is set.
+   *
+   * @return The key used to sign remember-me tokens.
+   */
+  private String resolveRememberMeKey() {
+    if (rememberMeKey == null || rememberMeKey.isBlank()) {
+      log.warn("app.remember-me.key is not set; generating a random key. "
+          + "Remember-me cookies will not survive a restart.");
+      return UUID.randomUUID().toString();
+    }
+    return rememberMeKey;
   }
 
   /** Password encoder bean using BCrypt hashing algorithm. **/

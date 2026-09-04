@@ -2,7 +2,7 @@ package springboot.bg.harisauto.service.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import springboot.bg.harisauto.common.exception.UserDoesNotExistException;
+import springboot.bg.harisauto.common.exception.ResourceNotFoundException;
 import springboot.bg.harisauto.service.model.CarService;
 import springboot.bg.harisauto.service.model.ServiceCategory;
 import springboot.bg.harisauto.service.repository.ServiceCategoryRepository;
@@ -35,7 +35,7 @@ class CatalogServiceTest {
         UUID id = UUID.randomUUID();
         when(serviceRepository.findById(id)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> catalogService.getById(id))
-                .isInstanceOf(UserDoesNotExistException.class);
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -71,7 +71,7 @@ class CatalogServiceTest {
                 .build();
 
         assertThatThrownBy(() -> catalogService.createService(req))
-                .isInstanceOf(UserDoesNotExistException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Category not found");
     }
 
@@ -80,7 +80,7 @@ class CatalogServiceTest {
         UUID id = UUID.randomUUID();
         when(serviceRepository.existsById(id)).thenReturn(false);
         assertThatThrownBy(() -> catalogService.deleteService(id))
-                .isInstanceOf(UserDoesNotExistException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Service not found");
     }
 

@@ -15,6 +15,7 @@ import springboot.bg.harisauto.web.dto.ChangeUserPasswordRequest;
 import springboot.bg.harisauto.web.dto.RegisterRequest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,6 +40,13 @@ class UserServiceTest {
     void register_publishesEvent_andSaves_whenEmailNotExists() {
         when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("Pass123!")).thenReturn("ENC");
+        // The event is built from the saved instance, so save() must return it back
+        // with an id, the way a real repository does.
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> {
+            User u = inv.getArgument(0);
+            u.setId(UUID.randomUUID());
+            return u;
+        });
 
         RegisterRequest req = new RegisterRequest();
         req.setEmail("a@b.com");
@@ -49,8 +57,12 @@ class UserServiceTest {
 
         userService.register(req);
 
-        verify(publisher, times(1)).publishEvent(any(UserRegisteredEvent.class));
+        ArgumentCaptor<UserRegisteredEvent> eventCaptor =
+                ArgumentCaptor.forClass(UserRegisteredEvent.class);
+        verify(publisher, times(1)).publishEvent(eventCaptor.capture());
         verify(userRepository, times(1)).save(any(User.class));
+        assertThat(eventCaptor.getValue().getUserId()).isNotNull();
+        assertThat(eventCaptor.getValue().getEmail()).isEqualTo("a@b.com");
     }
 
     @Test

@@ -1,0 +1,17 @@
+# Scrapes the application's Actuator metrics from the host.
+# The app's management port is 9090 on the host; Prometheus itself is published on 9091.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: car-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:9090"]
+        labels:
+          application: car-service
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

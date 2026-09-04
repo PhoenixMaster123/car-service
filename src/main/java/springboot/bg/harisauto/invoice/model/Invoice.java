@@ -81,6 +81,9 @@ public class Invoice {
   @Column(nullable = false)
   private InvoiceStatus status;
 
+  /** Payment intent this invoice was settled by, when one is known. */
+  private String paymentReference;
+
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
   private LocalDateTime issuedAt;

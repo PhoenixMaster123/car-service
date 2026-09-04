@@ -7,7 +7,7 @@ import springboot.bg.harisauto.news.model.News;
 /**
  * NewsRepository.java - Repository for News model.
  *
- * @author AI Engine
+ * @author Kristian Popov
  */
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {

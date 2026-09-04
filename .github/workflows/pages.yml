@@ -1,0 +1,75 @@
+name: Deploy project site to GitHub Pages
+
+# The application itself is a server-rendered Spring Boot app and cannot run on
+# GitHub Pages, which serves static files only. What is published here is the
+# project's documentation site: a landing page, the Javadoc, and the Checkstyle report.
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let one deployment finish rather than cancelling it; queued runs collapse to the latest.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Generate Javadoc
+        run: mvn -B -DskipTests javadoc:javadoc
+
+      # Checkstyle must not fail the site build; the report is the point, and the
+      # CI workflow already gates on violations.
+      - name: Generate Checkstyle report
+        run: mvn -B checkstyle:checkstyle || true
+
+      - name: Assemble site
+        run: |
+          mkdir -p site
+          cp docs/index.html site/index.html
+          mkdir -p site/javadoc
+          if [ -d target/reports/apidocs ]; then
+            cp -r target/reports/apidocs/. site/javadoc/
+          elif [ -d target/site/apidocs ]; then
+            cp -r target/site/apidocs/. site/javadoc/
+          fi
+          if [ -f target/site/checkstyle.html ]; then
+            cp target/site/checkstyle.html site/checkstyle.html
+          fi
+          ls -R site | head -40
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -24,17 +24,20 @@ jobs:
           # This matches your original GIT_SUBMODULE_STRATEGY
           submodules: 'recursive'
 
-      # 2. Set up JDK 17
-      - name: Set up JDK 17
+      # 2. Set up JDK 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           # Cache Maven packages for faster builds
           cache: 'maven'
 
+      # "clean" must come first, otherwise Checkstyle runs against stale classes
+      # and is then wiped before the tests. The test profile is selected by
+      # @ActiveProfiles("test") on the test classes, not by a command-line flag.
       - name: Run Lint and Tests
-        run: mvn -Dspring.profiles.active=ci checkstyle:check clean test
+        run: mvn clean checkstyle:check test
 
       # 4. Upload JUnit test reports
       - name: Upload Test Reports

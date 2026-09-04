@@ -1,6 +1,7 @@
 package springboot.bg.harisauto.vehicle.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,15 @@ public class VehicleService {
   @Transactional
   public void createVehicle(User user, CreateVehicleRequest request) {
 
-    if (user.getVehicles().size() >= 3) {
+    // Queried rather than read off user.getVehicles(): the User arrives from the
+    // controller already detached, so touching the lazy association here would throw.
+    List<Vehicle> ownedVehicles = vehicleRepository.findByOwner(user);
+
+    if (ownedVehicles.size() >= 3) {
       throw new VehicleBusinessException("You cannot add more than 3 vehicles.");
     }
 
-    boolean exists = user.getVehicles().stream()
+    boolean exists = ownedVehicles.stream()
         .anyMatch(v -> v.getVin().equalsIgnoreCase(request.getVin()));
 
     if (exists) {
@@ -60,7 +65,6 @@ public class VehicleService {
 
     log.info("New vehicle created for user: {}", user.getEmail());
 
-    user.getVehicles().add(vehicle);
     vehicleRepository.save(vehicle);
   }
 
@@ -79,9 +83,24 @@ public class VehicleService {
    *
    * @param vehicleId - vehicle id
    * @return vehicle
+   * @throws VehicleBusinessException if no vehicle has that id
    */
   public Vehicle getById(UUID vehicleId) {
-    return vehicleRepository.findById(vehicleId).orElse(null);
+    return vehicleRepository.findById(vehicleId)
+        .orElseThrow(() -> new VehicleBusinessException("Vehicle not found: " + vehicleId));
+  }
+
+  /**
+   * Get vehicle by id, or empty when it does not exist.
+   *
+   * <p>For callers that render a placeholder rather than failing, such as a booking that
+   * still references a vehicle the owner has since deleted.</p>
+   *
+   * @param vehicleId - vehicle id
+   * @return the vehicle, if present
+   */
+  public Optional<Vehicle> findById(UUID vehicleId) {
+    return vehicleRepository.findById(vehicleId);
   }
 
   /**
@@ -99,7 +118,6 @@ public class VehicleService {
       throw new VehicleBusinessException("You are not authorized to delete this vehicle.");
     }
 
-    user.getVehicles().remove(vehicle);
     vehicleRepository.delete(vehicle);
   }
 }

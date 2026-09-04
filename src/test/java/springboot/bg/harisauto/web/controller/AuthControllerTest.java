@@ -16,6 +16,7 @@ import springboot.bg.harisauto.common.config.security.AuthenticationMetaData;
 import springboot.bg.harisauto.common.config.security.CustomAccessDeniedHandler;
 import springboot.bg.harisauto.common.config.security.CustomOAuth2UserService;
 import springboot.bg.harisauto.common.config.security.SecurityConfig;
+import springboot.bg.harisauto.twofactor.TwoFactorAuthenticationSuccessHandler;
 import springboot.bg.harisauto.user.model.User;
 import springboot.bg.harisauto.user.service.UserService;
 import springboot.bg.harisauto.web.dto.RegisterRequest;
@@ -43,6 +44,9 @@ public class AuthControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @MockitoBean
+  private TwoFactorAuthenticationSuccessHandler twoFactorSuccessHandler;
 
   @MockitoBean
   private UserService userService;

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,7 +96,7 @@ class BookingServiceTest {
         v.setMake("BMW");
         v.setModel("X5");
         v.setLicensePlate("CB1234AB");
-        when(vehicleService.getById(vehicleId)).thenReturn(v);
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(v));
 
         CarService s1 = new CarService();
         s1.setId(service1);
@@ -103,8 +104,7 @@ class BookingServiceTest {
         CarService s2 = new CarService();
         s2.setId(service2);
         s2.setName("Tire rotation");
-        when(catalogService.getById(service1)).thenReturn(s1);
-        when(catalogService.getById(service2)).thenReturn(s2);
+        when(catalogService.findAll()).thenReturn(List.of(s1, s2));
 
         List<BookingResponse> result = bookingService.getBookingsByUser(userId);
 
@@ -129,7 +129,8 @@ class BookingServiceTest {
         GetBookingResponse response = new GetBookingResponse(new ArrayList<>(List.of(b1)));
         when(bookingClient.getBookings(userId)).thenReturn(response);
 
-        when(vehicleService.getById(vehicleId)).thenThrow(new RuntimeException("vehicle error"));
+        // A missing vehicle comes back as an empty Optional, not as an exception.
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.empty());
 
         List<BookingResponse> result = bookingService.getBookingsByUser(userId);
 
@@ -140,7 +141,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getBookingsByUser_whenCatalogLookupFails_setsFallbackServiceNames() {
+    void getBookingsByUser_whenServiceNotInCatalogue_namesItUnknown() {
         UUID userId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
         UUID sId = UUID.randomUUID();
@@ -157,12 +158,13 @@ class BookingServiceTest {
         v.setMake("VW");
         v.setModel("Golf");
         v.setLicensePlate("X1234YY");
-        when(vehicleService.getById(vehicleId)).thenReturn(v);
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(v));
 
-        when(catalogService.getById(sId)).thenThrow(new RuntimeException("service err"));
+        // The service is no longer in the catalogue, so it cannot be named.
+        when(catalogService.findAll()).thenReturn(List.of());
 
         List<BookingResponse> result = bookingService.getBookingsByUser(userId);
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getServiceNames()).isEqualTo("Service details unavailable");
+        assertThat(result.get(0).getServiceNames()).isEqualTo("Unknown Service");
     }
 }
