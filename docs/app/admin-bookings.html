@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Bookings - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/admin-sidebar/admin-sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/users/admin-users.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/bookings/admin-bookings.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <div data-slot="admin-sidebar"></div>
+
+    <main class="dashboard-content">
+        <h1>Bookings Management</h1>
+
+        <div id="flash"></div>
+
+        <div class="users-table-container" id="table-container">
+            <table class="users-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Services</th>
+                    <th>Phone</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="booking-rows"></tbody>
+            </table>
+        </div>
+
+        <p id="empty-message" style="display:none">There are no bookings to show.</p>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'admin', active: 'bookings', guard: 'admin' })) {
+    const rows = document.getElementById('booking-rows');
+    const container = document.getElementById('table-container');
+    const empty = document.getElementById('empty-message');
+
+    function render() {
+      const bookings = Store.allBookings();
+
+      container.style.display = bookings.length ? '' : 'none';
+      empty.style.display = bookings.length ? 'none' : '';
+
+      rows.innerHTML = bookings.map((booking) => `
+        <tr>
+          <td>${UI.dateAdmin(booking.bookingDate)}, ${UI.time(booking.bookingDate)}</td>
+          <td>${UI.escape(booking.vehicleDescription)}</td>
+          <td>${UI.escape(booking.serviceNames)}</td>
+          <td>${UI.escape(booking.phoneNumber || 'N/A')}</td>
+          <td>${UI.escape(booking.paymentMethod || 'N/A')}</td>
+          <td>${UI.money(booking.totalPrice)}</td>
+          <td><span class="role-badge">${UI.escape(booking.status)}</span></td>
+          <td>
+            <button class="btn-action btn-delete" data-cancel="${booking.id}"
+                    title="Cancel this booking"
+                    ${booking.status === 'CANCELLED' ? 'disabled' : ''}>Cancel</button>
+            <button class="btn-action btn-edit" data-archive="${booking.id}"
+                    title="Archive this booking">Archive</button>
+          </td>
+        </tr>`).join('');
+
+      rows.querySelectorAll('[data-cancel]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          Store.cancelBooking(btn.dataset.cancel);
+          render();
+          UI.flash('#flash', 'success', 'Booking cancelled.');
+        });
+      });
+
+      rows.querySelectorAll('[data-archive]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          Store.archiveBooking(btn.dataset.archive);
+          render();
+          UI.flash('#flash', 'success', 'Booking archived and removed from this list.');
+        });
+      });
+    }
+
+    render();
+  }
+</script>
+</body>
+</html>

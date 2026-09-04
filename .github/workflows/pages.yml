@@ -2,12 +2,15 @@ name: Deploy project site to GitHub Pages
 
 # The application itself is a server-rendered Spring Boot app and cannot run on
 # GitHub Pages, which serves static files only. What is published here is the
-# project's documentation site: a landing page, the Javadoc, and the Checkstyle report.
+# project site: a landing page, the clickable demo under docs/app, the Javadoc,
+# and the Checkstyle report.
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+# Everything the site needs beyond the generated reports lives in docs/.
 
 permissions:
   contents: read
@@ -45,15 +48,23 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p site
-          cp docs/index.html site/index.html
+          # docs/ carries the landing page, the demo under app/, demo.gif,
+          # video/ and .nojekyll — copy the lot, then add the generated reports.
+          cp -r docs/. site/
           mkdir -p site/javadoc
           if [ -d target/reports/apidocs ]; then
             cp -r target/reports/apidocs/. site/javadoc/
           elif [ -d target/site/apidocs ]; then
             cp -r target/site/apidocs/. site/javadoc/
           fi
+          # The report links ./css/*.css and ./images/*, so the whole Doxia skin has
+          # to travel with it or Pages serves an unstyled page. It gets its own
+          # directory to keep those generic names out of the site root.
           if [ -f target/site/checkstyle.html ]; then
-            cp target/site/checkstyle.html site/checkstyle.html
+            mkdir -p site/checkstyle
+            cp target/site/checkstyle.html site/checkstyle/index.html
+            cp -r target/site/css site/checkstyle/css
+            cp -r target/site/images site/checkstyle/images
           fi
           ls -R site | head -40
 

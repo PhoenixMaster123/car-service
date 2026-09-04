@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/public/location/location.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<header>
+    <h1>Our <span>Location</span></h1>
+    <p>Come visit us. We're open 7 days a week.</p>
+</header>
+
+<main class="sp-wrapper">
+    <section class="content-card">
+        <h2><i class="fa-solid fa-map-marked-alt"></i> Find Us on the Map</h2>
+        <p class="section-description">We are conveniently located in Ruse.</p>
+        <iframe class="map-embed" title="Map of Ruse, Bulgaria"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46067.8282361771!2d25.92723758656114!3d43.84373145116787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40ae60b69171587f%3A0x400a01269bf5a60!2sRuse%2C%20Bulgaria!5e0!3m2!1sen!2sde!4v1729690000000!5m2!1sen!2sde"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <section class="content-card">
+        <h2><i class="fa-solid fa-circle-info"></i> Shop Details</h2>
+        <div class="location-grid">
+            <div class="info-card">
+                <h3><i class="fa-solid fa-location-dot"></i> Address</h3>
+                <p>Maria Luiza Blvd<br>Ruse, Bulgaria</p>
+            </div>
+            <div class="info-card">
+                <h3><i class="fa-solid fa-clock"></i> Hours</h3>
+                <p>Mon–Sat: 08:00 – 19:00<br>Sun: 10:00 – 16:00</p>
+            </div>
+            <div class="info-card">
+                <h3><i class="fa-solid fa-phone"></i> Contact</h3>
+                <p><a href="tel:+3590000000">+359 00 000 000</a><br>
+                   <a href="mailto:harisauto@gmail.com">harisauto@gmail.com</a></p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div data-slot="footer"></div>
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  UI.mount({ shell: 'public' });
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/sidebar/sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/settings/settings.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="sidebar"></div>
+
+<div class="main-content">
+    <main class="page-container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-gear"></i> Settings</h1>
+            <p>Manage your profile, password, and notification preferences.</p>
+        </header>
+
+        <div id="flash"></div>
+
+        <form class="content-card" id="profileForm">
+            <div class="card-header">
+                <i class="fa-solid fa-user-pen"></i>
+                <h3>Edit Profile</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-input">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="country">Country</label>
+                        <select id="country" class="form-input">
+                            <option>Bulgaria</option>
+                            <option>Germany</option>
+                            <option>Austria</option>
+                            <option>Czechia</option>
+                            <option>Romania</option>
+                            <option>Greece</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i><span>Save Profile Changes</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-bell"></i>
+                <h3>Notifications</h3>
+            </div>
+            <div class="card-body">
+                <form id="notificationForm">
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Email on New Booking</h4>
+                            <p>Receive an email when you schedule a new appointment.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNewBooking">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Email on Booking Cancellation</h4>
+                            <p>Get notified if your appointment is canceled.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailBookingCancel">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-description">
+                            <h4>Service Reminders</h4>
+                            <p>Receive a reminder email 24 hours before your appointment.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailReminder">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button type="submit" form="notificationForm" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i><span>Save Preferences</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-key"></i>
+                <h3>Change Password</h3>
+            </div>
+            <div class="card-body">
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="currentPassword" required placeholder="Enter your current password">
+                            <button type="button" class="password-toggle" data-target="currentPassword" aria-label="Toggle current password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="newPassword" required placeholder="Enter your new password">
+                            <button type="button" class="password-toggle" data-target="newPassword" aria-label="Toggle new password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                        <div id="strength-indicator" class="strength-indicator">
+                            <div class="strength-bar-background">
+                                <div id="strength-bar" class="strength-bar"></div>
+                            </div>
+                            <p class="strength-text">Strength: <span id="strength-label"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="confirmPassword" required placeholder="Confirm your new password">
+                            <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle confirm password visibility">
+                                <i class="fa-solid fa-eye password-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button type="submit" form="password-form" id="submit-password-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i><span>Change Password</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-user-shield"></i>
+                <h3>Additional Security</h3>
+            </div>
+            <div class="card-body">
+                <div class="setting-item">
+                    <div class="setting-description">
+                        <h4>Two-Factor Authentication (2FA)</h4>
+                        <p id="two-factor-info">Add an extra layer of security to your account.</p>
+                    </div>
+                    <button id="toggle-2fa-btn" class="btn btn-enable" type="button">
+                        <span>Enable 2FA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'account', active: 'settings', guard: 'user' })) {
+    const user = Store.currentUser();
+
+    /* ---------------------------------------------------------- profile */
+
+    document.getElementById('firstName').value = user.firstName;
+    document.getElementById('lastName').value = user.lastName;
+    document.getElementById('email').value = user.email;
+    document.getElementById('phone').value = user.phoneNumber || '';
+    document.getElementById('country').value = user.country;
+
+    document.getElementById('profileForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      Store.updateUser(user.id, {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        phoneNumber: document.getElementById('phone').value.trim(),
+        country: document.getElementById('country').value,
+      });
+      UI.flash('#flash', 'success', 'Your profile has been updated.');
+    });
+
+    /* ---------------------------------------------------- notifications */
+
+    const prefs = Store.notifications();
+    ['emailNewBooking', 'emailBookingCancel', 'emailReminder'].forEach((key) => {
+      document.getElementById(key).checked = prefs[key];
+    });
+
+    document.getElementById('notificationForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      Store.setNotifications({
+        emailNewBooking: document.getElementById('emailNewBooking').checked,
+        emailBookingCancel: document.getElementById('emailBookingCancel').checked,
+        emailReminder: document.getElementById('emailReminder').checked,
+      });
+      UI.flash('#flash', 'success', 'Notification preferences saved.');
+    });
+
+    /* -------------------------------------------------------- password */
+
+    /* Same scoring as account/settings/password.js. */
+    function checkPasswordStrength(password) {
+      let score = 0;
+      if (password.length > 8) score++;
+      if (password.match(/[a-z]/)) score++;
+      if (password.match(/[A-Z]/)) score++;
+      if (password.match(/[0-9]/)) score++;
+      if (password.match(/[^A-Za-z0-9]/)) score++;
+      if (score <= 2) return { scoreClass: 'weak', label: 'Weak' };
+      if (score <= 4) return { scoreClass: 'medium', label: 'Medium' };
+      return { scoreClass: 'strong', label: 'Strong' };
+    }
+
+    const newPassword = document.getElementById('newPassword');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+
+    newPassword.addEventListener('input', () => {
+      if (newPassword.value.length === 0) {
+        strengthBar.className = 'strength-bar';
+        strengthLabel.textContent = '';
+        return;
+      }
+      const strength = checkPasswordStrength(newPassword.value);
+      strengthBar.className = 'strength-bar ' + strength.scoreClass;
+      strengthLabel.textContent = strength.label;
+    });
+
+    document.querySelectorAll('.password-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        const icon = btn.querySelector('i');
+        const hidden = input.type === 'password';
+        input.type = hidden ? 'text' : 'password';
+        icon.classList.toggle('fa-eye', !hidden);
+        icon.classList.toggle('fa-eye-slash', hidden);
+      });
+    });
+
+    document.getElementById('password-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const next = newPassword.value;
+      if (next !== document.getElementById('confirmPassword').value) {
+        UI.flash('#flash', 'error', 'The two new passwords do not match.');
+        return;
+      }
+      const result = Store.changePassword(document.getElementById('currentPassword').value, next);
+      if (!result.ok) {
+        UI.flash('#flash', 'error', result.error);
+        return;
+      }
+      event.target.reset();
+      strengthBar.className = 'strength-bar';
+      strengthLabel.textContent = '';
+      UI.flash('#flash', 'success', 'Your password has been changed.');
+    });
+
+    /* ------------------------------------------------------------- 2FA */
+
+    const twoFactorBtn = document.getElementById('toggle-2fa-btn');
+    const twoFactorInfo = document.getElementById('two-factor-info');
+
+    function renderTwoFactor() {
+      const on = Store.currentUser().twoFactorEnabled;
+      twoFactorBtn.querySelector('span').textContent = on ? 'Disable 2FA' : 'Enable 2FA';
+      twoFactorInfo.textContent = on
+        ? 'Enabled — we will email a six-digit code every time you sign in.'
+        : 'Add an extra layer of security to your account.';
+    }
+
+    twoFactorBtn.addEventListener('click', () => {
+      const on = Store.toggleTwoFactor();
+      renderTwoFactor();
+      UI.flash('#flash', 'success', on
+        ? 'Two-factor authentication is on. Sign out and back in to see the code screen.'
+        : 'Two-factor authentication is off.');
+    });
+
+    renderTwoFactor();
+  }
+</script>
+</body>
+</html>

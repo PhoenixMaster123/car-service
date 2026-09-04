@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/sidebar/sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/invoices/invoices.css?v=4" rel="stylesheet">
+    <link href="assets/account/invoices/invoice-detail.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="sidebar"></div>
+
+<div class="main-content">
+    <main class="page-container">
+
+        <div class="invoice-detail-toolbar">
+            <a href="invoices.html" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Back to Invoices
+            </a>
+            <button class="btn btn-primary" id="pdf-btn">
+                <i class="fa-solid fa-download"></i> Download PDF
+            </button>
+        </div>
+
+        <div id="flash"></div>
+
+        <article class="invoice-document" id="invoice-document"></article>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'account', active: 'invoices', guard: 'user' })) {
+    const id = new URLSearchParams(window.location.search).get('id');
+    const invoice = id ? Store.invoice(id) : null;
+
+    if (!invoice || invoice.userId !== Store.currentUser().id) {
+      Store.setFlash('error', 'That invoice does not exist.');
+      window.location.replace('invoices.html');
+    } else {
+      document.title = 'Invoice ' + invoice.invoiceNumber + ' - Haris Car Care';
+
+      const optional = (label, value) => (value
+        ? `<div class="detail-item"><span>${label}</span><strong>${UI.escape(value)}</strong></div>`
+        : '');
+
+      document.getElementById('invoice-document').innerHTML = `
+        <header class="invoice-document-header">
+          <div class="brand">
+            <h1>Haris Car Care</h1>
+            <p>Maria Luiza Blvd, Ruse, Bulgaria</p>
+            <p>hariscarcare@gmail.com</p>
+          </div>
+          <div class="meta">
+            <span class="invoice-tag">Invoice</span>
+            <h2>${UI.escape(invoice.invoiceNumber)}</h2>
+            <span class="status-pill status-${invoice.status.toLowerCase()}">${UI.escape(invoice.status)}</span>
+          </div>
+        </header>
+
+        <section class="invoice-parties">
+          <div class="party-box">
+            <h3>Billed To</h3>
+            <p class="customer-name">${UI.escape(invoice.customerName)}</p>
+            <p class="text-muted">${UI.escape(invoice.customerEmail)}</p>
+            ${invoice.customerPhone ? `<p class="text-muted">${UI.escape(invoice.customerPhone)}</p>` : ''}
+          </div>
+          <div class="party-box details-grid">
+            <div class="detail-item"><span>Issued</span><strong>${UI.date(invoice.issuedAt)}</strong></div>
+            <div class="detail-item"><span>Service Date</span><strong>${UI.dateTime(invoice.serviceDate)}</strong></div>
+            ${invoice.dueDate ? `<div class="detail-item"><span>Due Date</span><strong>${UI.date(invoice.dueDate)}</strong></div>` : ''}
+            <div class="detail-item"><span>Payment</span><strong>${UI.escape(invoice.paymentMethod)}</strong></div>
+            ${optional('Vehicle', invoice.vehicleDescription)}
+          </div>
+        </section>
+
+        <section class="invoice-items">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-service">Service</th>
+                  <th class="col-desc">Description</th>
+                  <th class="col-price num">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${invoice.lineItems.map((item) => `
+                  <tr>
+                    <td class="col-service strong">${UI.escape(item.name)}</td>
+                    <td class="col-desc text-muted">${UI.escape(item.description)}</td>
+                    <td class="col-price num">${UI.money(item.basePrice)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="invoice-totals">
+          <div class="totals-wrapper">
+            <div class="row">
+              <span class="text-muted">Subtotal</span>
+              <span>${UI.money(invoice.subtotal)}</span>
+            </div>
+            <div class="row">
+              <span class="text-muted">VAT (${Math.round(invoice.taxRate * 100)}%)</span>
+              <span>${UI.money(invoice.taxAmount)}</span>
+            </div>
+            <div class="row total">
+              <span>Total Due</span>
+              <span class="total-amount">${UI.money(invoice.total)}</span>
+            </div>
+          </div>
+        </section>`;
+
+      document.getElementById('pdf-btn').addEventListener('click', () => {
+        UI.flash('#flash', 'error',
+          'PDF export runs server-side — the app renders invoice-pdf.html through openhtmltopdf. '
+          + 'A static page has no renderer, so the invoice is shown here instead.');
+      });
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vehicles - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/sidebar/sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/vehicles/vehicles.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+    <style>
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px dashed var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<div data-slot="sidebar"></div>
+
+<div class="main-content">
+    <main class="page-container">
+        <header class="page-header">
+            <h1>My Vehicles</h1>
+            <p>Manage your registered vehicles for easier booking.</p>
+        </header>
+
+        <div id="flash"></div>
+
+        <div class="vehicle-grid" id="vehicle-grid"></div>
+
+        <div class="add-vehicle-card">
+            <div class="add-vehicle-header">
+                <i class="material-icons">add_circle_outline</i>
+                <h2>Add New Vehicle</h2>
+            </div>
+
+            <form class="vehicle-form" id="addVehicleForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="make" class="required">Make</label>
+                        <input type="text" id="make" placeholder="e.g. BMW" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="model" class="required">Model</label>
+                        <input type="text" id="model" placeholder="e.g. X5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year" class="required">Year</label>
+                        <input type="number" id="year" placeholder="e.g. 2023" required min="1900" max="2030">
+                    </div>
+                    <div class="form-group">
+                        <label for="licensePlate" class="required">License Plate</label>
+                        <input type="text" id="licensePlate" placeholder="e.g. AB-123-CD" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vin" class="required">VIN</label>
+                        <input type="text" id="vin" placeholder="Vehicle Identification Number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color (Optional)</label>
+                        <input type="text" id="color" placeholder="e.g. Black">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="material-icons">add</i> Add Vehicle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="editVehicleModal">
+        <div class="modal-header">
+            <h2>Edit Vehicle</h2>
+            <button type="button" class="modal-close-btn" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="vehicle-form" id="editVehicleForm">
+                <input type="hidden" id="edit-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit-make" class="required">Make</label>
+                        <input type="text" id="edit-make" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-model" class="required">Model</label>
+                        <input type="text" id="edit-model" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-year" class="required">Year</label>
+                        <input type="number" id="edit-year" required min="1900" max="2030">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-licensePlate" class="required">License Plate</label>
+                        <input type="text" id="edit-licensePlate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-vin">VIN</label>
+                        <input type="text" id="edit-vin">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-color">Color</label>
+                        <input type="text" id="edit-color">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" data-close>Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteVehicleModal">
+        <div class="modal-header">
+            <h2>Remove Vehicle</h2>
+            <button type="button" class="modal-close-btn" data-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove <strong id="delete-vehicle-name">this vehicle</strong>?</p>
+            <p style="color: var(--text-color-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                This action cannot be undone.
+            </p>
+
+            <form id="deleteVehicleForm">
+                <input type="hidden" id="delete-vehicle-id">
+                <div class="form-actions" style="margin-top: 1.5rem; border-top: none; padding-top: 0; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" data-close>Cancel</button>
+                    <button type="submit" class="btn-danger">Yes, Remove</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'account', active: 'vehicles', guard: 'user' })) {
+    const grid = document.getElementById('vehicle-grid');
+    const overlay = document.getElementById('modalOverlay');
+    const editModal = document.getElementById('editVehicleModal');
+    const deleteModal = document.getElementById('deleteVehicleModal');
+
+    UI.showPendingFlash('#flash');
+
+    function closeModal() {
+      overlay.classList.remove('active');
+      editModal.classList.remove('active');
+      deleteModal.classList.remove('active');
+    }
+
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) closeModal();
+    });
+    document.querySelectorAll('[data-close]').forEach((btn) => {
+      btn.addEventListener('click', closeModal);
+    });
+
+    function render() {
+      const vehicles = Store.vehicles();
+
+      if (vehicles.length === 0) {
+        grid.className = '';
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="material-icons" style="font-size:48px;color:var(--text-color-muted);margin-bottom:1rem">no_crash</i>
+            <h3 style="margin-bottom:0.5rem;color:var(--text-color)">No vehicles in your garage</h3>
+            <p style="color:var(--text-color-muted)">Add your first vehicle below to get started with bookings.</p>
+          </div>`;
+        return;
+      }
+
+      grid.className = 'vehicle-grid';
+      grid.innerHTML = vehicles.map((vehicle) => `
+        <div class="vehicle-card">
+          <div class="vehicle-header">
+            <i class="material-icons vehicle-icon">directions_car</i>
+            <div class="vehicle-title">
+              <h3>${UI.escape(vehicle.make)}</h3>
+              <p>${vehicle.manufacturingYear}</p>
+            </div>
+          </div>
+          <div class="vehicle-details">
+            <div class="detail-row">
+              <span class="detail-label">License Plate</span>
+              <span class="detail-value">${UI.escape(vehicle.licensePlate)}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Color</span>
+              <span class="detail-value">${UI.escape(vehicle.color)}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">VIN</span>
+              <span class="detail-value">${UI.escape(vehicle.vin)}</span>
+            </div>
+          </div>
+          <div class="vehicle-actions">
+            <button type="button" class="btn-sm btn-edit" data-edit="${vehicle.id}">
+              <i class="material-icons">edit</i> Edit
+            </button>
+            <button type="button" class="btn-sm btn-delete" data-delete="${vehicle.id}">
+              <i class="material-icons" style="font-size:16px">delete</i> Remove
+            </button>
+          </div>
+        </div>`).join('');
+
+      grid.querySelectorAll('[data-edit]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const vehicle = Store.vehicle(btn.dataset.edit);
+          document.getElementById('edit-id').value = vehicle.id;
+          document.getElementById('edit-make').value = vehicle.make;
+          document.getElementById('edit-model').value = vehicle.model;
+          document.getElementById('edit-year').value = vehicle.manufacturingYear;
+          document.getElementById('edit-licensePlate').value = vehicle.licensePlate;
+          document.getElementById('edit-vin').value = vehicle.vin;
+          document.getElementById('edit-color').value = vehicle.color;
+          overlay.classList.add('active');
+          editModal.classList.add('active');
+        });
+      });
+
+      grid.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const vehicle = Store.vehicle(btn.dataset.delete);
+          document.getElementById('delete-vehicle-name').textContent =
+            vehicle.make + ' ' + vehicle.model;
+          document.getElementById('delete-vehicle-id').value = vehicle.id;
+          overlay.classList.add('active');
+          deleteModal.classList.add('active');
+        });
+      });
+    }
+
+    document.getElementById('addVehicleForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const result = Store.addVehicle({
+        make: document.getElementById('make').value.trim(),
+        model: document.getElementById('model').value.trim(),
+        manufacturingYear: document.getElementById('year').value,
+        licensePlate: document.getElementById('licensePlate').value.trim(),
+        vin: document.getElementById('vin').value.trim(),
+        color: document.getElementById('color').value.trim(),
+      });
+      if (!result.ok) {
+        UI.flash('#flash', 'error', result.error);
+        return;
+      }
+      event.target.reset();
+      render();
+      UI.flash('#flash', 'success',
+        result.vehicle.make + ' ' + result.vehicle.model + ' was added to your garage.');
+    });
+
+    document.getElementById('editVehicleForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      Store.updateVehicle(document.getElementById('edit-id').value, {
+        make: document.getElementById('edit-make').value.trim(),
+        model: document.getElementById('edit-model').value.trim(),
+        manufacturingYear: document.getElementById('edit-year').value,
+        licensePlate: document.getElementById('edit-licensePlate').value.trim(),
+        vin: document.getElementById('edit-vin').value.trim(),
+        color: document.getElementById('edit-color').value.trim(),
+      });
+      closeModal();
+      render();
+      UI.flash('#flash', 'success', 'Vehicle updated.');
+    });
+
+    document.getElementById('deleteVehicleForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      Store.deleteVehicle(document.getElementById('delete-vehicle-id').value);
+      closeModal();
+      render();
+      UI.flash('#flash', 'success', 'Vehicle removed from your garage.');
+    });
+
+    render();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/auth/auth-layout.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="standalone-theme-toggle theme-toggle" id="theme-toggle">
+    <i class="fa-solid fa-sun"></i>
+    <i class="fa-solid fa-moon"></i>
+    <div class="toggle-circle"></div>
+</div>
+
+<main class="auth-wrapper">
+    <div class="auth-container">
+        <a href="home.html" class="brand-name">Haris Car Care</a>
+        <h2>Sign In</h2>
+
+        <div id="flash"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="email" id="username" name="username" required autocomplete="username">
+                <i class="fa-solid fa-envelope input-icon"></i>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <i class="fa-solid fa-lock input-icon"></i>
+            </div>
+
+            <div class="form-helpers">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember-me" name="remember-me">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn">Login</button>
+
+            <div class="auth-switch-link">
+                Don't have an account?
+                <a href="register.html">Register</a>
+            </div>
+        </form>
+
+        <div class="demo-accounts">
+            <h4>Demo accounts — click to fill</h4>
+            <button type="button" class="demo-account" data-email="alex@demo.dev" data-password="demo1234">
+                <span>
+                    Alex Johnson
+                    <span class="demo-account-creds">alex@demo.dev · demo1234</span>
+                </span>
+                <span class="demo-account-role">Customer</span>
+            </button>
+            <button type="button" class="demo-account" data-email="admin@demo.dev" data-password="admin1234">
+                <span>
+                    Haris Petrov
+                    <span class="demo-account-creds">admin@demo.dev · admin1234 · asks for a 2FA code</span>
+                </span>
+                <span class="demo-account-role">Admin</span>
+            </button>
+        </div>
+
+        <div class="social-login-separator">
+            <span>OR</span>
+        </div>
+
+        <div class="social-buttons">
+            <a href="#" class="social-btn google" data-demo-oauth>
+                <i class="fa-brands fa-google"></i> Continue with Google
+            </a>
+            <a href="#" class="social-btn github" data-demo-oauth>
+                <i class="fa-brands fa-github"></i> Continue with GitHub
+            </a>
+        </div>
+    </div>
+</main>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  /* Landing on sign-in ends any previous session, so the demo always starts here. */
+  Store.signOut();
+
+  document.body.insertAdjacentHTML('afterbegin', UI.banner());
+  UI.wireTheme();
+  document.querySelector('[data-demo-reset]').addEventListener('click', () => {
+    Store.reset();
+    window.location.reload();
+  });
+
+  UI.showPendingFlash('#flash');
+
+  document.querySelectorAll('.demo-account').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.getElementById('username').value = btn.dataset.email;
+      document.getElementById('password').value = btn.dataset.password;
+    });
+  });
+
+  document.querySelectorAll('[data-demo-oauth]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      UI.flash('#flash', 'error',
+        'Google and GitHub sign-in need the real OAuth2 flow, which a static page cannot run. '
+        + 'Use one of the demo accounts above.');
+    });
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const result = Store.signIn(
+      document.getElementById('username').value,
+      document.getElementById('password').value,
+    );
+    if (!result.ok) {
+      UI.flash('#flash', 'error', result.error);
+      return;
+    }
+    window.location.href = result.twoFactor
+      ? 'verify-2fa.html'
+      : (Store.isAdmin() ? 'admin-dashboard.html' : 'dashboard.html');
+  });
+</script>
+</body>
+</html>

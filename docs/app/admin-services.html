@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Services - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/admin-sidebar/admin-sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/services/admin-services.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <div data-slot="admin-sidebar"></div>
+
+    <main class="dashboard-content">
+        <div class="page-header">
+            <h1>Service Management</h1>
+            <button class="btn-add-service" id="add-service-btn">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Service</span>
+            </button>
+        </div>
+
+        <div id="flash"></div>
+
+        <div class="services-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <label for="serviceSearch"></label>
+                <input type="text" id="serviceSearch" placeholder="Search services by name, category, or description...">
+            </div>
+        </div>
+
+        <div class="services-table-container">
+            <table class="services-table" id="servicesTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Price (€)</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="service-rows"></tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fa-solid fa-car-side"></i>
+                <p>No services found matching your search.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- View -->
+<div class="modal-overlay" id="viewServiceModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-eye"></i><h2>Service Details</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="service-details-view">
+                <div class="service-details-grid">
+                    <div class="detail-item"><label><i class="fa-solid fa-tag"></i> Name</label><p id="viewServiceName"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-layer-group"></i> Category</label><p id="viewServiceCategory"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-align-left"></i> Description</label><p id="viewServiceDescription"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-euro-sign"></i> Price</label><p id="viewServicePrice"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-clock"></i> Duration</label><p id="viewServiceDuration"></p></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add / Edit share one form -->
+<div class="modal-overlay" id="serviceFormModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-pencil"></i><h2 id="serviceFormTitle">Edit Service</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="serviceForm">
+            <div class="modal-body">
+                <input type="hidden" id="serviceId">
+                <div class="form-group">
+                    <label for="serviceName">Name <span class="required">*</span></label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceCategory">Category <span class="required">*</span></label>
+                    <select id="serviceCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="serviceDescription">Description <span class="required">*</span></label>
+                    <input type="text" id="serviceDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="servicePrice">Price (€) <span class="required">*</span></label>
+                    <input type="number" id="servicePrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceDuration">Duration (minutes) <span class="required">*</span></label>
+                    <input type="number" id="serviceDuration" min="1" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal-overlay" id="deleteServiceModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-trash"></i><h2>Delete Service</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteServiceName">this service</strong>?</p>
+            <p style="color:var(--text-color-muted);font-size:0.9rem;margin-top:0.5rem">
+                Bookings that already reference it keep their line items.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteService">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'admin', active: 'services', guard: 'admin' })) {
+    const rows = document.getElementById('service-rows');
+    const noResults = document.getElementById('noResults');
+    const search = document.getElementById('serviceSearch');
+    let deleteTargetId = null;
+
+    const overlays = {
+      view: document.getElementById('viewServiceModalOverlay'),
+      form: document.getElementById('serviceFormModalOverlay'),
+      delete: document.getElementById('deleteServiceModalOverlay'),
+    };
+
+    const closeAll = () => Object.values(overlays)
+      .forEach((overlay) => overlay.classList.remove('active'));
+    const open = (name) => { closeAll(); overlays[name].classList.add('active'); };
+
+    Object.values(overlays).forEach((overlay) => {
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeAll();
+      });
+    });
+    document.querySelectorAll('[data-close]').forEach((btn) => btn.addEventListener('click', closeAll));
+
+    const categorySelect = document.getElementById('serviceCategory');
+    categorySelect.innerHTML = Store.categories()
+      .map((cat) => `<option value="${cat.id}">${UI.escape(cat.displayName)}</option>`).join('');
+
+    const categoryName = (id) => {
+      const cat = Store.categories().find((c) => c.id === id);
+      return cat ? cat.displayName : '—';
+    };
+
+    function render() {
+      const services = Store.services();
+      rows.innerHTML = services.map((service) => `
+        <tr data-search="${UI.escape((service.name + ' ' + categoryName(service.categoryId) + ' ' + service.description).toLowerCase())}">
+          <td><div class="service-name-cell"><span>${UI.escape(service.name)}</span></div></td>
+          <td>${UI.escape(categoryName(service.categoryId))}</td>
+          <td><div class="service-description-cell">${UI.escape(service.description)}</div></td>
+          <td>${service.basePrice.toFixed(2)}</td>
+          <td>${service.duration} min</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-action btn-view" data-view="${service.id}" aria-label="View Service"><i class="fa-solid fa-eye"></i></button>
+              <button class="btn-action btn-edit" data-edit="${service.id}" aria-label="Edit Service"><i class="fa-solid fa-pencil"></i></button>
+              <button class="btn-action btn-delete" data-delete="${service.id}" aria-label="Delete Service"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      rows.querySelectorAll('[data-view]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const service = Store.service(btn.dataset.view);
+          document.getElementById('viewServiceName').textContent = service.name;
+          document.getElementById('viewServiceCategory').textContent = categoryName(service.categoryId);
+          document.getElementById('viewServiceDescription').textContent = service.description;
+          document.getElementById('viewServicePrice').textContent = UI.money(service.basePrice);
+          document.getElementById('viewServiceDuration').textContent = service.duration + ' min';
+          open('view');
+        });
+      });
+
+      rows.querySelectorAll('[data-edit]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const service = Store.service(btn.dataset.edit);
+          document.getElementById('serviceFormTitle').textContent = 'Edit Service';
+          document.getElementById('serviceId').value = service.id;
+          document.getElementById('serviceName').value = service.name;
+          document.getElementById('serviceCategory').value = service.categoryId;
+          document.getElementById('serviceDescription').value = service.description;
+          document.getElementById('servicePrice').value = service.basePrice;
+          document.getElementById('serviceDuration').value = service.duration;
+          open('form');
+        });
+      });
+
+      rows.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const service = Store.service(btn.dataset.delete);
+          deleteTargetId = service.id;
+          document.getElementById('deleteServiceName').textContent = service.name;
+          open('delete');
+        });
+      });
+
+      applySearch();
+    }
+
+    function applySearch() {
+      const term = search.value.trim().toLowerCase();
+      let visible = 0;
+      rows.querySelectorAll('tr').forEach((row) => {
+        const match = !term || row.dataset.search.includes(term);
+        row.style.display = match ? '' : 'none';
+        if (match) visible += 1;
+      });
+      noResults.style.display = visible === 0 ? '' : 'none';
+    }
+
+    /* The app wires onkeyup; also listen for input so paste and
+       autofill filter too. */
+    search.addEventListener('keyup', applySearch);
+    search.addEventListener('input', applySearch);
+
+    document.getElementById('add-service-btn').addEventListener('click', () => {
+      document.getElementById('serviceForm').reset();
+      document.getElementById('serviceFormTitle').textContent = 'Add Service';
+      document.getElementById('serviceId').value = '';
+      open('form');
+    });
+
+    document.getElementById('serviceForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const payload = {
+        name: document.getElementById('serviceName').value.trim(),
+        description: document.getElementById('serviceDescription').value.trim(),
+        basePrice: document.getElementById('servicePrice').value,
+        duration: document.getElementById('serviceDuration').value,
+        categoryId: document.getElementById('serviceCategory').value,
+      };
+      const id = document.getElementById('serviceId').value;
+      if (id) {
+        Store.updateService(id, payload);
+      } else {
+        Store.addService(payload);
+      }
+      closeAll();
+      render();
+      UI.flash('#flash', 'success', id ? 'Service updated.' : 'Service added to the catalogue.');
+    });
+
+    document.getElementById('confirmDeleteService').addEventListener('click', () => {
+      Store.deleteService(deleteTargetId);
+      deleteTargetId = null;
+      closeAll();
+      render();
+      UI.flash('#flash', 'success', 'Service removed from the catalogue.');
+    });
+
+    render();
+  }
+</script>
+</body>
+</html>

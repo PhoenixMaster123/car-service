@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/admin-sidebar/admin-sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/settings/admin-settings.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <div data-slot="admin-sidebar"></div>
+
+    <main class="dashboard-content">
+        <h1>Admin Settings</h1>
+
+        <div id="flash"></div>
+
+        <div class="settings-section">
+            <h2><i class="fa-solid fa-user"></i> Account Settings</h2>
+
+            <div class="settings-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-envelope"></i> Change Email</h3>
+                </div>
+                <div class="card-body">
+                    <form id="emailForm">
+                        <div class="form-group">
+                            <label for="currentEmail">Current Email</label>
+                            <input type="email" id="currentEmail" class="form-input" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEmail">New Email</label>
+                            <input type="email" id="newEmail" class="form-input" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> Update Email
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-key"></i> Change Password</h3>
+                </div>
+                <div class="card-body">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="currentPassword" class="form-input" required>
+                                <button type="button" class="password-toggle" data-target="currentPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="newPassword" class="form-input" required>
+                                <button type="button" class="password-toggle" data-target="newPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirmNewPassword" class="form-input" required>
+                                <button type="button" class="password-toggle" data-target="confirmNewPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'admin', active: 'settings', guard: 'admin' })) {
+    const admin = Store.currentUser();
+    document.getElementById('currentEmail').value = admin.email;
+
+    document.querySelectorAll('.password-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        const icon = btn.querySelector('i');
+        const hidden = input.type === 'password';
+        input.type = hidden ? 'text' : 'password';
+        icon.classList.toggle('fa-eye', !hidden);
+        icon.classList.toggle('fa-eye-slash', hidden);
+      });
+    });
+
+    document.getElementById('emailForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const next = document.getElementById('newEmail').value.trim();
+      Store.updateUser(admin.id, { email: next });
+      event.target.reset();
+      document.getElementById('currentEmail').value = next;
+      UI.flash('#flash', 'success', 'Sign-in email changed to ' + next + '.');
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const next = document.getElementById('newPassword').value;
+      if (next !== document.getElementById('confirmNewPassword').value) {
+        UI.flash('#flash', 'error', 'The two new passwords do not match.');
+        return;
+      }
+      const result = Store.changePassword(document.getElementById('currentPassword').value, next);
+      if (!result.ok) {
+        UI.flash('#flash', 'error', result.error);
+        return;
+      }
+      event.target.reset();
+      UI.flash('#flash', 'success', 'Password updated.');
+    });
+  }
+</script>
+</body>
+</html>

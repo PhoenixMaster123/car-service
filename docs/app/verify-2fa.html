@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify sign-in - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/auth/auth-layout.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="standalone-theme-toggle theme-toggle" id="theme-toggle">
+    <i class="fa-solid fa-sun"></i>
+    <i class="fa-solid fa-moon"></i>
+    <div class="toggle-circle"></div>
+</div>
+
+<main class="auth-wrapper">
+    <div class="auth-container">
+        <a href="home.html" class="brand-name">Haris Car Care</a>
+        <h2>Check your email</h2>
+        <p style="color:var(--text-color-muted);margin-bottom:20px">
+            We sent a six-digit code to <strong id="target-email">your email address</strong>.
+            Enter it below to finish signing in.
+        </p>
+
+        <div id="flash"></div>
+
+        <form id="verifyForm">
+            <div class="form-group">
+                <label for="code">Verification code</label>
+                <input type="text" id="code" name="code" required autofocus
+                       inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+                       autocomplete="one-time-code" placeholder="000000"
+                       style="letter-spacing:8px;text-align:center;font-size:20px">
+            </div>
+
+            <button type="submit" class="submit-btn">Verify</button>
+
+            <div class="auth-switch-link">
+                <a href="index.html">Start again</a>
+            </div>
+        </form>
+
+        <div class="demo-accounts">
+            <h4>No mail server here</h4>
+            <button type="button" class="demo-account" id="fill-code">
+                <span>
+                    Use the code 123456
+                    <span class="demo-account-creds">
+                        The real app mails a token and expires it after 10 minutes
+                    </span>
+                </span>
+                <span class="demo-account-role">Fill</span>
+            </button>
+        </div>
+    </div>
+</main>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  const pending = Store.pendingTwoFactorUser();
+  if (!pending) {
+    window.location.replace('index.html');
+  }
+
+  document.body.insertAdjacentHTML('afterbegin', UI.banner());
+  UI.wireTheme();
+  document.querySelector('[data-demo-reset]').addEventListener('click', () => {
+    Store.reset();
+    window.location.href = 'index.html';
+  });
+
+  if (pending) {
+    document.getElementById('target-email').textContent = pending.email;
+  }
+
+  document.getElementById('fill-code').addEventListener('click', () => {
+    document.getElementById('code').value = '123456';
+  });
+
+  document.getElementById('verifyForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const result = Store.verifyTwoFactor(document.getElementById('code').value);
+    if (!result.ok) {
+      UI.flash('#flash', 'error', result.error);
+      return;
+    }
+    window.location.href = Store.isAdmin() ? 'admin-dashboard.html' : 'dashboard.html';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* ========================================
+                 DARK THEME
+   ======================================== */
+
+aside.sidebar {
+    width: 260px;
+    background: var(--nav-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 101;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+.sidebar .sidebar-brand {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar .sidebar-brand .brand-name {
+    font-size: 1.6rem;
+}
+
+.sidebar-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.sidebar-links li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-links a i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.sidebar-links a:hover {
+    background: var(--inner-card-bg);
+    color: var(--primary);
+}
+
+.sidebar-links a.active {
+    background: var(--primary);
+    color: var(--text-color-dark);
+    font-weight: 600;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.sidebar-links a.active i {
+    opacity: 1;
+}
+
+.sidebar-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.sidebar-footer .theme-toggle {
+    margin: 0 auto;
+}
+/* ========================================
+                 LIGHT THEME
+   ======================================== */
+
+body.light aside.sidebar {
+    background: var(--inner-card-bg); /* Use white */
+    border-right-color: var(--border-color);
+}
+body.light .sidebar .sidebar-brand {
+    border-bottom-color: var(--border-color);
+}
+body.light .sidebar-links a {
+    color: var(--text-color-muted);
+}
+body.light .sidebar-links a:hover {
+    background: #f0f9ff;
+    color: var(--primary);
+}
+body.light .sidebar-links a.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+body.light .sidebar-footer {
+    border-top-color: var(--border-color);
+}

@@ -1,0 +1,231 @@
+/*
+ * Styling that belongs to the demo shell only — the banner across the top, the
+ * sign-in hint card and the flash alerts. Everything else on these pages is
+ * styled by the application's own stylesheets, copied verbatim.
+ */
+
+/*
+ * Fixed rather than sticky on purpose: the admin pages set `body {display:flex}`,
+ * which would make an in-flow banner a stretched flex item beside the layout.
+ * Out of flow it cannot be stretched, and body padding makes room for it.
+ */
+.demo-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding: 8px 16px;
+    background: linear-gradient(90deg, rgba(0, 225, 255, 0.16), rgba(0, 255, 166, 0.10));
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 0.8rem;
+    backdrop-filter: blur(8px);
+}
+
+.demo-banner-tag {
+    flex: none;
+    padding: 2px 9px;
+    border-radius: var(--radius-full);
+    background: var(--primary);
+    color: #04121c;
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.demo-banner-text {
+    flex: 1 1 240px;
+    color: var(--text-color-muted);
+}
+
+.demo-banner-reset {
+    flex: none;
+    padding: 4px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--text-color);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.demo-banner-reset:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/*
+ * The sidebars and the auth theme toggle are position: fixed, so they ignore the
+ * banner in normal flow and would sit under it. --demo-banner-h is measured and
+ * set by UI.mount() once the banner is in the DOM.
+ */
+:root {
+    --demo-banner-h: 0px;
+}
+
+body {
+    padding-top: var(--demo-banner-h);
+}
+
+/* sidebar.css sets these on aside.sidebar, so match that specificity. */
+aside.sidebar {
+    top: var(--demo-banner-h);
+    height: calc(100vh - var(--demo-banner-h));
+}
+
+/* The site navbar is sticky at top: 0 and would slide under the banner. */
+.navbar {
+    top: var(--demo-banner-h);
+}
+
+.standalone-theme-toggle {
+    top: calc(1.5rem + var(--demo-banner-h));
+}
+
+/* ------------------------------------------------------------------ alerts */
+
+.demo-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.92rem;
+}
+
+.demo-alert-success {
+    border-color: rgba(34, 197, 94, 0.45);
+    background: rgba(34, 197, 94, 0.10);
+}
+
+.demo-alert-success i {
+    color: var(--success-color);
+}
+
+.demo-alert-error {
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.10);
+}
+
+.demo-alert-error i {
+    color: var(--danger-color);
+}
+
+/* -------------------------------------------------------- sign-in hint card */
+
+.demo-accounts {
+    margin-top: var(--space-6);
+    padding: var(--space-4);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+}
+
+.demo-accounts h4 {
+    margin: 0 0 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-color-muted);
+}
+
+.demo-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+    color: var(--text-color);
+    font: inherit;
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.demo-account:last-child {
+    margin-bottom: 0;
+}
+
+.demo-account:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.demo-account-role {
+    flex: none;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: rgba(0, 225, 255, 0.16);
+    color: var(--primary);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+}
+
+.demo-account-creds {
+    display: block;
+    color: var(--text-color-muted);
+    font-size: 0.75rem;
+}
+
+/* ------------------------------------------------------------ misc helpers */
+
+.demo-empty {
+    padding: var(--space-10) var(--space-6);
+    text-align: center;
+    color: var(--text-color-muted);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+}
+
+.demo-empty i {
+    display: block;
+    margin-bottom: var(--space-3);
+    font-size: 2.2rem;
+    opacity: 0.55;
+}
+
+.demo-note {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary);
+    background: var(--card-bg);
+    color: var(--text-color-muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.demo-note strong {
+    color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .demo-banner {
+        font-size: 0.74rem;
+    }
+
+    .demo-banner-text {
+        flex-basis: 100%;
+        order: 3;
+    }
+}

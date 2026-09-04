@@ -52,6 +52,12 @@
   footer { margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
   footer a { color: var(--accent); }
   .scroll { overflow-x: auto; }
+  a.demo-card { border-color: var(--accent); background: var(--accent-soft); }
+  a.shot {
+    display: block; margin: 20px 0 0; border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden; line-height: 0;
+  }
+  a.shot img { width: 100%; height: auto; }
 </style>
 </head>
 <body>
@@ -62,8 +68,31 @@
     <p class="lede">
       A Spring Boot application for car service operations — a Thymeleaf web UI, OAuth2 login,
       invoicing with PDF export, and OpenFeign calls to a booking and a payment service.
+      There is a clickable demo below, plus the generated Javadoc and Checkstyle report.
     </p>
   </header>
+
+  <h2>Live demo</h2>
+  <p style="color:var(--muted);margin:0 0 16px;max-width:62ch">
+    The application's own templates and stylesheets, running in the browser against a seeded
+    catalogue — so signing in, booking, paying and invoicing all work with no backend behind
+    them. State lives in <code>sessionStorage</code>; reloading starts over on the sign-in screen.
+  </p>
+  <div class="cards">
+    <a class="card demo-card" href="app/">
+      <strong>Open the demo →</strong>
+      <span>Sign in as a customer or as an admin. Both accounts are on the sign-in screen.</span>
+    </a>
+    <a class="card" href="video/car-service-demo.mp4">
+      <strong>Watch the walkthrough →</strong>
+      <span>A silent screen recording of the whole demo, about four minutes.</span>
+    </a>
+  </div>
+
+  <a class="shot" href="app/">
+    <img src="demo.gif" alt="Sign in, book a service, pay, download the invoice, and the admin area"
+         width="680" loading="lazy">
+  </a>
 
   <h2>Generated reports</h2>
   <div class="cards">
@@ -71,11 +100,11 @@
       <strong>Javadoc →</strong>
       <span>API documentation for every package under <code>springboot.bg.harisauto</code>.</span>
     </a>
-    <a class="card" href="checkstyle.html">
+    <a class="card" href="checkstyle/">
       <strong>Checkstyle report →</strong>
       <span>Google style rules, enforced on every pull request.</span>
     </a>
-    <a class="card" href="https://github.com/PhoenixMaster123/car-service-3">
+    <a class="card" href="https://github.com/PhoenixMaster123/car-service">
       <strong>Source on GitHub →</strong>
       <span>Repository, issues and pull requests.</span>
     </a>
@@ -85,8 +114,8 @@
   <div class="scroll">
     <table>
       <tr><th>Concern</th><th>Choice</th></tr>
-      <tr><td>Language</td><td>Java 17</td></tr>
-      <tr><td>Framework</td><td>Spring Boot 3.4.0, Spring Cloud 2024.0.2</td></tr>
+      <tr><td>Language</td><td>Java 21</td></tr>
+      <tr><td>Framework</td><td>Spring Boot 3.5.8, Spring Cloud 2025.0.3</td></tr>
       <tr><td>Views</td><td>Thymeleaf</td></tr>
       <tr><td>Persistence</td><td>Spring Data JPA — MySQL by default, H2 in <code>dev</code></td></tr>
       <tr><td>Security</td><td>Spring Security, form login plus Google and GitHub OAuth2</td></tr>
@@ -112,13 +141,15 @@
   </div>
 
   <p class="note">
-    <strong>This site is documentation only.</strong> GitHub Pages serves static files, so it cannot
-    host the application itself — that needs a JVM, a database, and the two backing services.
-    Everything here is generated from the repository on each push to <code>main</code>.
+    <strong>The demo is not the running application.</strong> GitHub Pages serves static files, so it
+    cannot host the real thing — that needs a JVM, MySQL, and the booking and payment services.
+    The demo reproduces the UI faithfully, but OAuth2 sign-in, Stripe, PDF export and the Gemini
+    chatbot are server-side and are stubbed. Everything on this site is rebuilt from the
+    repository on each push to <code>main</code>.
   </p>
 
   <footer>
-    Built from <a href="https://github.com/PhoenixMaster123/car-service-3">PhoenixMaster123/car-service-3</a>.
+    Built from <a href="https://github.com/PhoenixMaster123/car-service">PhoenixMaster123/car-service</a>.
   </footer>
 </div>
 </body>

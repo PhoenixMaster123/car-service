@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/public/index/index.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-i18n="hero.title">Drive Clean. Feel Fresh.</h1>
+            <p data-i18n="hero.subtitle">Premium car wash and detailing with pro-grade equipment and eco-friendly products.</p>
+            <div class="hero-actions">
+                <a href="booking.html" class="hero-cta cta-button" data-i18n="hero.ctaPrimary">Book a Wash</a>
+                <a href="services.html" class="hero-cta cta-button" data-i18n="hero.ctaSecondary">See Services</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="services-container">
+            <h2 data-i18n="services.title">Our Comprehensive Services</h2>
+            <p class="services-intro">We offer a wide range of professional services to keep your vehicle in top condition. Our expert technicians use state-of-the-art equipment for everything from a detailed wash to complex mechanical repairs. Click on any service to learn more.</p>
+            <div class="services-grid">
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-soap"></i>
+                    <h3>Car Washing</h3>
+                    <p>Get a spotless, showroom shine with our premium hand and automatic wash services.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-spray-can-sparkles"></i>
+                    <h3>Carpet Cleaning</h3>
+                    <p>Deep clean your vehicle's interior with our advanced automatic carpet cleaning.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-ring"></i>
+                    <h3>Tire Changes</h3>
+                    <p>Fast and reliable seasonal tire changes and balancing for a safer drive.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-oil-can"></i>
+                    <h3>Oil Changes</h3>
+                    <p>Keep your engine running smoothly with our quick and efficient oil change service.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-fan"></i>
+                    <h3>A/C Refill</h3>
+                    <p>Stay cool and comfortable with our professional air conditioning diagnostic and refill.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-filter"></i>
+                    <h3>DPF Filter Cleaning</h3>
+                    <p>Restore your diesel engine's performance with our specialized DPF cleaning service.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <h3>Overall Car Repair</h3>
+                    <p>Comprehensive diagnostics and repairs for any mechanical or electrical issue.</p>
+                </a>
+                <a href="services.html" class="service-card">
+                    <i class="fa-solid fa-star"></i>
+                    <h3>Detailing</h3>
+                    <p>Full interior and exterior detailing, waxing, and ceramic coating options.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="hiw">
+        <div class="hiw-container">
+            <h2 data-i18n="hiw.title">How It Works</h2>
+            <div class="hiw-steps">
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3>1. Book</h3>
+                    <p>Choose a service and a time that works for you.</p>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-car-side"></i></div>
+                    <h3>2. Arrive</h3>
+                    <p>Visit our location or request pickup where available.</p>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-star"></i></div>
+                    <h3>3. Shine</h3>
+                    <p>Relax while we bring your car back to showroom condition.</p>
+                </div>
+            </div>
+            <div class="trust-badges">
+                <div class="badge"><i class="fa-solid fa-seedling"></i> <span>Eco-Friendly</span></div>
+                <div class="badge"><i class="fa-solid fa-bolt"></i> <span>Fast Service</span></div>
+                <div class="badge"><i class="fa-solid fa-shield-halved"></i> <span>Safe Chemicals</span></div>
+                <div class="badge"><i class="fa-solid fa-thumbs-up"></i> <span>4.9/5 Rated</span></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div data-slot="footer"></div>
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  UI.mount({ shell: 'public' });
+</script>
+</body>
+</html>

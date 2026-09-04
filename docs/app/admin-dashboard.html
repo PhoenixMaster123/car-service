@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/admin-sidebar/admin-sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/dashboard/admin-dashboard.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <div data-slot="admin-sidebar"></div>
+
+    <main class="dashboard-content">
+        <h1>Dashboard Overview</h1>
+
+        <div class="card-grid">
+            <div class="dashboard-card">
+                <div class="icon"><i class="fa-solid fa-users"></i></div>
+                <h3>Total Users</h3>
+                <p class="value" id="stat-users">0</p>
+                <p class="description">+15 This month</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="icon"><i class="fa-solid fa-euro-sign"></i></div>
+                <h3>Monthly Revenue</h3>
+                <p class="value">€8,450</p>
+                <p class="description">+5.2% vs last month</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="icon"><i class="fa-solid fa-calendar-day"></i></div>
+                <h3>Bookings Today</h3>
+                <p class="value" id="stat-bookings">0</p>
+                <p class="description">Avg. €25 per booking</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="icon"><i class="fa-solid fa-clock"></i></div>
+                <h3>Pending Repairs</h3>
+                <p class="value" id="stat-pending">0</p>
+                <p class="description">2 Overdue</p>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-container">
+                <h3>Revenue Over Time</h3>
+                <div class="chart-wrapper"><canvas id="revenueChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <h3>Service Popularity</h3>
+                <div class="chart-wrapper"><canvas id="serviceChart"></canvas></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'admin', active: 'dashboard', guard: 'admin' })) {
+    const bookings = Store.allBookings();
+
+    document.getElementById('stat-users').textContent = Store.allUsers().length;
+    document.getElementById('stat-bookings').textContent =
+      bookings.filter((b) => UI.date(b.bookingDate) === UI.date(new Date().toISOString())).length;
+    document.getElementById('stat-pending').textContent =
+      bookings.filter((b) => b.status === 'PENDING').length;
+
+    const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name);
+
+    Chart.defaults.color = css('--text-color');
+    Chart.defaults.borderColor = css('--border-color');
+
+    const revenueChart = new Chart(document.getElementById('revenueChart'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Revenue (€)',
+          data: [6200, 7100, 6800, 8500, 9200, 8800, 10100, 9800, 11200, 10800, 12400, 11800],
+          borderColor: css('--primary'),
+          backgroundColor: css('--primary') + '20',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          pointBackgroundColor: css('--primary'),
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { color: css('--text-color'), font: { family: 'Poppins', size: 12 } },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: css('--text-color-muted'),
+              callback: (value) => '€' + value.toLocaleString(),
+            },
+            grid: { color: css('--border-color') },
+          },
+          x: {
+            ticks: { color: css('--text-color-muted') },
+            grid: { color: css('--border-color') },
+          },
+        },
+      },
+    });
+
+    const serviceChart = new Chart(document.getElementById('serviceChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Oil Change', 'Brake Service', 'Tire Rotation', 'Engine Repair', 'AC Service', 'Other'],
+        datasets: [{
+          data: [35, 22, 18, 12, 8, 5],
+          backgroundColor: [
+            css('--primary'), css('--secondary'), css('--accent'),
+            '#ff6b6b', '#4ecdc4', '#95a5a6',
+          ],
+          borderWidth: 2,
+          borderColor: css('--inner-card-bg'),
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              color: css('--text-color'),
+              font: { family: 'Poppins', size: 11 },
+              padding: 15,
+              usePointStyle: true,
+            },
+          },
+          tooltip: {
+            callbacks: { label: (context) => context.label + ': ' + context.parsed + '%' },
+          },
+        },
+      },
+    });
+
+    /* Redraw both charts against the new palette after a theme switch. */
+    document.addEventListener('demo:themechange', () => {
+      setTimeout(() => {
+        [revenueChart, serviceChart].forEach((chart) => {
+          Chart.defaults.color = css('--text-color');
+          Chart.defaults.borderColor = css('--border-color');
+          chart.update();
+        });
+      }, 300);
+    });
+  }
+</script>
+</body>
+</html>
