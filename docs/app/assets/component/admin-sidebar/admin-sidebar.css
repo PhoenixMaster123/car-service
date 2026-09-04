@@ -1,0 +1,168 @@
+/* ========================================
+   SIDEBAR (Admin-specific)
+   ======================================== */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transition: background 0.3s ease;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-decoration: none;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    text-shadow: 0 0 8px var(--primary);
+    padding: 0 0.5rem;
+    display: block;
+}
+
+body.light .sidebar-brand {
+    text-shadow: none;
+    color: var(--secondary);
+}
+
+.sidebar-nav {
+    list-style: none;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar-nav li a:hover {
+    transform: translateX(4px);
+}
+
+.sidebar-nav li a i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--primary);
+    transition: color 0.3s ease;
+}
+
+body.light .sidebar-nav li a i {
+    color: var(--secondary);
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li a.active {
+    background: var(--primary);
+    color: var(--text-color-dark);
+}
+
+.sidebar-nav li a:hover i,
+.sidebar-nav li a.active i {
+    color: var(--text-color-dark);
+}
+
+body.light .sidebar-nav li a:hover,
+body.light .sidebar-nav li a.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+body.light .sidebar-nav li a:hover i,
+body.light .sidebar-nav li a.active i {
+    color: #fff;
+}
+
+/* Theme Toggle in Sidebar */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+.theme-toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: var(--inner-card-bg);
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+.theme-toggle i {
+    font-size: 14px;
+    color: var(--primary);
+    width: 14px;
+    transition: color 0.3s ease;
+}
+
+body.light .theme-toggle i.fa-sun {
+    color: var(--secondary);
+}
+
+body:not(.light) .theme-toggle i.fa-moon {
+    color: var(--primary);
+}
+
+body.light .theme-toggle .fa-moon {
+    display: none;
+}
+
+body:not(.light) .theme-toggle .fa-sun {
+    display: none;
+}
+
+.toggle-circle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px var(--primary);
+}
+
+body.light .toggle-circle {
+    box-shadow: none;
+    background: var(--secondary);
+    left: calc(100% - 23px);
+}

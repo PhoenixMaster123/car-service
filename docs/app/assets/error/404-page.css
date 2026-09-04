@@ -1,0 +1,165 @@
+/* General Styling */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #0e1018; /* Dark blue-black dashboard color */
+    color: #fff;
+    overflow: hidden;
+}
+
+/* Diagnostic Grid Background */
+.grid-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image:
+            linear-gradient(rgba(255,102,0,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,102,0,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: pan-grid 60s linear infinite;
+}
+
+@keyframes pan-grid {
+    0% { background-position: 0 0; }
+    100% { background-position: 1000px 500px; }
+}
+
+/* Main Content Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Car & Warning Icon Styling */
+.car-icon {
+    position: relative;
+    margin-bottom: 20px;
+    animation: car-shake 3s infinite;
+}
+
+.car-icon .warning {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    animation: warning-flash 1.5s infinite;
+}
+
+.car-icon .car {
+    stroke: #d0d0d0;
+}
+
+@keyframes car-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+    20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+@keyframes warning-flash {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+/* Glitchy 404 Text */
+.error-code {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15vw;
+    font-weight: 700;
+    position: relative;
+    animation: glitch 1.5s infinite linear;
+    text-shadow:
+            0 0 10px #ff6600,
+            0 0 20px #ff6600,
+            0 0 30px #ff6600,
+            0 0 40px #ff0000,
+            0 0 70px #ff0000;
+}
+
+.error-code::before,
+.error-code::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0e1018; /* Match page background */
+    overflow: hidden;
+}
+
+.error-code::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff0000;
+    animation: glitch-anim-1 2s infinite linear reverse;
+}
+
+.error-code::after {
+    left: -2px;
+    text-shadow: -2px 0 #ff6600, 2px 2px #ff0000;
+    animation: glitch-anim-2 2s infinite linear reverse;
+}
+
+/* Glitch Keyframe Animations (Unchanged from original) */
+@keyframes glitch { 0%{transform:translate(0)} 20%{transform:translate(-5px,5px)} 40%{transform:translate(-5px,-5px)} 60%{transform:translate(5px,5px)} 80%{transform:translate(5px,-5px)} 100%{transform:translate(0)} }
+@keyframes glitch-anim-1 { 0%{clip:rect(132px,9999px,119px,0)} 5%{clip:rect(17px,9999px,94px,0)} 10%{clip:rect(40px,9999px,122px,0)} 15%{clip:rect(41px,9999px,5px,0)} 100%{clip:rect(132px,9999px,119px,0)} }
+@keyframes glitch-anim-2 { 0%{clip:rect(129px,9999px,101px,0)} 5%{clip:rect(113px,9999px,69px,0)} 10%{clip:rect(144px,9999px,129px,0)} 15%{clip:rect(104px,9999px,145px,0)} 100%{clip:rect(129px,9999px,101px,0)} }
+
+/* Message Text Styling */
+.message {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2em;
+    margin-top: -20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+}
+
+.sub-message {
+    font-size: 1.2em;
+    color: #ccc;
+    margin-top: 5px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* Dashboard-style Button */
+.home-button {
+    margin-top: 30px;
+    padding: 15px 30px;
+    border: 2px solid #ff6600;
+    border-radius: 5px;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px #ff6600, 0 0 20px #ff6600 inset;
+}
+
+.home-button:hover {
+    background-color: #ff6600;
+    color: #000;
+    box-shadow: 0 0 20px #ff6600, 0 0 40px #ff6600, 0 0 60px #ff6600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .error-code { font-size: 25vw; }
+    .message { font-size: 1.5em; }
+    .sub-message { font-size: 1em; }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/public/checkout/checkout.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<main class="checkout-wrapper">
+
+    <div class="checkout-header">
+        <h1><i class="fa-solid fa-lock"></i> Secure Checkout</h1>
+        <p>Complete your payment to finalize your booking.</p>
+    </div>
+
+    <div class="checkout-grid">
+
+        <div class="payment-section">
+            <div class="card-box">
+                <div class="card-header-row">
+                    <h3>Select Payment Method</h3>
+                    <div class="secure-badge">
+                        <i class="fa-solid fa-shield-halved"></i> Encrypted
+                    </div>
+                </div>
+
+                <div id="devModePayment">
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-flask" style="color: #f59e0b; font-size: 1.3rem;"></i>
+                            <strong style="color: #f59e0b;">Development Mode</strong>
+                        </div>
+                        <p style="color: var(--text-color-muted); font-size: 0.9rem; margin: 0;">
+                            Stripe is not configured. Click below to simulate a successful payment and
+                            auto-generate an invoice.
+                        </p>
+                    </div>
+
+                    <button type="button" class="btn-pay" id="devPayBtn">
+                        <i class="fa-solid fa-flask"></i> Simulate Payment — <span id="pay-total">€0.00</span>
+                    </button>
+
+                    <p class="terms-text">
+                        <i class="fa-solid fa-info-circle"></i> This simulated payment is for development
+                        only. No real charges will be made.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-card">
+                <h3><i class="fa-solid fa-receipt"></i> Order Summary</h3>
+                <div class="summary-items" id="summary-items"></div>
+                <hr class="divider">
+                <div class="cost-breakdown" id="cost-breakdown"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="processing-overlay" id="processingOverlay">
+    <div class="spinner"></div>
+    <h3>Processing Payment...</h3>
+    <p>Please do not close this window.</p>
+</div>
+
+<div data-slot="footer"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'public', guard: 'user' })) {
+    const bookingId = sessionStorage.getItem('demo-checkout-booking');
+    const booking = bookingId
+      ? Store.bookings().find((b) => b.id === bookingId)
+      : null;
+
+    if (!booking) {
+      Store.setFlash('error', 'Start a booking before opening checkout.');
+      window.location.replace('booking.html');
+    } else {
+      const total = booking.totalPrice;
+
+      document.getElementById('pay-total').textContent = UI.money(total);
+
+      document.getElementById('summary-items').innerHTML = booking.services.map((service) => `
+        <div class="summary-item">
+          <div class="item-left">
+            <span class="s-name">${UI.escape(service.name)}</span>
+            <span class="s-desc">${UI.escape(service.description)}</span>
+          </div>
+          <span class="s-price">${UI.money(service.basePrice)}</span>
+        </div>`).join('');
+
+      document.getElementById('cost-breakdown').innerHTML = `
+        <div class="cost-row"><span>Subtotal</span><span>${UI.money(total)}</span></div>
+        <div class="cost-row small"><span>Tax (Included)</span><span>€0.00</span></div>
+        <div class="cost-row total">
+          <span>Total Due</span>
+          <span class="neon-text">${UI.money(total)}</span>
+        </div>`;
+
+      document.getElementById('devPayBtn').addEventListener('click', () => {
+        document.getElementById('processingOverlay').classList.add('active');
+        /* The real flow waits on the payment-service callback before invoicing. */
+        setTimeout(() => {
+          const invoice = Store.payForBooking(booking.id);
+          sessionStorage.removeItem('demo-checkout-booking');
+          Store.setFlash('success',
+            'Payment received. Invoice ' + invoice.invoiceNumber + ' has been issued.');
+          window.location.href = 'invoices.html';
+        }, 1400);
+      });
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/sidebar/sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/invoices/invoices.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="sidebar"></div>
+
+<div class="main-content">
+    <main class="page-container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</h1>
+            <p>View and manage all your service invoices.</p>
+        </header>
+
+        <div id="flash"></div>
+
+        <div class="invoice-stats">
+            <div class="stat-card stat-total">
+                <i class="fa-solid fa-receipt"></i>
+                <div><h3 id="count-total">0</h3><p>Total Invoices</p></div>
+            </div>
+            <div class="stat-card stat-paid">
+                <i class="fa-solid fa-check-circle"></i>
+                <div><h3 id="count-paid">0</h3><p>Paid</p></div>
+            </div>
+            <div class="stat-card stat-pending">
+                <i class="fa-solid fa-clock"></i>
+                <div><h3 id="count-pending">0</h3><p>Pending</p></div>
+            </div>
+            <div class="stat-card stat-overdue">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+                <div><h3 id="count-overdue">0</h3><p>Overdue</p></div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fa-solid fa-list"></i>
+                <h3>All Invoices</h3>
+            </div>
+            <div id="invoice-container"></div>
+        </div>
+    </main>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'account', active: 'invoices', guard: 'user' })) {
+    UI.showPendingFlash('#flash');
+
+    const invoices = Store.invoices();
+    const countBy = (status) => invoices.filter((i) => i.status === status).length;
+
+    document.getElementById('count-total').textContent = invoices.length;
+    document.getElementById('count-paid').textContent = countBy('PAID');
+    document.getElementById('count-pending').textContent = countBy('PENDING');
+    document.getElementById('count-overdue').textContent = countBy('OVERDUE');
+
+    const container = document.getElementById('invoice-container');
+
+    if (invoices.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-file-circle-xmark"></i>
+          <p>No invoices yet. Invoices appear here after you book a service.</p>
+          <a href="services.html" class="btn btn-primary">Book a service</a>
+        </div>`;
+    } else {
+      const statusIcon = (status) => (status === 'PAID'
+        ? 'fa-check-circle'
+        : (status === 'PENDING' ? 'fa-clock' : 'fa-exclamation-triangle'));
+
+      container.innerHTML = `<div class="invoice-list">${invoices.map((invoice) => `
+        <div class="invoice-card">
+          <div class="invoice-header">
+            <div class="invoice-number">
+              <i class="fa-solid fa-file-invoice"></i>
+              <div>
+                <span class="invoice-label">Invoice #</span>
+                <span class="invoice-id">${UI.escape(invoice.invoiceNumber)}</span>
+              </div>
+            </div>
+            <div class="invoice-status status-${invoice.status.toLowerCase()}">
+              <i class="fa-solid ${statusIcon(invoice.status)}"></i>
+              <span>${UI.capitalize(invoice.status)}</span>
+            </div>
+          </div>
+          <div class="invoice-body">
+            <div class="invoice-details">
+              <div class="invoice-detail-item">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value">${UI.escape(invoice.vehicleDescription)}</span>
+              </div>
+              <div class="invoice-detail-item">
+                <span class="detail-label">Service Date</span>
+                <span class="detail-value">${UI.date(invoice.serviceDate)}</span>
+              </div>
+              <div class="invoice-detail-item">
+                <span class="detail-label">Issued</span>
+                <span class="detail-value">${UI.date(invoice.issuedAt)}</span>
+              </div>
+              <div class="invoice-detail-item">
+                <span class="detail-label">Payment</span>
+                <span class="detail-value">${UI.escape(invoice.paymentMethod)}</span>
+              </div>
+            </div>
+            <div class="invoice-amount">
+              <span class="amount-label">Total Amount</span>
+              <span class="amount-value">${UI.money(invoice.total)}</span>
+            </div>
+          </div>
+          <div class="invoice-footer">
+            <a class="btn btn-secondary" href="invoice-detail.html?id=${encodeURIComponent(invoice.id)}">
+              <i class="fa-solid fa-eye"></i><span>View Details</span>
+            </a>
+            <button class="btn btn-primary" data-pdf="${invoice.id}">
+              <i class="fa-solid fa-download"></i><span>Download PDF</span>
+            </button>
+          </div>
+        </div>`).join('')}</div>`;
+
+      container.querySelectorAll('[data-pdf]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          UI.flash('#flash', 'error',
+            'PDF export runs server-side — the app renders a Thymeleaf template through '
+            + 'openhtmltopdf. A static page has no renderer, so use View Details instead.');
+        });
+      });
+    }
+  }
+</script>
+</body>
+</html>

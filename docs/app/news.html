@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/public/news/news.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<header>
+    <h1>Latest <span>News</span></h1>
+</header>
+
+<main class="sp-wrapper">
+    <section class="content-card">
+        <h2><i class="fa-solid fa-newspaper"></i> What's New</h2>
+        <p class="section-description">Updates on our equipment, products, and services.</p>
+        <div class="articles-grid" id="articles"></div>
+    </section>
+
+    <section class="content-card">
+        <h2><i class="fa-solid fa-video"></i> Carpet Machine in Action</h2>
+        <p class="section-description">See how our deep extraction machine brings carpets back to life.</p>
+        <p class="demo-note">
+            <strong>The live site embeds a video here.</strong> It is served from the application's
+            <code>uploads/</code> directory, which a static build has no access to, so the player is
+            left out of the demo.
+        </p>
+    </section>
+</main>
+
+<div data-slot="footer"></div>
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  UI.mount({ shell: 'public' });
+
+  document.getElementById('articles').innerHTML = Store.news().map((item) => `
+    <article class="article-card">
+      <div class="content">
+        <h3>${UI.escape(item.title)}</h3>
+        <div class="meta">
+          <span>${UI.dateAdmin(item.dateCreated)}</span>
+          <span> • ${UI.escape(item.author)}</span>
+        </div>
+        <p>${UI.escape(item.content)}</p>
+      </div>
+    </article>`).join('');
+</script>
+</body>
+</html>

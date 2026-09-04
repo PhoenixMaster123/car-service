@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/public/booking/booking.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<main class="page-container">
+    <div class="booking-container">
+
+        <div class="step-progress">
+            <div class="step completed">
+                <div class="step-circle"><i class="fa-solid fa-list-check"></i></div>
+                <span class="step-label">Services</span>
+            </div>
+            <div class="step-line completed-line"></div>
+            <div class="step active">
+                <div class="step-circle"><i class="fa-solid fa-calendar-check"></i></div>
+                <span class="step-label">Details</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle"><i class="fa-solid fa-credit-card"></i></div>
+                <span class="step-label">Payment</span>
+            </div>
+        </div>
+
+        <h1><i class="fa-solid fa-calendar-check"></i> Book Your Appointment</h1>
+
+        <div id="flash"></div>
+
+        <div class="form-group">
+            <label><i class="fa-solid fa-list-check"></i> Selected Services <span style="color:var(--primary)">*</span></label>
+            <div class="selected-services-box" id="selected-services"></div>
+            <div id="price-summary"></div>
+            <button type="button" class="btn-select-services" onclick="window.location.href='services.html'">
+                <i class="fa-solid fa-plus"></i>
+                <span id="browse-label">Browse Service Menu</span>
+            </button>
+        </div>
+
+        <form id="bookingForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bookingDate"><i class="fa-solid fa-calendar-days"></i> Date &amp; Time *</label>
+                    <input type="datetime-local" id="bookingDate" name="bookingDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicle"><i class="fa-solid fa-car"></i> Vehicle *</label>
+                    <select id="vehicle" name="vehicleId" required>
+                        <option value="" disabled selected>Select Car</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" id="phoneGroup">
+                    <label for="phoneNumber"><i class="fa-solid fa-phone"></i> Phone Number *</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+49 151 1234567" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod"><i class="fa-solid fa-credit-card"></i> Payment *</label>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="" disabled selected>Method</option>
+                        <option value="CASH">Cash on Arrival</option>
+                        <option value="CARD">Credit / Debit Card</option>
+                        <option value="PAYPAL">PayPal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <small><i class="fa-solid fa-lock security-icon"></i> Your contact details are secure and encrypted.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="notes"><i class="fa-solid fa-comment"></i> Special Instructions</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Gate code, specific scratches to look at, etc..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span id="btnText">Confirm Booking</span>
+                <i id="btnIcon" class="fa-solid fa-arrow-right submit-icon"></i>
+            </button>
+        </form>
+    </div>
+</main>
+
+<div data-slot="footer"></div>
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'public', guard: 'user' })) {
+    const user = Store.currentUser();
+
+    UI.showPendingFlash('#flash');
+
+    /* ------------------------------------------------------------ cart box */
+
+    function renderCart() {
+      const cart = Store.cart();
+      const box = document.getElementById('selected-services');
+      const summary = document.getElementById('price-summary');
+
+      if (cart.count === 0) {
+        box.innerHTML = `
+          <div class="empty-cart-state">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <p>No services selected yet.</p>
+          </div>`;
+        summary.innerHTML = '';
+        document.getElementById('browse-label').textContent = 'Browse Service Menu';
+        return;
+      }
+
+      box.innerHTML = cart.items.map((item, index) => `
+        <div class="service-item-row">
+          <div class="service-item-info">
+            <span class="service-name">${UI.escape(item.name)}</span>
+            <span class="service-price">${UI.money(item.basePrice)}</span>
+          </div>
+          <button type="button" class="btn-remove-item" title="Remove" data-remove="${index}">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>`).join('');
+
+      summary.innerHTML = `
+        <div class="price-summary">
+          <span>Total Estimate:</span>
+          <span class="total-amount">${UI.money(cart.total)}</span>
+        </div>`;
+
+      document.getElementById('browse-label').textContent = 'Add More Services';
+
+      box.querySelectorAll('[data-remove]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const item = Store.cart().items[Number(btn.dataset.remove)];
+          if (item) Store.removeFromCart(item.id);
+          renderCart();
+        });
+      });
+    }
+
+    /* --------------------------------------------------------- form set-up */
+
+    const vehicleSelect = document.getElementById('vehicle');
+    Store.vehicles().forEach((vehicle) => {
+      const option = document.createElement('option');
+      option.value = vehicle.id;
+      option.textContent = `${vehicle.make} ${vehicle.model} (${vehicle.licensePlate})`;
+      vehicleSelect.appendChild(option);
+    });
+
+    document.getElementById('phoneNumber').value = user.phoneNumber || '';
+
+    /* Default to the next round hour tomorrow, and refuse dates in the past. */
+    const soon = new Date();
+    soon.setDate(soon.getDate() + 1);
+    soon.setHours(10, 0, 0, 0);
+    const isoLocal = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 16);
+    const dateInput = document.getElementById('bookingDate');
+    dateInput.value = isoLocal(soon);
+    dateInput.min = isoLocal(new Date());
+
+    document.getElementById('bookingForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (Store.vehicles().length === 0) {
+        UI.flash('#flash', 'error', 'Add a vehicle to your garage before booking.');
+        return;
+      }
+
+      const result = Store.createBooking({
+        vehicleId: vehicleSelect.value,
+        bookingDate: dateInput.value,
+        phoneNumber: document.getElementById('phoneNumber').value,
+        paymentMethod: document.getElementById('paymentMethod').value,
+        notes: document.getElementById('notes').value,
+      });
+
+      if (!result.ok) {
+        UI.flash('#flash', 'error', result.error);
+        return;
+      }
+
+      /* Card and PayPal go through checkout; cash is settled on arrival. */
+      if (result.booking.paymentMethod === 'CASH') {
+        Store.clearCart();
+        Store.setFlash('success',
+          'Booking confirmed for ' + UI.date(result.booking.bookingDate)
+          + ' at ' + UI.time(result.booking.bookingDate) + '. Pay when you arrive.');
+        window.location.href = 'my-bookings.html';
+        return;
+      }
+
+      sessionStorage.setItem('demo-checkout-booking', result.booking.id);
+      window.location.href = 'checkout.html';
+    });
+
+    renderCart();
+  }
+</script>
+</body>
+</html>

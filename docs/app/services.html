@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services &amp; Pricing - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/footer/footer.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/public/services/services.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div data-slot="navbar"></div>
+
+<header>
+    <h1><span>Haris</span> Car Care</h1>
+    <p>Your car deserves more than just a wash — it deserves a glow.</p>
+</header>
+
+<main class="sp-wrapper" id="catalogue"></main>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+
+<div class="cart-modal" id="cart-modal">
+    <div class="cart-header">
+        <h3><i class="fa-solid fa-bag-shopping"></i> Your Cart</h3>
+        <button class="close-cart" id="close-cart-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-content" id="cart-content"></div>
+    <div id="cart-footer-slot"></div>
+</div>
+
+<div class="cart" id="cart-btn">
+    <div class="cart-icon-wrapper">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+    </div>
+    <div class="cart-text">
+        <span class="cart-label">Total</span>
+        <span class="cart-total" id="cart-total">€0.00</span>
+    </div>
+</div>
+
+<div data-slot="footer"></div>
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  UI.mount({ shell: 'public' });
+
+  const catalogue = document.getElementById('catalogue');
+
+  /* Mirrors services.html: one section per category, "Add" only when signed in. */
+  function renderCatalogue() {
+    const authed = Store.isAuthenticated();
+    catalogue.innerHTML = Store.servicesByCategory().map((group) => `
+      <div>
+        <section class="category">
+          <h2><i class="fa-solid fa-wrench"></i> <span>${UI.escape(group.category.displayName)}</span></h2>
+          <p>Check out our ${UI.escape(group.category.displayName)} options.</p>
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Description</th>
+                <th>Price</th>
+                ${authed ? '<th>Add</th>' : ''}
+              </tr>
+            </thead>
+            <tbody>
+              ${group.services.map((service) => `
+                <tr>
+                  <td class="service-cell">${UI.escape(service.name)}</td>
+                  <td class="description-cell">${UI.escape(service.description)}</td>
+                  <td class="price-cell">${UI.money(service.basePrice)}</td>
+                  ${authed ? `<td><div class="add-cell">
+                    <button type="button" class="add-to-cart" data-add="${service.id}">Add</button>
+                  </div></td>` : ''}
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </section>
+        <hr class="glow">
+      </div>`).join('');
+
+    catalogue.querySelectorAll('[data-add]').forEach((btn) => {
+      /* The real page POSTs and reloads, leaving the cart closed behind the
+         badge, so adding here only updates the badge too. */
+      btn.addEventListener('click', () => {
+        Store.addToCart(btn.dataset.add);
+        renderCart();
+        const badge = document.getElementById('cart-badge');
+        badge.animate(
+          [{ transform: 'scale(1)' }, { transform: 'scale(1.45)' }, { transform: 'scale(1)' }],
+          { duration: 260, easing: 'ease-out' },
+        );
+      });
+    });
+
+    if (!authed) {
+      catalogue.insertAdjacentHTML('beforeend', `
+        <p class="demo-note">
+          <strong>Sign in to build a cart.</strong> The application only shows the Add column to an
+          authenticated user, so the catalogue is read-only until you sign in.
+        </p>`);
+    }
+  }
+
+  const cartContent = document.getElementById('cart-content');
+  const cartFooterSlot = document.getElementById('cart-footer-slot');
+
+  function renderCart() {
+    const cart = Store.cart();
+
+    document.getElementById('cart-total').textContent = UI.money(cart.total);
+    const badge = document.getElementById('cart-badge');
+    badge.textContent = cart.count;
+    badge.style.display = cart.count > 0 ? '' : 'none';
+
+    if (cart.count === 0) {
+      cartContent.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <p>Your cart is empty.</p>
+          <span>Add services to get started.</span>
+        </div>`;
+      cartFooterSlot.innerHTML = '';
+      return;
+    }
+
+    cartContent.innerHTML = `
+      <div class="cart-items">
+        ${cart.items.map((item, index) => `
+          <div class="cart-item">
+            <div class="item-info">
+              <span class="item-name">${UI.escape(item.name)}</span>
+              <span class="item-price">${UI.money(item.basePrice)}</span>
+            </div>
+            <button type="button" class="remove-btn" title="Remove Item" data-remove="${index}">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>`).join('')}
+      </div>`;
+
+    cartFooterSlot.innerHTML = `
+      <div class="cart-footer">
+        <div class="cart-summary">
+          <span>Total Amount</span>
+          <span class="total-price">${UI.money(cart.total)}</span>
+        </div>
+        <div class="cart-actions">
+          <a href="booking.html" class="cta-button checkout-btn" style="flex:2">
+            Checkout <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <button type="button" class="clear-btn" style="flex:1" id="clear-cart">Clear</button>
+        </div>
+      </div>`;
+
+    cartContent.querySelectorAll('[data-remove]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = Store.cart().items[Number(btn.dataset.remove)];
+        if (item) Store.removeFromCart(item.id);
+        renderCart();
+      });
+    });
+    const clear = document.getElementById('clear-cart');
+    if (clear) clear.addEventListener('click', () => { Store.clearCart(); renderCart(); });
+  }
+
+  const cartModal = document.getElementById('cart-modal');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const openCart = () => { cartModal.classList.add('active'); cartOverlay.classList.add('active'); };
+  const closeCart = () => { cartModal.classList.remove('active'); cartOverlay.classList.remove('active'); };
+
+  document.getElementById('cart-btn').addEventListener('click', openCart);
+  document.getElementById('close-cart-btn').addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', closeCart);
+
+  renderCatalogue();
+  renderCart();
+</script>
+</body>
+</html>

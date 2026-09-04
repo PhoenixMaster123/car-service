@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - Haris Car Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="assets/common/variables.css?v=4" rel="stylesheet">
+    <link href="assets/common/base.css?v=4" rel="stylesheet">
+    <link href="assets/component/admin-sidebar/admin-sidebar.css?v=4" rel="stylesheet">
+    <link href="assets/component/navbar/navbar.css?v=4" rel="stylesheet">
+    <link href="assets/component/chatbot/chatbot.css?v=4" rel="stylesheet">
+    <link href="assets/account/admin/users/admin-users.css?v=4" rel="stylesheet">
+    <link href="assets/demo.css?v=4" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard">
+    <div data-slot="admin-sidebar"></div>
+
+    <main class="dashboard-content">
+        <div class="page-header">
+            <h1>User Management</h1>
+            <button class="btn-add-user" id="add-user-btn">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Add Customer</span>
+            </button>
+        </div>
+
+        <div id="flash"></div>
+
+        <div class="users-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <label for="userSearch"></label>
+                <input type="text" id="userSearch" placeholder="Search users by name, email, or phone...">
+            </div>
+        </div>
+
+        <div class="users-table-container">
+            <table class="users-table" id="usersTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>Role</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="user-rows"></tbody>
+            </table>
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fa-solid fa-users-slash"></i>
+                <p>No users found matching your search.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- View -->
+<div class="modal-overlay" id="viewUserModalOverlay">
+    <div class="modal" id="viewUserModal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-eye"></i><h2>User Details</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="user-details-view">
+                <div class="user-profile-header">
+                    <div class="user-avatar-large"><i class="fa-solid fa-user"></i></div>
+                    <h3 id="viewUserName">John Doe</h3>
+                    <span class="role-badge" id="viewUserRole">USER</span>
+                </div>
+                <div class="user-details-grid">
+                    <div class="detail-item"><label><i class="fa-solid fa-envelope"></i> Email</label><p id="viewUserEmail"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-phone"></i> Phone</label><p id="viewUserPhone"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-globe"></i> Country</label><p id="viewUserCountry"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-calendar-plus"></i> Created On</label><p id="viewUserCreated"></p></div>
+                    <div class="detail-item"><label><i class="fa-solid fa-calendar-check"></i> Last Updated</label><p id="viewUserUpdated"></p></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit -->
+<div class="modal-overlay" id="editUserModalOverlay">
+    <div class="modal" id="editUserModal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-pencil"></i><h2>Edit User</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="editUserForm">
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label for="editFirstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="editFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="editLastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email <span class="required">*</span></label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone</label>
+                    <input type="tel" id="editPhone">
+                </div>
+                <div class="form-group">
+                    <label for="editCountry">Country</label>
+                    <select id="editCountry">
+                        <option>Bulgaria</option>
+                        <option>Germany</option>
+                        <option>Austria</option>
+                        <option>Czechia</option>
+                        <option>Romania</option>
+                        <option>Greece</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editRole">Role</label>
+                    <select id="editRole">
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add -->
+<div class="modal-overlay" id="addUserModalOverlay">
+    <div class="modal" id="addUserModal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-user-plus"></i><h2>Add Customer</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="addUserForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="addFirstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="addFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addLastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="addLastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addEmail">Email <span class="required">*</span></label>
+                    <input type="email" id="addEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="addPhone">Phone</label>
+                    <input type="tel" id="addPhone">
+                </div>
+                <div class="form-group">
+                    <label for="addCountry">Country</label>
+                    <select id="addCountry">
+                        <option>Bulgaria</option>
+                        <option>Germany</option>
+                        <option>Austria</option>
+                        <option>Czechia</option>
+                        <option>Romania</option>
+                        <option>Greece</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Customer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal-overlay" id="deleteUserModalOverlay">
+    <div class="modal" id="deleteUserModal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-trash"></i><h2>Delete User</h2></div>
+            <button class="modal-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteUserName">this user</strong>?</p>
+            <p style="color:var(--text-color-muted);font-size:0.9rem;margin-top:0.5rem">
+                This action cannot be undone.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteUser">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+<div data-slot="chatbot"></div>
+
+<script src="js/seed.js?v=4"></script>
+<script src="js/store.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script>
+  if (UI.mount({ shell: 'admin', active: 'users', guard: 'admin' })) {
+    const rows = document.getElementById('user-rows');
+    const noResults = document.getElementById('noResults');
+    const search = document.getElementById('userSearch');
+    let deleteTargetId = null;
+
+    const overlays = {
+      view: document.getElementById('viewUserModalOverlay'),
+      edit: document.getElementById('editUserModalOverlay'),
+      add: document.getElementById('addUserModalOverlay'),
+      delete: document.getElementById('deleteUserModalOverlay'),
+    };
+
+    function closeAll() {
+      Object.values(overlays).forEach((overlay) => overlay.classList.remove('active'));
+    }
+
+    function open(name) {
+      closeAll();
+      overlays[name].classList.add('active');
+    }
+
+    Object.values(overlays).forEach((overlay) => {
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeAll();
+      });
+      overlay.querySelector('.modal').addEventListener('click', (e) => e.stopPropagation());
+    });
+    document.querySelectorAll('[data-close]').forEach((btn) => btn.addEventListener('click', closeAll));
+
+    function render() {
+      const users = Store.allUsers();
+      rows.innerHTML = users.map((user) => `
+        <tr data-search="${UI.escape((user.firstName + ' ' + user.lastName + ' ' + user.email + ' ' + (user.phoneNumber || '')).toLowerCase())}">
+          <td><div class="user-name-cell"><span>${UI.escape(user.firstName + ' ' + user.lastName)}</span></div></td>
+          <td>${UI.escape(user.email)}</td>
+          <td>${UI.escape(user.phoneNumber || 'N/A')}</td>
+          <td>${UI.escape(user.country || 'N/A')}</td>
+          <td><span class="role-badge ${user.role === 'ADMIN' ? 'role-admin' : 'role-user'}">${user.role}</span></td>
+          <td>${UI.dateAdmin(user.createdOn)}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-action btn-view" data-view="${user.id}" aria-label="View User"><i class="fa-solid fa-eye"></i></button>
+              <button class="btn-action btn-edit" data-edit="${user.id}" aria-label="Edit User"><i class="fa-solid fa-pencil"></i></button>
+              <button class="btn-action btn-delete" data-delete="${user.id}" aria-label="Delete User"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      rows.querySelectorAll('[data-view]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const user = Store.user(btn.dataset.view);
+          document.getElementById('viewUserName').textContent = user.firstName + ' ' + user.lastName;
+          document.getElementById('viewUserRole').textContent = user.role;
+          document.getElementById('viewUserEmail').textContent = user.email;
+          document.getElementById('viewUserPhone').textContent = user.phoneNumber || 'N/A';
+          document.getElementById('viewUserCountry').textContent = user.country || 'N/A';
+          document.getElementById('viewUserCreated').textContent = UI.dateAdmin(user.createdOn) + ' ' + UI.time(user.createdOn);
+          document.getElementById('viewUserUpdated').textContent = UI.dateAdmin(user.updatedOn) + ' ' + UI.time(user.updatedOn);
+          open('view');
+        });
+      });
+
+      rows.querySelectorAll('[data-edit]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const user = Store.user(btn.dataset.edit);
+          document.getElementById('editUserId').value = user.id;
+          document.getElementById('editFirstName').value = user.firstName;
+          document.getElementById('editLastName').value = user.lastName;
+          document.getElementById('editEmail').value = user.email;
+          document.getElementById('editPhone').value = user.phoneNumber || '';
+          document.getElementById('editCountry').value = user.country || 'Bulgaria';
+          document.getElementById('editRole').value = user.role;
+          open('edit');
+        });
+      });
+
+      rows.querySelectorAll('[data-delete]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const user = Store.user(btn.dataset.delete);
+          deleteTargetId = user.id;
+          document.getElementById('deleteUserName').textContent = user.firstName + ' ' + user.lastName;
+          open('delete');
+        });
+      });
+
+      applySearch();
+    }
+
+    /* filterUsers() in admin-users.js — same behaviour, same no-results panel. */
+    function applySearch() {
+      const term = search.value.trim().toLowerCase();
+      let visible = 0;
+      rows.querySelectorAll('tr').forEach((row) => {
+        const match = !term || row.dataset.search.includes(term);
+        row.style.display = match ? '' : 'none';
+        if (match) visible += 1;
+      });
+      noResults.style.display = visible === 0 ? '' : 'none';
+    }
+
+    /* The app wires onkeyup; also listen for input so paste and
+       autofill filter too. */
+    search.addEventListener('keyup', applySearch);
+    search.addEventListener('input', applySearch);
+
+    document.getElementById('add-user-btn').addEventListener('click', () => {
+      document.getElementById('addUserForm').reset();
+      open('add');
+    });
+
+    document.getElementById('addUserForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const user = Store.addUser({
+        firstName: document.getElementById('addFirstName').value.trim(),
+        lastName: document.getElementById('addLastName').value.trim(),
+        email: document.getElementById('addEmail').value.trim(),
+        phoneNumber: document.getElementById('addPhone').value.trim(),
+        country: document.getElementById('addCountry').value,
+      });
+      closeAll();
+      render();
+      UI.flash('#flash', 'success', user.firstName + ' ' + user.lastName + ' was added.');
+    });
+
+    document.getElementById('editUserForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      Store.updateUser(document.getElementById('editUserId').value, {
+        firstName: document.getElementById('editFirstName').value.trim(),
+        lastName: document.getElementById('editLastName').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        phoneNumber: document.getElementById('editPhone').value.trim(),
+        country: document.getElementById('editCountry').value,
+        role: document.getElementById('editRole').value,
+      });
+      closeAll();
+      render();
+      UI.flash('#flash', 'success', 'User updated.');
+    });
+
+    document.getElementById('confirmDeleteUser').addEventListener('click', () => {
+      if (deleteTargetId === Store.currentUser().id) {
+        closeAll();
+        UI.flash('#flash', 'error', 'You cannot delete the account you are signed in with.');
+        return;
+      }
+      Store.deleteUser(deleteTargetId);
+      deleteTargetId = null;
+      closeAll();
+      render();
+      UI.flash('#flash', 'success', 'User deleted.');
+    });
+
+    render();
+  }
+</script>
+</body>
+</html>
