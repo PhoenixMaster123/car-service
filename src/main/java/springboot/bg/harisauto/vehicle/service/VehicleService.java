@@ -1,6 +1,5 @@
 package springboot.bg.harisauto.vehicle.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,8 +38,9 @@ public class VehicleService {
   @Transactional
   public void createVehicle(User user, CreateVehicleRequest request) {
 
-    List<Vehicle> ownedVehicles =
-        user.getVehicles() == null ? new ArrayList<>() : user.getVehicles();
+    // Queried rather than read off user.getVehicles(): the User arrives from the
+    // controller already detached, so touching the lazy association here would throw.
+    List<Vehicle> ownedVehicles = vehicleRepository.findByOwner(user);
 
     if (ownedVehicles.size() >= 3) {
       throw new VehicleBusinessException("You cannot add more than 3 vehicles.");
@@ -65,8 +65,6 @@ public class VehicleService {
 
     log.info("New vehicle created for user: {}", user.getEmail());
 
-    ownedVehicles.add(vehicle);
-    user.setVehicles(ownedVehicles);
     vehicleRepository.save(vehicle);
   }
 
@@ -120,7 +118,6 @@ public class VehicleService {
       throw new VehicleBusinessException("You are not authorized to delete this vehicle.");
     }
 
-    user.getVehicles().remove(vehicle);
     vehicleRepository.delete(vehicle);
   }
 }
