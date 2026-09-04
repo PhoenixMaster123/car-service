@@ -157,4 +157,48 @@ public class EmailService {
       log.error("Failed to send daily report: {}", e.getMessage(), e);
     }
   }
+
+  /**
+   * Sends a one-time sign-in code.
+   *
+   * <p>Unlike the other mail here, delivery failures are <em>not</em> swallowed. If the
+   * code never arrives the user cannot sign in, so the caller has to know: it refuses the
+   * sign-in rather than leaving them stuck on a code that was never sent. This also runs
+   * synchronously for the same reason.</p>
+   *
+   * @param to The user's email address.
+   * @param code The six-digit code.
+   * @param expiryMinutes How long the code stays valid.
+   */
+  public void sendTwoFactorCode(String to, String code, int expiryMinutes) {
+    try {
+      Context context = new Context();
+      context.setVariable("code", code);
+      context.setVariable("expiryMinutes", expiryMinutes);
+      String htmlBody = templateEngine.process("email/two-factor-email.html", context);
+
+      MimeMessage message = javaMailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+      String from = realFromUser.isEmpty() ? defaultFromAddress : realFromUser;
+      helper.setFrom(from);
+      helper.setSubject("Your sign-in code");
+      helper.setText(htmlBody, true);
+
+      String recipient;
+      if (notificationEmail != null && !notificationEmail.isEmpty()) {
+        recipient = notificationEmail;
+        log.warn("DEV MODE: Redirecting sign-in code for {} to {}", to, recipient);
+      } else {
+        recipient = to;
+      }
+      helper.setTo(recipient);
+
+      // The code itself is deliberately never logged.
+      log.info("Sending a sign-in code to {}", recipient);
+      javaMailSender.send(message);
+    } catch (MessagingException e) {
+      throw new IllegalStateException("Could not send the sign-in code", e);
+    }
+  }
 }
