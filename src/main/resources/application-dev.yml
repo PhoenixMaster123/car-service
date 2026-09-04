@@ -50,3 +50,8 @@ notification:
 app:
   dev-mode:
     enabled: true
+  two-factor:
+    # Off by default, as in production. Two-factor sign-in depends on outbound email:
+    # switch this on only with MailHog (or a real SMTP server) running, or nobody can
+    # complete a sign-in.
+    enabled: false

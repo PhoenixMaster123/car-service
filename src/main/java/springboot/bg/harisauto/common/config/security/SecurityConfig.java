@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import springboot.bg.harisauto.twofactor.TwoFactorAuthenticationSuccessHandler;
 
 /**
  * SecurityConfig.java - Security configuration for the application.
@@ -37,7 +38,8 @@ public class SecurityConfig {
   @Bean
   @Order(4)
   public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOAuth2UserService oauth2Service,
-      CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
+      CustomAccessDeniedHandler accessDeniedHandler,
+      TwoFactorAuthenticationSuccessHandler twoFactorSuccessHandler) throws Exception {
     http.authorizeHttpRequests(matcher -> matcher
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         .requestMatchers(
@@ -53,7 +55,7 @@ public class SecurityConfig {
         // "/login" is listed explicitly: formLogin().permitAll() only covers the bare
         // path and its error/logout variants, so /login?lang=de was redirected away and
         // the language switcher did not work on the sign-in page.
-        .requestMatchers("/register", "/", "/login").permitAll()
+        .requestMatchers("/register", "/", "/login", "/login/verify").permitAll()
         .requestMatchers(
             "/services",
             "/about",
@@ -69,7 +71,9 @@ public class SecurityConfig {
         .formLogin(form -> form
             .loginPage("/login")
             .usernameParameter("email")
-            .defaultSuccessUrl("/home", true)
+            // No defaultSuccessUrl: the handler decides whether the sign-in is
+            // complete or still needs a second factor.
+            .successHandler(twoFactorSuccessHandler)
             .failureUrl("/login?error")
             .permitAll()
     )
