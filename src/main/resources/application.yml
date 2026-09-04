@@ -116,6 +116,13 @@ logging:
           descriptor: trace
     blog: debug
 
+# Outbound service calls. Feign has no timeout by default, so a peer that accepts a
+# connection and then stops responding would hold a Tomcat worker indefinitely.
+spring.cloud.openfeign.client.config:
+  default:
+    connectTimeout: 2000
+    readTimeout: 5000
+
 # Service URLs
 payment-service:
   url: http://localhost:8081
